@@ -2,11 +2,8 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.renderer.FlintSpearItemRenderer;
-import com.yanny.age.stone.items.BoneTierProperties;
-import com.yanny.age.stone.items.HammerItem;
-import com.yanny.age.stone.items.SpearItem;
-import com.yanny.age.stone.items.StoneTierProperties;
 import com.yanny.age.stone.group.ModItemGroup;
+import com.yanny.age.stone.items.*;
 import com.yanny.ages.api.items.*;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemTier;
@@ -82,11 +79,13 @@ public class ToolSubscriber {
         registry.register(new AgesAxeItem(ItemTier.STONE, 7, -3.2f, stoneAxeToolProperties).setRegistryName(Reference.MODID, "stone_axe"));
         registry.register(new AgesShovelItem(ItemTier.STONE, 1.5f, -3.0f, stoneShovelToolProperties).setRegistryName(Reference.MODID, "stone_shovel"));
         registry.register(new AgesHoeItem(ItemTier.STONE, -2.0f, stoneHoeToolProperties).setRegistryName(Reference.MODID, "stone_hoe"));
-        registry.register(new AgesSwordItem(ItemTier.STONE, 3,-2.4f, combatProperties).setRegistryName(Reference.MODID, "stone_sword"));
+        registry.register(new AgesSwordItem(ItemTier.STONE, 3, -2.4f, combatProperties).setRegistryName(Reference.MODID, "stone_sword"));
 
         registry.register(new ShearsItem(toolProperties.maxDamage(ItemTier.WOOD.getMaxUses())).setRegistryName(Reference.MODID, "bone_shears"));
-        registry.register(new SwordItem(ItemTier.WOOD, 0,-1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
+        registry.register(new SwordItem(ItemTier.WOOD, 0, -1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
         registry.register(new HammerItem(ItemTier.STONE, 2, -3.5f, toolProperties).setRegistryName(Reference.MODID, "stone_hammer"));
+        registry.register(new CopperHammerItem(ItemTier.IRON, 4, -3.5f, toolProperties).setRegistryName(Reference.MODID, "copper_hammer"));
+        registry.register(new BronzeHammerItem(ItemTier.IRON, 5, -3.5f, toolProperties).setRegistryName(Reference.MODID, "bronze_hammer"));
         registry.register(new SpearItem(ItemTier.WOOD, 5.5f, -3.2f, spearProperties).setRegistryName(Reference.MODID, "flint_spear"));
 
         registry.register(new AgesPartItem(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64), boneTierProperties).setRegistryName(MODID, "bone_axe_head"));

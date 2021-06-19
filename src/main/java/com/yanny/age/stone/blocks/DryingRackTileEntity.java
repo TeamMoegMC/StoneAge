@@ -1,5 +1,6 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.config.CommonCofing;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
@@ -13,7 +14,10 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -48,19 +52,36 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
     @Override
     public void tick() {
         assert world != null;
-
-        if (!world.isRemote && world.isDaytime()) {
-            for (int i = 0; i < ITEMS; i++) {
-                if (items[i].active) {
-                    if (items[i].isDried()) {
-                        stacks.set(i + ITEMS, items[i].result);
-                        stacks.set(i, ItemStack.EMPTY);
-                        items[i].reset();
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-                    } else {
-                        items[i].remaining--;
+        if (!world.isRemote) {
+            if (CommonCofing.DryingRackNeedDaytime.get()) {
+                if (world.isDaytime()) {
+                    for (int i = 0; i < ITEMS; i++) {
+                        if (items[i].active) {
+                            if (items[i].isDried()) {
+                                stacks.set(i + ITEMS, items[i].result);
+                                stacks.set(i, ItemStack.EMPTY);
+                                items[i].reset();
+                                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                            } else {
+                                items[i].remaining--;
+                            }
+                        }
                     }
                 }
+            } else {
+                for (int i = 0; i < ITEMS; i++) {
+                    if (items[i].active) {
+                        if (items[i].isDried()) {
+                            stacks.set(i + ITEMS, items[i].result);
+                            stacks.set(i, ItemStack.EMPTY);
+                            items[i].reset();
+                            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                        } else {
+                            items[i].remaining--;
+                        }
+                    }
+                }
+
             }
         }
     }

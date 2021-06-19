@@ -1,5 +1,6 @@
 package com.yanny.age.stone;
 
+import com.yanny.age.stone.config.CommonCofing;
 import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.proxy.ClientProxy;
 import com.yanny.age.stone.proxy.IProxy;
@@ -17,5 +18,6 @@ public class ExampleMod {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);
         modLoadingContext.registerConfig(ModConfig.Type.SERVER, ConfigHolder.SERVER_SPEC);
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, CommonCofing.CONFIG);
     }
 }

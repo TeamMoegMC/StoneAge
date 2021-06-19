@@ -24,13 +24,18 @@ public class TreeStumpRenderer extends TileEntityRenderer<TreeStumpTileEntity> {
     public void render(@Nonnull TreeStumpTileEntity tileEntity, float partialTicks, @Nonnull MatrixStack matrixStack,
                        @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
         matrixStack.push();
-        matrixStack.translate(0.5, 0.75, 0.5);
+        matrixStack.translate(0.5, 0.77, 0.5);
         matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
         matrixStack.scale(0.7f, 0.7f, 0.7f);
 
         Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
                 overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
-
+        if (tileEntity.getInventory().getStackInSlot(0).getCount() == 2) {
+            matrixStack.translate(0, 0, -0.05);
+            matrixStack.rotate(Vector3f.ZP.rotationDegrees(30));
+            Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
+                    overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
+        }
         matrixStack.pop();
     }
 }

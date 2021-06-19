@@ -14,7 +14,10 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.Direction;
+import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -120,21 +123,23 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
         assert world != null;
 
         if (hasTool(player.getHeldItemMainhand())) {
-            chopLeft--;
+            if (stacks.get(0).getCount() == Arrays.stream(getRecipe(stacks.get(0)).getIngredients().get(0).getMatchingStacks()).findFirst().get().getCount()) {
+                chopLeft--;
 
-            if (chopLeft == 0) {
-                NonNullList<ItemStack> itemStacks = NonNullList.create();
-                itemStacks.add(recipeResult);
-                stacks.set(0, ItemStack.EMPTY);
-                InventoryHelper.dropItems(world, getPos(), itemStacks);
-                recipeResult = ItemStack.EMPTY;
-                tools.clear();
-                player.getHeldItemMainhand().damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+                if (chopLeft == 0) {
+                    NonNullList<ItemStack> itemStacks = NonNullList.create();
+                    itemStacks.add(recipeResult);
+                    stacks.set(0, ItemStack.EMPTY);
+                    InventoryHelper.dropItems(world, getPos(), itemStacks);
+                    recipeResult = ItemStack.EMPTY;
+                    tools.clear();
+                    player.getHeldItemMainhand().damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
 
-                world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-            } else {
-                world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_HIT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                } else {
+                    world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_HIT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                }
             }
         } else {
             world.playSound(null, getPos(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.BLOCKS, 1.0f, 1.0f);
@@ -153,6 +158,15 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
 
         if (stacks.get(0).isEmpty() && recipe != null) {
             stacks.set(0, itemStack.split(1));
+            totalChops = recipe.getChopTimes();
+            chopLeft = recipe.getChopTimes();
+            recipeResult = recipe.getCraftingResult(null);
+            tools.addAll(recipe.getTools());
+
+            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+            return;
+        } else if (stacks.get(0).getCount() == 1 && recipe != null && Arrays.stream(recipe.getIngredients().get(0).getMatchingStacks()).findFirst().get().getCount() == 2) {
+            stacks.get(0).grow(itemStack.split(1).getCount());
             totalChops = recipe.getChopTimes();
             chopLeft = recipe.getChopTimes();
             recipeResult = recipe.getCraftingResult(null);
