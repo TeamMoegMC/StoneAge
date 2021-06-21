@@ -84,8 +84,8 @@ public class ToolSubscriber {
         registry.register(new ShearsItem(toolProperties.maxDamage(ItemTier.WOOD.getMaxUses())).setRegistryName(Reference.MODID, "bone_shears"));
         registry.register(new SwordItem(ItemTier.WOOD, 0, -1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
         registry.register(new HammerItem(ItemTier.STONE, 2, -3.5f, toolProperties).setRegistryName(Reference.MODID, "stone_hammer"));
-        registry.register(new CopperHammerItem(ItemTier.IRON, 4, -3.5f, toolProperties).setRegistryName(Reference.MODID, "copper_hammer"));
-        registry.register(new BronzeHammerItem(ItemTier.IRON, 5, -3.5f, toolProperties).setRegistryName(Reference.MODID, "bronze_hammer"));
+        registry.register(new CopperHammerItem(ItemTier.IRON, 4, -3.5f, toolProperties.maxDamage(128)).setRegistryName(Reference.MODID, "copper_hammer"));
+        registry.register(new BronzeHammerItem(ItemTier.IRON, 5, -3.5f, toolProperties.maxDamage(256)).setRegistryName(Reference.MODID, "bronze_hammer"));
         registry.register(new SpearItem(ItemTier.WOOD, 5.5f, -3.2f, spearProperties).setRegistryName(Reference.MODID, "flint_spear"));
 
         registry.register(new AgesPartItem(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64), boneTierProperties).setRegistryName(MODID, "bone_axe_head"));
