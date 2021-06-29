@@ -1,6 +1,6 @@
 package com.yanny.age.stone.blocks;
 
-import com.yanny.age.stone.config.CommonCofing;
+import com.yanny.age.stone.config.CommonConfig;
 import net.minecraft.block.BedBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
@@ -114,7 +114,7 @@ public class DriedGrassBedBlock extends BedBlock {
 
                 return ActionResultType.SUCCESS;
             } else {
-                if (CommonCofing.GrassBedSleep.get()) {
+                if (CommonConfig.GrassBedSleep.get()) {
                     player.trySleep(pos).ifLeft((result) -> {
                         if (result != null) {
                             player.sendStatusMessage(result.getMessage(), true);

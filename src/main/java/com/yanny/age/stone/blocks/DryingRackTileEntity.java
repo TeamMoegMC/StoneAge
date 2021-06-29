@@ -1,6 +1,6 @@
 package com.yanny.age.stone.blocks;
 
-import com.yanny.age.stone.config.CommonCofing;
+import com.yanny.age.stone.config.CommonConfig;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
@@ -53,7 +53,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
     public void tick() {
         assert world != null;
         if (!world.isRemote) {
-            if (CommonCofing.DryingRackNeedDaytime.get()) {
+            if (CommonConfig.DryingRackNeedDaytime.get()) {
                 if (world.isDaytime()) {
                     for (int i = 0; i < ITEMS; i++) {
                         if (items[i].active) {

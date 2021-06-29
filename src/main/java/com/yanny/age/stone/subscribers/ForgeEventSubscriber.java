@@ -3,6 +3,7 @@ package com.yanny.age.stone.subscribers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.yanny.age.stone.config.CommonConfig;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import com.yanny.ages.api.enums.Age;
@@ -156,15 +157,7 @@ public class ForgeEventSubscriber {
         }
     }
 
-    @SubscribeEvent
-    public static void rightClickBlockEvent(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        BlockPos blockPos = event.getPos();
-        BlockState blockState = event.getWorld().getBlockState(blockPos);
 
-        if (Config.disableVanillaCraftingTable && (AgeUtils.getPlayerAge(event.getPlayer()) <= Age.STONE_AGE.value) && Config.disabledUseInStoneAgeList.contains(blockState.getBlock())) {
-            event.setUseBlock(Event.Result.DENY);
-        }
-    }
 
     @SubscribeEvent
     public static void advancementEvent(@Nonnull AdvancementEvent event) {
@@ -194,7 +187,7 @@ public class ForgeEventSubscriber {
     public static void disableInfinityWaterSource(@Nonnull BlockEvent.CreateFluidSourceEvent event) {
         Biome biome = event.getWorld().getBiome(event.getPos());
 
-        if (Config.aqueductRemoveWaterSource && !Config.infinityWaterSourceBiomeList.contains(biome)) {
+        if (CommonConfig.DisableInfinityWater.get() && !CommonConfig.DEFAULT_INFINITY_WATER_SOURCE_BIOMES.contains(biome)) {
             event.setResult(Event.Result.DENY);
         }
     }
@@ -205,31 +198,32 @@ public class ForgeEventSubscriber {
         PlayerEntity player = event.getPlayer();
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
+        if (CommonConfig.MakeFire.get()) {
+            if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
+                World world = event.getWorld();
+                BlockPos position = event.getPos().offset(event.getFace());
+                BlockState blockState = world.getBlockState(position);
+                List<ItemEntity> driedGrassList = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(position),
+                        itemEntity -> itemEntity.getItem().getItem().equals(ItemSubscriber.dried_grass));
 
-        if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
-            World world = event.getWorld();
-            BlockPos position = event.getPos().offset(event.getFace());
-            BlockState blockState = world.getBlockState(position);
-            List<ItemEntity> driedGrassList = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(position),
-                    itemEntity -> itemEntity.getItem().getItem().equals(ItemSubscriber.dried_grass));
+                if (blockState.getBlock().isAir(blockState, world, position) && !driedGrassList.isEmpty()) {
+                    world.setBlockState(position, FIRE.getDefaultState(), 11);
+                    player.sendBreakAnimation(Hand.MAIN_HAND);
+                    player.sendBreakAnimation(Hand.OFF_HAND);
 
-            if (blockState.getBlock().isAir(blockState, world, position) && !driedGrassList.isEmpty()) {
-                world.setBlockState(position, FIRE.getDefaultState(), 11);
-                player.sendBreakAnimation(Hand.MAIN_HAND);
-                player.sendBreakAnimation(Hand.OFF_HAND);
+                    if (mainItem.getCount() > 1) {
+                        mainItem.setCount(mainItem.getCount() - 1);
+                    } else {
+                        player.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                    }
+                    if (offItem.getCount() > 1) {
+                        offItem.setCount(offItem.getCount() - 1);
+                    } else {
+                        player.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+                    }
 
-                if (mainItem.getCount() > 1) {
-                    mainItem.setCount(mainItem.getCount() - 1);
-                } else {
-                    player.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                    driedGrassList.forEach(Entity::remove);
                 }
-                if (offItem.getCount() > 1) {
-                    offItem.setCount(offItem.getCount() - 1);
-                } else {
-                    player.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
-                }
-
-                driedGrassList.forEach(Entity::remove);
             }
         }
     }
@@ -280,13 +274,17 @@ public class ForgeEventSubscriber {
             spawns.getSpawner(coelacanth.getClassification()).add(new MobSpawnInfo.Spawners(coelacanth, Config.spawnCoelacanthWeight, Config.spawnCoelacanthMinCount, Config.spawnCoelacanthMaxCount));
         }
 
-        if (Config.abandonedCampAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
-            event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
-                    FeatureSubscriber.abandoned_camp_feature.withConfiguration(new ProbabilityConfig((float) Config.abandonedCampSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+        if (CommonConfig.AbandonedCampAllowedBiomes.get()) {
+            if (Config.abandonedCampAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
+                event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
+                        FeatureSubscriber.abandoned_camp_feature.withConfiguration(new ProbabilityConfig((float) Config.abandonedCampSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+            }
         }
-        if (Config.burialPlaceAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
-            event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
-                    FeatureSubscriber.burial_place_feature.withConfiguration(new ProbabilityConfig((float) Config.burialPlaceSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+        if (CommonConfig.BurialPlaceAllowedBiomes.get()) {
+            if (Config.burialPlaceAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
+                event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
+                        FeatureSubscriber.burial_place_feature.withConfiguration(new ProbabilityConfig((float) Config.burialPlaceSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+            }
         }
     }
 
