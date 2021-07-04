@@ -157,15 +157,7 @@ public class ForgeEventSubscriber {
         }
     }
 
-    @SubscribeEvent
-    public static void rightClickBlockEvent(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        BlockPos blockPos = event.getPos();
-        BlockState blockState = event.getWorld().getBlockState(blockPos);
 
-        if (Config.disableVanillaCraftingTable && (AgeUtils.getPlayerAge(event.getPlayer()) <= Age.STONE_AGE.value) && Config.disabledUseInStoneAgeList.contains(blockState.getBlock())) {
-            event.setUseBlock(Event.Result.DENY);
-        }
-    }
 
     @SubscribeEvent
     public static void advancementEvent(@Nonnull AdvancementEvent event) {
