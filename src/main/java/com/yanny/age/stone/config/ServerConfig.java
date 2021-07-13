@@ -110,6 +110,11 @@ class ServerConfig {
     final ForgeConfigSpec.BooleanValue aqueductRemoveWaterSource;
     final ForgeConfigSpec.ConfigValue<List<? extends String>> infinityWaterSourceBiomeList;
 
+    final ForgeConfigSpec.BooleanValue GrassBedSleep;
+    final ForgeConfigSpec.BooleanValue DryingRackNeedDaytime;
+    final ForgeConfigSpec.BooleanValue MakeFire;
+    final ForgeConfigSpec.BooleanValue LitTorche;
+
     ServerConfig(@Nonnull final ForgeConfigSpec.Builder builder) {
         builder.push("general");
         removeVanillaRecipes = builder
@@ -172,7 +177,7 @@ class ServerConfig {
                 .comment("List of blocks that have disabled use until end of stone age")
                 .translation(Reference.MODID + ".config.disabled_use_in_stone_age_list")
                 .defineList("disabledUseInStoneAgeList", Config.DEFAULT_DISABLED_USE_BLOCKS.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BLOCKS.containsKey(new ResourceLocation((String) string)));
         builder.pop();
 
@@ -185,7 +190,7 @@ class ServerConfig {
                 .comment("Abandoned camp allowed biomes")
                 .translation(Reference.MODID + ".config.abandoned_camp_allowed_biomes")
                 .defineList("abandonedCampAllowedBiomes", Config.DEFAULT_STRUCTURE_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         burialPlaceSpawnChance = builder
                 .comment("Burial place spawn chance")
@@ -195,7 +200,7 @@ class ServerConfig {
                 .comment("Burial place allowed biomes")
                 .translation(Reference.MODID + ".config.burial_place_allowed_biomes")
                 .defineList("burialPlaceAllowedBiomes", Config.DEFAULT_STRUCTURE_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
 
@@ -225,7 +230,7 @@ class ServerConfig {
                 .comment("Spawn deer in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_deer_allowed_biomes")
                 .defineList("spawnDeerAllowedBiomes", Config.DEFAULT_DEER_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("boar");
@@ -257,7 +262,7 @@ class ServerConfig {
                 .comment("Spawn boar in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_boar_allowed_biomes")
                 .defineList("spawnBoarAllowedBiomes", Config.DEFAULT_BOAR_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("auroch");
@@ -289,7 +294,7 @@ class ServerConfig {
                 .comment("Spawn auroch in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_auroch_allowed_biomes")
                 .defineList("spawnAurochAllowedBiomes", Config.DEFAULT_AUROCH_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("fowl");
@@ -321,7 +326,7 @@ class ServerConfig {
                 .comment("Spawn fowl in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_fowl_allowed_biomes")
                 .defineList("spawnFowlAllowedBiomes", Config.DEFAULT_FOWL_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("mouflon");
@@ -353,7 +358,7 @@ class ServerConfig {
                 .comment("Spawn mouflon in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_mouflon_allowed_biomes")
                 .defineList("spawnMouflonAllowedBiomes", Config.DEFAULT_MOUFLON_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("mammoth");
@@ -381,7 +386,7 @@ class ServerConfig {
                 .comment("Spawn mammoth in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_mammoth_allowed_biomes")
                 .defineList("spawnMammothAllowedBiomes", Config.DEFAULT_MAMMOTH_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("saber tooth tiger");
@@ -409,7 +414,7 @@ class ServerConfig {
                 .comment("Spawn saber-tooth tiger in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_saber_tooth_tiger_allowed_biomes")
                 .defineList("spawnSaberToothTigerAllowedBiomes", Config.DEFAULT_TIGER_BIOMES.stream()
-                        .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("woolly rhino");
@@ -437,7 +442,7 @@ class ServerConfig {
                 .comment("Spawn woolly rhino in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_woolly_rhino_allowed_biomes")
                 .defineList("spawnWoollyRhinoAllowedBiomes", Config.DEFAULT_RHINO_BIOMES.stream()
-                         .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
+                                .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
         builder.push("terror bird");
@@ -508,6 +513,13 @@ class ServerConfig {
                 .defineList("infinityWaterSourceBiomeList", Config.DEFAULT_INFINITY_WATER_SOURCE_BIOMES.stream()
                                 .map(value -> Objects.requireNonNull(value.getRegistryName()).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
+        builder.pop();
+
+        builder.push("Config");
+        GrassBedSleep = builder.comment("If grass bed can sleep").define("sleep", true);
+        DryingRackNeedDaytime = builder.comment("If Drying rack need daytime").define("need daytime", true);
+        MakeFire = builder.define("Make fire", true);
+        LitTorche = builder.define("Lit torche", true);
         builder.pop();
     }
 }

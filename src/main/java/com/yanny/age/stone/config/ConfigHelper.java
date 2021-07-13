@@ -133,6 +133,11 @@ public class ConfigHelper {
         Config.infinityWaterSourceBiomeList.clear();
         Config.infinityWaterSourceBiomeList.addAll(ConfigHolder.SERVER.infinityWaterSourceBiomeList.get().stream()
                 .map(value -> ForgeRegistries.BIOMES.getValue(new ResourceLocation(value))).collect(Collectors.toSet()));
+        Config.GrassBedSleep = ConfigHolder.SERVER.GrassBedSleep.get();
+        Config.DryingRackNeedDaytime = ConfigHolder.SERVER.DryingRackNeedDaytime.get();
+        Config.MakeFire = ConfigHolder.SERVER.MakeFire.get();
+        Config.LitTorche = ConfigHolder.SERVER.LitTorche.get();
+
     }
 
     public static void bakeClient() {

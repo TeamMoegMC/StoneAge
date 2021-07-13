@@ -3,7 +3,6 @@ package com.yanny.age.stone.subscribers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.yanny.age.stone.config.CommonConfig;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import com.yanny.ages.api.enums.Age;
@@ -169,7 +168,7 @@ public class ForgeEventSubscriber {
     @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void litTorch(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        if (CommonConfig.LitTorche.get()) {
+        if (Config.LitTorche) {
             PlayerEntity player = event.getPlayer();
 
             if (event.getHand() == Hand.MAIN_HAND && player.getHeldItemMainhand().getItem().equals(ItemSubscriber.unlit_torch)) {
@@ -200,7 +199,7 @@ public class ForgeEventSubscriber {
         PlayerEntity player = event.getPlayer();
         ItemStack mainItem = player.getHeldItemMainhand();
         ItemStack offItem = player.getHeldItemOffhand();
-        if (CommonConfig.MakeFire.get()) {
+        if (Config.MakeFire) {
             if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
                 World world = event.getWorld();
                 BlockPos position = event.getPos().offset(event.getFace());

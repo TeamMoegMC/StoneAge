@@ -154,4 +154,9 @@ public class Config {
 
     public static boolean aqueductRemoveWaterSource = true;
     public static final Set<Biome> infinityWaterSourceBiomeList = DEFAULT_INFINITY_WATER_SOURCE_BIOMES;
+
+    public static boolean GrassBedSleep = true;
+    public static boolean DryingRackNeedDaytime = true;
+    public static boolean MakeFire = true;
+    public static boolean LitTorche = true;
 }
