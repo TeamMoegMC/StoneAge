@@ -49,6 +49,9 @@ public class TreeStumpRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
         }
 
         int i = JSONUtils.getInt(json, "chopTimes", 1);
+        int a = JSONUtils.getInt(json, "amount", 1);
+
+        ingredient.getMatchingStacks()[0].setCount(a);
 
         return this.factory.create(recipeId, s, ingredient, tool, itemstack, i);
     }

@@ -123,7 +123,7 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
         assert world != null;
 
         if (hasTool(player.getHeldItemMainhand())) {
-            if (stacks.get(0).getCount() == Arrays.stream(getRecipe(stacks.get(0)).getIngredients().get(0).getMatchingStacks()).findFirst().get().getCount()) {
+            if (stacks.get(0).getCount() == getRecipe(stacks.get(0)).getIngredients().get(0).getMatchingStacks()[0].getCount()) {
                 chopLeft--;
 
                 if (chopLeft == 0) {
