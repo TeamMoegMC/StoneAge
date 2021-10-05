@@ -78,11 +78,12 @@ public class MillstoneBlock extends HorizontalBlock implements TopBlockInfoProvi
         if (tile != null) {
             if (player.isSneaking()) {
                 if (!worldIn.isRemote) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+                    tile.onActivated();
+                    return ActionResultType.SUCCESS;
                 }
             } else {
                 if (!worldIn.isRemote) {
-                    tile.onActivated();
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
                 }
 
                 return ActionResultType.SUCCESS;
