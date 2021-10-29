@@ -4,9 +4,9 @@ import com.yanny.age.stone.ExampleMod;
 import com.yanny.age.stone.compatibility.top.TopCompatibility;
 import com.yanny.age.stone.config.ConfigHelper;
 import com.yanny.age.stone.config.ConfigHolder;
-import com.yanny.age.stone.datagen.*;
+import com.yanny.age.stone.datagen.LootTableGenerator;
+import com.yanny.age.stone.datagen.RecipeGenerator;
 import com.yanny.age.stone.entities.*;
-import com.yanny.ages.api.Reference;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
@@ -63,14 +63,8 @@ public class ModEventSubscriber {
     public static void dataGen(@Nonnull GatherDataEvent event) {
         if (event.includeServer()) {
             // ages_api MODID
-            AgesApiBlockTagGenerator agesApiBlockTagGenerator = new AgesApiBlockTagGenerator(event.getGenerator(), Reference.MODID, event.getExistingFileHelper());
-            AgesApiItemTagGenerator agesApiItemTagGenerator = new AgesApiItemTagGenerator(event.getGenerator(), agesApiBlockTagGenerator, Reference.MODID, event.getExistingFileHelper());
-            ForgeItemTagGenerator forgeItemTagGenerator = new ForgeItemTagGenerator(event.getGenerator(), agesApiBlockTagGenerator, "forge", event.getExistingFileHelper());
             RecipeGenerator recipeGenerator = new RecipeGenerator(event.getGenerator());
 
-            event.getGenerator().addProvider(agesApiBlockTagGenerator);
-            event.getGenerator().addProvider(agesApiItemTagGenerator);
-            event.getGenerator().addProvider(forgeItemTagGenerator);
             event.getGenerator().addProvider(recipeGenerator);
         }
 

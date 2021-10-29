@@ -6,10 +6,7 @@ import com.yanny.ages.api.items.AgesPartItem;
 import com.yanny.ages.api.items.AgesToolItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.*;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -17,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
-
 import java.util.Arrays;
 
 import static com.yanny.ages.api.items.AgesToolItem.*;
@@ -45,6 +41,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
         this.recipeItems = ingredients;
         this.recipeOutput = output;
         this.tool = tool;
+        new ShapedRecipe(id, group, recipeWidth, recipeHeight, ingredients, output);
     }
 
     @Nonnull

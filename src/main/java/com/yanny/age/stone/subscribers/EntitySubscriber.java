@@ -17,7 +17,8 @@ import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
-import static net.minecraft.entity.EntityClassification.*;
+import static net.minecraft.entity.EntityClassification.CREATURE;
+import static net.minecraft.entity.EntityClassification.WATER_CREATURE;
 
 @SuppressWarnings({"unused", "unchecked"})
 @ObjectHolder(Reference.MODID)
@@ -33,8 +34,6 @@ public class EntitySubscriber {
             .size(0.7f, 0.7f).trackingRange(10).build("").setRegistryName(Reference.MODID,"fowl");
     public static final EntityType<MouflonEntity> mouflon = (EntityType<MouflonEntity>) EntityType.Builder.create(MouflonEntity::new, CREATURE)
             .size(0.9f, 1.5f).trackingRange(10).build("").setRegistryName(Reference.MODID,"mouflon");
-    public static final EntityType<FlintSpearEntity> flint_spear = (EntityType<FlintSpearEntity>) EntityType.Builder.<FlintSpearEntity>create(FlintSpearEntity::new, MISC)
-            .size(0.5f, 0.5f).trackingRange(4).updateInterval(20).build("").setRegistryName(Reference.MODID,"flint_spear");
     public static final EntityType<MammothEntity> mammoth = (EntityType<MammothEntity>) EntityType.Builder.create(MammothEntity::new, CREATURE)
             .size(1.9f, 2.0f).trackingRange(10).build("").setRegistryName(Reference.MODID,"mammoth");
     public static final EntityType<SaberToothTigerEntity> saber_tooth_tiger = (EntityType<SaberToothTigerEntity>) EntityType.Builder.create(SaberToothTigerEntity::new, CREATURE)
@@ -65,7 +64,6 @@ public class EntitySubscriber {
         registry.register(auroch);
         registry.register(fowl);
         registry.register(mouflon);
-        registry.register(flint_spear);
         registry.register(mammoth);
         registry.register(saber_tooth_tiger);
         registry.register(woolly_rhino);

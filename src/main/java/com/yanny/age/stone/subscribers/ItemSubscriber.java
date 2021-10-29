@@ -1,9 +1,8 @@
 package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
-import com.yanny.age.stone.items.BackpackItem;
-import com.yanny.age.stone.items.MeshItem;
 import com.yanny.age.stone.group.ModItemGroup;
+import com.yanny.age.stone.items.MeshItem;
 import net.minecraft.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,7 +50,6 @@ public class ItemSubscriber {
         registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "mammoth_tusk"));
         registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "rhino_tusk"));
         registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "saber_teeth"));
-        registry.register(new BackpackItem().setRegistryName(MODID, "backpack"));
         registry.register(new MeshItem(new Item.Properties().group(ModItemGroup.AGES).maxDamage(15)).setRegistryName(MODID, "grass_mesh"));
         registry.register(new MeshItem(new Item.Properties().group(ModItemGroup.AGES).maxDamage(30)).setRegistryName(MODID, "cobweb_mesh"));
         registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "grass_lead"));

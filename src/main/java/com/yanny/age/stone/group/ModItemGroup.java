@@ -17,6 +17,6 @@ public class ModItemGroup extends ItemGroup {
     @Override
     @Nonnull
     public ItemStack createIcon() {
-        return new ItemStack(ToolSubscriber.stone_hammer);
+        return new ItemStack(ToolSubscriber.flint_knife);
     }
 }

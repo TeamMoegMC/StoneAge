@@ -3,10 +3,8 @@ package com.yanny.age.stone.handlers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
-import com.yanny.ages.api.utils.Tags;
 import net.minecraft.advancements.criterion.ItemPredicate;
 import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.loot.*;
@@ -25,7 +23,10 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import static com.yanny.age.stone.Reference.MODID;
 
@@ -81,33 +82,6 @@ public class LootHandler {
         INJECT_POOL.put("minecraft:entities/trader_llama", "stone_age:inject/entities/bone_fat_hide");
         INJECT_POOL.put("minecraft:entities/pig", "stone_age:inject/entities/bone_fat");
         INJECT_POOL.put("minecraft:entities/sheep", "stone_age:inject/entities/bone_fat");
-
-        INJECT_ITEM_POOL.put("minecraft:blocks/seagrass", new Pair<>(Blocks.SEAGRASS, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ITEM_POOL.put("minecraft:blocks/tall_seagrass", new Pair<>(Blocks.SEAGRASS, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ITEM_POOL.put("minecraft:blocks/vine", new Pair<>(Blocks.VINE, net.minecraftforge.common.Tags.Items.SHEARS));
-
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/stone", new Pair<>(Blocks.GRAVEL, Tags.Items.HAMMERS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/acacia_leaves", new Pair<>(Blocks.ACACIA_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/birch_leaves", new Pair<>(Blocks.BIRCH_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/cobweb", new Pair<>(Blocks.COBWEB, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/dark_oak_leaves", new Pair<>(Blocks.DARK_OAK_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/dead_bush", new Pair<>(Blocks.DEAD_BUSH, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/fern", new Pair<>(Blocks.FERN, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/grass", new Pair<>(Blocks.GRASS, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/jungle_leaves", new Pair<>(Blocks.JUNGLE_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/large_fern", new Pair<>(Blocks.FERN, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/oak_leaves", new Pair<>(Blocks.OAK_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/spruce_leaves", new Pair<>(Blocks.SPRUCE_LEAVES, net.minecraftforge.common.Tags.Items.SHEARS));
-        INJECT_ALTERNATE_ENTRIES.put("minecraft:blocks/tall_grass", new Pair<>(Blocks.GRASS, net.minecraftforge.common.Tags.Items.SHEARS));
-
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/sandstone", new Pair<>(Blocks.SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/chiseled_sandstone", new Pair<>(Blocks.SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/cut_sandstone", new Pair<>(Blocks.SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/smooth_sandstone", new Pair<>(Blocks.SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/red_sandstone", new Pair<>(Blocks.RED_SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/chiseled_red_sandstone", new Pair<>(Blocks.RED_SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/cut_red_sandstone", new Pair<>(Blocks.RED_SAND, Tags.Items.HAMMERS));
-        CHANGE_ALTERNATE_ENTRIES.put("minecraft:blocks/smooth_red_sandstone", new Pair<>(Blocks.RED_SAND, Tags.Items.HAMMERS));
     }
 
     @SubscribeEvent

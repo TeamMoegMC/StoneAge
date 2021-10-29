@@ -88,24 +88,7 @@ public class RecipeGenerator extends RecipeProvider {
         FOODS.add(new FoodHolder(FoodSubscriber.venison, FoodSubscriber.cooked_venison));
         FOODS.add(new FoodHolder(ItemSubscriber.raw_bread, Items.BREAD));
 
-        TOOLS.add(new ToolHolder(ToolSubscriber.bone_axe, ToolSubscriber.bone_axe_head, ItemSubscriber.grass_lead));
-        TOOLS.add(new ToolHolder(ToolSubscriber.bone_hoe, ToolSubscriber.bone_hoe_head, ItemSubscriber.grass_lead));
-        TOOLS.add(new ToolHolder(ToolSubscriber.bone_pickaxe, ToolSubscriber.bone_pickaxe_head, ItemSubscriber.grass_lead));
-        TOOLS.add(new ToolHolder(ToolSubscriber.bone_shovel, ToolSubscriber.bone_shovel_head, ItemSubscriber.grass_lead));
-        TOOLS.add(new ToolHolder(ToolSubscriber.bone_sword, ToolSubscriber.bone_sword_head, ItemSubscriber.grass_lead));
-        TOOLS.add(new ToolHolder(ToolSubscriber.stone_axe, ToolSubscriber.stone_axe_head, ItemSubscriber.leather_strip));
-        TOOLS.add(new ToolHolder(ToolSubscriber.stone_hoe, ToolSubscriber.stone_hoe_head, ItemSubscriber.leather_strip));
-        TOOLS.add(new ToolHolder(ToolSubscriber.stone_pickaxe, ToolSubscriber.stone_pickaxe_head, ItemSubscriber.leather_strip));
-        TOOLS.add(new ToolHolder(ToolSubscriber.stone_shovel, ToolSubscriber.stone_shovel_head, ItemSubscriber.leather_strip));
-        TOOLS.add(new ToolHolder(ToolSubscriber.stone_sword, ToolSubscriber.stone_sword_head, ItemSubscriber.leather_strip));
-
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.bone_arrow_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"#"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_axe_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"##", "# "}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_hoe_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"##"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_pickaxe_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"###"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_shears, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{" #", "# "}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_shovel_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"#", "#"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.bone_sword_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"#", "#", "#"}));
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.cobweb_mesh, Items.STRING, Items.STRING, new String[]{"##", "##"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.aqueduct, Items.BRICK, Items.BRICK, new String[]{"# #", "# #", "###"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.drying_rack, Items.STICK, Items.STICK, new String[]{"# #", " # ", "# #"}));
@@ -115,11 +98,6 @@ public class RecipeGenerator extends RecipeProvider {
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.grass_mesh, ItemSubscriber.dried_grass, ItemSubscriber.dried_grass, new String[]{"##", "##"}));
         ONE_ITEMS.add(new OneItemHolder(Items.HAY_BLOCK, Items.WHEAT, Items.WHEAT, new String[]{"###", "###", "###"}));
         ONE_ITEMS.add(new OneItemHolder(Items.LEAD, ItemSubscriber.leather_strip, ItemSubscriber.leather_strip, new String[]{"## ", "# #", " ##"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.stone_axe_head, Tags.Items.STONE, Items.STONE, new String[]{"##", "# "}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.stone_hoe_head, Tags.Items.STONE, Items.STONE, new String[]{"##"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.stone_pickaxe_head, Tags.Items.STONE, Items.STONE, new String[]{"###"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.stone_shovel_head, Tags.Items.STONE, Items.STONE, new String[]{"#", "#"}));
-        ONE_ITEMS.add(new OneItemHolder(ToolSubscriber.stone_sword_head, Tags.Items.STONE, Items.STONE, new String[]{"#", "#", "#"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.thatch_block, ItemSubscriber.dried_grass, ItemSubscriber.dried_grass, new String[]{"###", "###", "###"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.thatch_stairs, ItemSubscriber.dried_grass, ItemSubscriber.dried_grass, new String[]{"#  ", "## ", "###"}));
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.leather_strip, Items.LEATHER, Items.LEATHER, 4, new String[]{"#"}));
@@ -212,20 +190,6 @@ public class RecipeGenerator extends RecipeProvider {
                 .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
                 .addCriterion("has_recipe", hasItem(Items.COBBLESTONE))
                 .build(consumer);
-        FlintWorkbenchRecipeBuilder.shapedRecipe(Items.CRAFTING_TABLE)
-                .patternLine("HWA")
-                .patternLine("MBC")
-                .patternLine("PPP")
-                .key('H', ToolSubscriber.stone_pickaxe)
-                .key('A', ToolSubscriber.stone_axe)
-                .key('W', ItemTags.WOOL)
-                .key('B', Items.BREAD)
-                .key('M', BlockSubscriber.millstone)
-                .key('C', BlockSubscriber.stone_chest)
-                .key('P', ItemTags.WOODEN_SLABS)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(BlockSubscriber.stone_chest))
-                .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.dried_grass_bed)
                 .patternLine("###")
                 .patternLine("###")
@@ -255,16 +219,7 @@ public class RecipeGenerator extends RecipeProvider {
                 .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
                 .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
                 .build(consumer);
-        FlintWorkbenchRecipeBuilder.shapedRecipe(ToolSubscriber.flint_spear)
-                .patternLine(" SF")
-                .patternLine(" # ")
-                .patternLine("#  ")
-                .key('F', Items.FLINT)
-                .key('S', ItemSubscriber.leather_strip)
-                .key('#', Items.STICK)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
-                .build(consumer);
+
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.LEATHER_BOOTS)
                 .patternLine("XSX")
                 .patternLine("XBX")
@@ -341,16 +296,7 @@ public class RecipeGenerator extends RecipeProvider {
                 .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
                 .addCriterion("has_recipe", hasItem(Items.STONE))
                 .build(consumer);
-        FlintWorkbenchRecipeBuilder.shapedRecipe(ToolSubscriber.stone_hammer)
-                .patternLine(" XS")
-                .patternLine(" #X")
-                .patternLine("#  ")
-                .key('#', Items.STICK)
-                .key('X', Items.STONE)
-                .key('S', ItemSubscriber.leather_strip)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
-                .build(consumer);
+
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.tree_stump)
                 .patternLine(" # ")
                 .patternLine("FFF")

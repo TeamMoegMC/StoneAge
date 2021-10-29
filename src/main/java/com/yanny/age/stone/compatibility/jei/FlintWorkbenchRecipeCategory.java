@@ -97,7 +97,7 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
         recipeLayout.getItemStacks().init(width * height, false, 97, 21);
         recipeLayout.getItemStacks().set(width * height, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
 
-        recipeLayout.getItemStacks().init(width * height + 1, false, 66, 20);
+        recipeLayout.getItemStacks().init(width * height + 1, false, 63, 39);
         recipeLayout.getItemStacks().set(width * height + 1, ingredients.getInputs(VanillaTypes.ITEM).get(width * height));
     }
 }

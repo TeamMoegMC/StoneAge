@@ -5,7 +5,6 @@ import com.yanny.age.stone.blocks.FishingNetGui;
 import com.yanny.age.stone.blocks.MillstoneGui;
 import com.yanny.age.stone.blocks.StoneChestGui;
 import com.yanny.age.stone.client.renderer.*;
-import com.yanny.age.stone.items.BackpackGui;
 import com.yanny.age.stone.subscribers.ContainerSubscriber;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
@@ -25,7 +24,6 @@ public class ClientProxy implements IProxy {
         ScreenManager.registerFactory(ContainerSubscriber.stone_chest, StoneChestGui::new);
         ScreenManager.registerFactory(ContainerSubscriber.feeder, FeederGui::new);
         ScreenManager.registerFactory(ContainerSubscriber.millstone, MillstoneGui::new);
-        ScreenManager.registerFactory(ContainerSubscriber.backpack, BackpackGui::new);
         ScreenManager.registerFactory(ContainerSubscriber.fishing_net, FishingNetGui::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.deer, new DeerRenderer.RenderFactory());
@@ -33,7 +31,6 @@ public class ClientProxy implements IProxy {
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.auroch, new AurochRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.fowl, new FowlRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.mouflon, new MouflonRenderer.RenderFactory());
-        RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.flint_spear, new FlintSpearRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.mammoth, new MammothRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.saber_tooth_tiger, new SaberToothTigerRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.woolly_rhino, new WoollyRhinoRenderer.RenderFactory());
