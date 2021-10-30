@@ -32,8 +32,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
         ItemStack itemstack = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "result"), true);
         Ingredient tool = Ingredient.deserialize(JSONUtils.getJsonObject(json, "tool"));
-        Boolean vanilla = JSONUtils.getBoolean(json, "vanilla");
-        return new FlintWorkbenchRecipe(recipeID, s, i, j, tool, nonnulllist, itemstack, vanilla);
+        return new FlintWorkbenchRecipe(recipeID, s, i, j, tool, nonnulllist, itemstack);
     }
 
     @Override
@@ -49,8 +48,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
 
         final ItemStack result = buffer.readItemStack();
         final Ingredient tool = Ingredient.read(buffer);
-        final Boolean vanilla = buffer.readBoolean();
-        return new FlintWorkbenchRecipe(recipeID, group, width, height, tool, ingredients, result, vanilla);
+        return new FlintWorkbenchRecipe(recipeID, group, width, height, tool, ingredients, result);
     }
 
     @Override
@@ -65,7 +63,6 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
 
         buffer.writeItemStack(recipe.getRecipeOutput());
         recipe.getTool().write(buffer);
-        buffer.writeBoolean(recipe.vanilla);
     }
 
     @Nonnull
