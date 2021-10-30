@@ -7,15 +7,19 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath "com.github.jengelman.gradle.plugins:shadow:4.0.2"
     }
+}
+
+plugins {
+    id 'com.matthewprenger.cursegradle' version '1.4.0'
 }
 
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-version = "${mc_version}-${game_version}"
+version = "${minecraft_version}-${mod_version}"
 group = 'com.yanny.age.stone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'stone-age'
 
@@ -112,8 +116,9 @@ configurations {
 }
 
 repositories {
+    mavenLocal()
     maven {
-        url "http://dvs1.progwml6.com/files/maven"
+        url "https://dvs1.progwml6.com/files/maven"
     }
     maven {
         url "https://maven.tterrag.com/"
@@ -124,10 +129,9 @@ repositories {
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
@@ -144,29 +148,6 @@ dependencies {
     compileOnly "org.joml:joml:1.9.25"
     runtimeOnly "org.joml:joml:1.9.25"
     shade "org.joml:joml:1.9.25"
-
-    // look for ages-api library
-    //compileOnly fileTree(include: ['*.jar'], dir: '../AgesApi/build/libs')
-	compileOnly fileTree(include: ['*.jar'], dir: '/libs')
-
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
-
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
 }
 
 shadowJar {
@@ -180,11 +161,64 @@ jar {
         attributes([
             "Specification-Title": "Stone age",
             "Specification-Vendor": "Yanny",
-            "Specification-Version": "${game_version}",
+            "Specification-Version": "${mod_version}",
             "Implementation-Title": project.name,
             "Implementation-Version": "${version}",
             "Implementation-Vendor" :"Yanny",
             "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         ])
+    }
+}
+
+String getChangelogText() {
+    def changelogFile = file('changelog.txt')
+    String str = ''
+    int lineCount = 0
+    boolean done = false
+    changelogFile.eachLine {
+        if (done || it == null) {
+            return
+        }
+        if (it.size() > 1) {
+            def temp = it
+            if (lineCount == 0) {
+                temp = "Stone Age ${version}"
+                temp = "<span style=\"font-size: 18px; color: #333399;\">Stone Age v${mod_version}</span>&nbsp;&nbsp;<em>for Minecraft ${minecraft_version}</em><br/>"
+            } else if (it.startsWith('-')) {
+                temp = "&nbsp;&nbsp;&nbsp;$temp<br/>"
+                temp = temp.replaceAll("(\\S+\\/\\S+)#([0-9]+)\\b", "<a href=\"https://github.com/\$1/issues/\$2\">\$0</a>");
+                temp = temp.replaceAll("#([0-9]+)\\b(?!<\\/a>)", "<a href=\"https://github.com/$github_project/issues/\$1\">\$0</a>");
+            } else {
+                temp = "<h4>$temp</h4>"
+            }
+            str += temp
+            lineCount++
+        } else {
+            str += "<p>Please submit any Issues you come across on the&nbsp;<a href=\"https://github.com/${github_project}/issues\" rel=\"nofollow\">Issue Tracker</a>.</p>"
+            done = true
+        }
+    }
+    return str
+}
+
+// changelog debugging
+//new File("changelog.html").write getChangelogText()
+
+curseforge {
+    project {
+        def envApiKey = System.getenv('CURSEFORGE_API_KEY')
+        apiKey = envApiKey == null ? 'nope' : envApiKey
+
+        id = project.projectId
+        changelog = getChangelogText()
+        changelogType = 'html'
+        releaseType = project.curse_type
+        addGameVersion project.minecraft_version
+
+        mainArtifact (shadowJar) {
+            relations {
+                requiredDependency 'ages-api'
+            }
+        }
     }
 }
