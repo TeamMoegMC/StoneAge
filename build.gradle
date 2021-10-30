@@ -217,7 +217,7 @@ curseforge {
 
         mainArtifact (shadowJar) {
             relations {
-
+                requiredDependency 'ages-api'
             }
         }
     }
