@@ -1,27 +1,31 @@
-modLoader="javafml"
-loaderVersion="[34,)"
-license="All rights reserved"
+modLoader = "javafml"
+loaderVersion = "[36,)"
+license = "GPLv3"
 [[mods]]
 modId="stone_age"
 version="${file.jarVersion}"
-displayName="Stone Age"
+displayName="TWR Stone Age"
 logoFile="stone_age.png"
-authors="Yanny"
-
+authors="Yanny, [TeamMoeg] dashuaibia, YueSha"
+credits = "Original author Yanny, who brought this amazing mod to us. We aim to make it better fit in our modpack The Winter Rescue."
 description='''
+The branch is modified by TeamMoeg, following the orginal GPLv3 license here: https://github.com/yanny7/StoneAge/blob/master/LICENSE.txt
+The modified branch is open source at: https://github.com/TeamMoegMC/StoneAge
+Do NOT contact the original author (Yanny) for any bugs or issues if you are using this branch!
+Content Description:
 Stone Age gives you feeling of man from stone age. No more magically created planks from wood logs, the way to first crafting table is long and dangerous.
 '''
 
 [[dependencies.stone_age]]
     modId="forge"
     mandatory=true
-    versionRange="[34,)"
+    versionRange="[36,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.stone_age]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.2,)"
+    versionRange="[1.16.5,1.17)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.stone_age]]
