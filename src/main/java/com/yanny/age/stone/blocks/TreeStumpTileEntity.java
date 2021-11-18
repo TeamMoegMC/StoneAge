@@ -166,7 +166,7 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
             return;
         } else if (stacks.get(0).getCount() == 1 && recipe != null) {
             ItemStack input = recipe.getIngredients().get(0).getMatchingStacks()[0];
-            if (input.getCount() == 2 && input.getItem() == stacks.get(0).getItem()) {
+            if (input.getCount() == 2 && input.getItem() == itemStack.getItem()) {
                 stacks.get(0).grow(itemStack.split(1).getCount());
                 totalChops = recipe.getChopTimes();
                 chopLeft = recipe.getChopTimes();
