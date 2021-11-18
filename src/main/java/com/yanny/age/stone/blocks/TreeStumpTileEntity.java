@@ -150,7 +150,6 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
         assert world != null;
         ItemStack itemStack = player.getHeldItemMainhand();
         TreeStumpRecipe recipe = getRecipe(itemStack);
-
         if (recipe == null) {
             itemStack = player.getHeldItemOffhand();
             recipe = getRecipe(itemStack);
@@ -165,15 +164,18 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
 
             world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
             return;
-        } else if (stacks.get(0).getCount() == 1 && recipe != null && Arrays.stream(recipe.getIngredients().get(0).getMatchingStacks()).findFirst().get().getCount() == 2) {
-            stacks.get(0).grow(itemStack.split(1).getCount());
-            totalChops = recipe.getChopTimes();
-            chopLeft = recipe.getChopTimes();
-            recipeResult = recipe.getCraftingResult(null);
-            tools.addAll(recipe.getTools());
+        } else if (stacks.get(0).getCount() == 1 && recipe != null) {
+            ItemStack input = recipe.getIngredients().get(0).getMatchingStacks()[0];
+            if (input.getCount() == 2 && input.getItem() == stacks.get(0).getItem()) {
+                stacks.get(0).grow(itemStack.split(1).getCount());
+                totalChops = recipe.getChopTimes();
+                chopLeft = recipe.getChopTimes();
+                recipeResult = recipe.getCraftingResult(null);
+                tools.addAll(recipe.getTools());
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-            return;
+                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                return;
+            }
         }
 
         if (itemStack.isEmpty() && !stacks.get(0).isEmpty()) {
