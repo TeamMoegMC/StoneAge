@@ -1,89 +1,315 @@
 {
-    "__comment": "Model generated using MrCrayfish's Model Creator (https://mrcrayfish.com/tools?id=mc)",
-    "textures": {
-        "particle": "stone_age:block/flint_workbench_top",
-        "flint_workbench_side": "stone_age:block/flint_workbench_side",
-        "flint_workbench_top": "stone_age:block/flint_workbench_top"
-    },
-    "display": {
-        "gui": {
-            "rotation": [ 30, 45, 0 ],
-            "translation": [ 0, 0, 0 ],
-            "scale": [ 0.625, 0.625, 0.625 ]
+  "credit": "Made with Blockbench",
+  "textures": {
+    "flint_workbench_side": "stone_age:block/flint_workbench_side",
+    "particle": "stone_age:block/flint_workbench_top",
+    "flint_workbench_top": "stone_age:block/flint_workbench_top"
+  },
+  "elements": [
+    {
+      "name": "Cube",
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        2,
+        16
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            3,
+            16,
+            5
+          ],
+          "texture": "#flint_workbench_side"
         },
-        "ground": {
-            "rotation": [ 0, 0, 0 ],
-            "translation": [ 0, 3, 0 ],
-            "scale": [ 0.25, 0.25, 0.25 ]
+        "east": {
+          "uv": [
+            0,
+            3,
+            16,
+            5
+          ],
+          "texture": "#flint_workbench_side"
         },
-        "fixed": {
-            "rotation": [ 0, 180, 0 ],
-            "translation": [ 0, 0, 0 ],
-            "scale": [ 1, 1, 1 ]
+        "south": {
+          "uv": [
+            0,
+            3,
+            16,
+            5
+          ],
+          "texture": "#flint_workbench_side"
         },
-        "head": {
-            "rotation": [ 0, 180, 0 ],
-            "translation": [ 0, 0, 0 ],
-            "scale": [ 1, 1, 1 ]
+        "west": {
+          "uv": [
+            0,
+            3,
+            16,
+            5
+          ],
+          "texture": "#flint_workbench_side"
         },
-        "firstperson_righthand": {
-            "rotation": [ 0, 315, 0 ],
-            "translation": [ 0, 2.5, 0 ],
-            "scale": [ 0.4, 0.4, 0.4 ]
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#flint_workbench_top"
         },
-        "thirdperson_righthand": {
-            "rotation": [ 75, 315, 0 ],
-            "translation": [ 0, 2.5, 0 ],
-            "scale": [ 0.375, 0.375, 0.375 ]
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#flint_workbench_side"
         }
+      }
     },
-    "elements": [
-        {
-            "name": "Cube",
-            "from": [ 0, 0, 0 ], 
-            "to": [ 16, 2, 16 ], 
-            "faces": {
-                "north": { "texture": "#flint_workbench_side", "uv": [ 0, 3, 16, 5 ] },
-                "east": { "texture": "#flint_workbench_side", "uv": [ 0, 3, 16, 5 ] },
-                "south": { "texture": "#flint_workbench_side", "uv": [ 0, 3, 16, 5 ] },
-                "west": { "texture": "#flint_workbench_side", "uv": [ 0, 3, 16, 5 ] },
-                "up": { "texture": "#flint_workbench_top", "uv": [ 0, 0, 16, 16 ] },
-                "down": { "texture": "#flint_workbench_side", "uv": [ 0, 0, 16, 16 ] }
-            }
+    {
+      "name": "Cube",
+      "from": [
+        0,
+        2,
+        0
+      ],
+      "to": [
+        16,
+        4,
+        1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            6,
+            16,
+            8
+          ],
+          "texture": "#flint_workbench_side"
         },
-        {
-            "name": "Cube",
-            "from": [ 0, 2, 0 ], 
-            "to": [ 16, 3, 1 ], 
-            "faces": {
-                "north": { "texture": "#flint_workbench_side", "uv": [ 0, 5, 16, 6 ] },
-                "east": { "texture": "#flint_workbench_side", "uv": [ 0, 0, 1, 1 ] },
-                "south": { "texture": "#flint_workbench_side", "uv": [ 0, 6, 16, 7 ] },
-                "west": { "texture": "#flint_workbench_side", "uv": [ 0, 0, 1, 1 ] },
-                "up": { "texture": "#flint_workbench_side", "uv": [ 0, 4, 16, 5 ] }
-            }
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#flint_workbench_side"
         },
-        {
-            "name": "Cube",
-            "from": [ 0.1, 1.1, 0.8 ], 
-            "to": [ 1, 2.1, 3.8 ], 
-            "rotation": { "origin": [ 8, 2, 3 ], "axis": "x", "angle": 22.5 },
-            "faces": {
-                "east": { "texture": "#flint_workbench_side", "uv": [ 0, 0, 3, 1 ] },
-                "west": { "texture": "#flint_workbench_side", "uv": [ 5, 4, 8, 5 ] },
-                "up": { "texture": "#flint_workbench_side", "uv": [ 8, 2, 8.9, 5 ] }
-            }
+        "south": {
+          "uv": [
+            0,
+            7,
+            16,
+            9
+          ],
+          "texture": "#flint_workbench_side"
         },
-        {
-            "name": "Cube",
-            "from": [ 15, 1.1, 0.8 ], 
-            "to": [ 15.9, 2.1, 3.8 ], 
-            "rotation": { "origin": [ 8, 2, 3 ], "axis": "x", "angle": 22.5 },
-            "faces": {
-                "east": { "texture": "#flint_workbench_side", "uv": [ 0, 0, 3, 1 ] },
-                "west": { "texture": "#flint_workbench_side", "uv": [ 5, 4, 8, 5 ] },
-                "up": { "texture": "#flint_workbench_side", "uv": [ 8, 2, 8.9, 5 ] }
-            }
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            1
+          ],
+          "texture": "#flint_workbench_side"
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            16,
+            5
+          ],
+          "texture": "#flint_workbench_side"
         }
-    ]
+      }
+    },
+    {
+      "name": "Cube",
+      "from": [
+        0.1,
+        1.1,
+        0.8
+      ],
+      "to": [
+        1,
+        2.1,
+        3.8
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          2,
+          3
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            3,
+            1
+          ],
+          "texture": "#flint_workbench_side"
+        },
+        "west": {
+          "uv": [
+            5,
+            4,
+            8,
+            5
+          ],
+          "texture": "#flint_workbench_side"
+        },
+        "up": {
+          "uv": [
+            8,
+            2,
+            8.9,
+            5
+          ],
+          "texture": "#flint_workbench_side"
+        }
+      }
+    },
+    {
+      "name": "Cube",
+      "from": [
+        15,
+        1.1,
+        0.8
+      ],
+      "to": [
+        15.9,
+        2.1,
+        4.8
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "x",
+        "origin": [
+          8,
+          2,
+          3
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            0,
+            0,
+            3,
+            1
+          ],
+          "texture": "#flint_workbench_side"
+        },
+        "west": {
+          "uv": [
+            5,
+            4,
+            8,
+            5
+          ],
+          "texture": "#flint_workbench_side"
+        },
+        "up": {
+          "uv": [
+            8,
+            2,
+            8.9,
+            5
+          ],
+          "texture": "#flint_workbench_side"
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        315,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.375,
+        0.375,
+        0.375
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        315,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        45,
+        0
+      ],
+      "scale": [
+        0.625,
+        0.625,
+        0.625
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        180,
+        0
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ]
+    }
+  }
 }
