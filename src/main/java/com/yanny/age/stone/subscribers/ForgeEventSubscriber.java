@@ -314,7 +314,7 @@ public class ForgeEventSubscriber {
         PlayerEntity entity = event.getPlayer();
         ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
         
-        if (state.getBlock().getTags().contains(logs)&&!stack.canHarvestBlock(state)) {
+        if (state.getBlock().getTags().contains(logs)&&!(stack.getItem() instanceof AxeItem||stack.canHarvestBlock(state))) {
             event.setNewSpeed(1e-10F);
         }
     }
