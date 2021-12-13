@@ -48,6 +48,7 @@ public class FlintWorkbenchRecipeComponent extends BaseComponent {
         String recipeName = unaryOperator.apply(IVariable.wrap("#recipe#")).asString();
 
         mc.world.getRecipeManager().getRecipe(new ResourceLocation(recipeName)).ifPresent((recipe) -> {
+        	if(recipe instanceof FlintWorkbenchRecipe)
             this.recipe = (FlintWorkbenchRecipe) recipe;
             this.title = recipe.getRecipeOutput().getDisplayName().func_241878_f();
         });
