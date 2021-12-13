@@ -3,6 +3,7 @@ package com.yanny.age.stone.subscribers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.Service.State;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import com.yanny.ages.api.enums.Age;
@@ -306,7 +307,17 @@ public class ForgeEventSubscriber {
             event.setCanHarvest(true);
         }
     }
-
+    static final ResourceLocation logs=new ResourceLocation("minecraft","logs");
+    @SubscribeEvent
+    public static void axeHarvestCheck(@Nonnull PlayerEvent.BreakSpeed event) {
+        BlockState state = event.getState();
+        PlayerEntity entity = event.getPlayer();
+        ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
+        
+        if (state.getBlock().getTags().contains(logs)&&!stack.canHarvestBlock(state)) {
+            event.setNewSpeed(1e-10F);
+        }
+    }
     @SubscribeEvent
     public static void addManualToPlayer(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
         if (!Config.givePlayerManualOnFirstConnect) {
@@ -337,34 +348,17 @@ public class ForgeEventSubscriber {
     private static boolean biomeComparator(Biome biome, BiomeLoadingEvent event) {
         if (biome.getRegistryName() != null) {
             return biome.getRegistryName().compareTo(event.getName()) == 0;
-        } else {
-            return false;
         }
+		return false;
     }
 
     private static void setUseToolForWood() {
-        Field useTool = ObfuscationReflectionHelper.findField(AbstractBlock.AbstractBlockState.class, "field_235706_j_");
-        Field material = AbstractBlock.class.getDeclaredFields()[1];
 
-        useTool.setAccessible(true);
-        material.setAccessible(true);
+        ForgeRegistries.BLOCKS.forEach(block -> {
+            if (block.material.equals(Material.WOOD)&&block.getTags().contains(logs)) {
+            	block.getDefaultState().requiresTool=true;
+            }
+        });
 
-        try {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(useTool, useTool.getModifiers() & ~Modifier.FINAL);
-
-            ForgeRegistries.BLOCKS.forEach(block -> {
-                try {
-                    if (material.get(block).equals(Material.WOOD)) {
-                        useTool.setBoolean(block.getDefaultState(), true);
-                    }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
-            });
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 }
