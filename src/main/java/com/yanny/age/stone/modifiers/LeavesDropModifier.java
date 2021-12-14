@@ -3,6 +3,7 @@ package com.yanny.age.stone.modifiers;
 import com.google.gson.JsonObject;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootContext;
@@ -27,24 +28,24 @@ public class LeavesDropModifier extends LootModifier {
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        ItemStack ctxTool = context.get(LootParameters.TOOL);
-        float chanceAfterLooting = chance;
-
-        if (ctxTool != null) {
-            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) {
-                return generatedLoot;
-            }
-
-            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.LOOTING)) {
-                int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, ctxTool);
-                chanceAfterLooting = chanceAfterLooting * enchantmentLevel;
-            }
+        if(context.has(LootParameters.THIS_ENTITY)) {//only by hand
+        	ItemStack ctxTool = context.get(LootParameters.TOOL);
+            float chanceAfterLooting = chance;
+	        if (ctxTool != null) {
+	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) {
+	                return generatedLoot;
+	            }
+	
+	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.LOOTING)) {
+	                int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, ctxTool);
+	                chanceAfterLooting = chanceAfterLooting * enchantmentLevel;
+	            }
+	        }
+	
+	        if (Math.random() < chanceAfterLooting) {
+	            generatedLoot.add(new ItemStack(Items.STICK, Math.max(1, Math.round(chanceAfterLooting))));
+	        }
         }
-
-        if (Math.random() < chanceAfterLooting) {
-            generatedLoot.add(new ItemStack(Items.STICK, Math.max(1, Math.round(chanceAfterLooting))));
-        }
-
         return generatedLoot;
     }
 
