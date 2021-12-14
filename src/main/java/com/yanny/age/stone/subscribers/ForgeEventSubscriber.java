@@ -103,41 +103,16 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public static void FMLServerStartingEvent(@Nonnull FMLServerStartingEvent event) {
         if (Config.removeVanillaRecipes) {
-            RecipeManager recipeManager = event.getServer().getRecipeManager();
-            Class<?> recipeManagerClass = recipeManager.getClass();
-
-            try {
-                Field recipes = recipeManagerClass.getDeclaredFields()[2];
-                recipes.setAccessible(true);
-                Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> recipesMap = (Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>>) recipes.get(recipeManager);
-                Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> map = Maps.newHashMap();
-                recipesMap.forEach((iRecipeType, resourceLocationIRecipeMap) -> {
-                    Map<ResourceLocation, IRecipe<?>> map1 = map.computeIfAbsent(iRecipeType, (recipeType) -> Maps.newHashMap());
-                    resourceLocationIRecipeMap.forEach(map1::put);
-                    RECIPES_TO_REMOVE.forEach(map1::remove);
-                });
-                recipes.set(recipeManager, ImmutableMap.copyOf(map));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-
-            AdvancementManager advancementManager = event.getServer().getAdvancementManager();
-            Class<?> advancementManagerClass = advancementManager.getClass();
-            Field advancements = advancementManagerClass.getDeclaredFields()[2];
-            advancements.setAccessible(true);
-
-            try {
-                AdvancementList advancementList = (AdvancementList) advancements.get(advancementManager);
-                Class<?> list = advancementList.getClass();
-                Field listField = list.getDeclaredFields()[1];
-                listField.setAccessible(true);
-                Map<ResourceLocation, Advancement> map = (Map<ResourceLocation, Advancement>) listField.get(advancementList);
-                ADVANCEMENTS_TO_REMOVE.forEach(map::remove);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> recipesMap = event.getServer().getRecipeManager().recipes;
+			Map<IRecipeType<?>, Map<ResourceLocation, IRecipe<?>>> map = Maps.newHashMap();
+			recipesMap.forEach((iRecipeType, resourceLocationIRecipeMap) -> {
+			    Map<ResourceLocation, IRecipe<?>> map1 = map.computeIfAbsent(iRecipeType, (recipeType) -> Maps.newHashMap());
+			    resourceLocationIRecipeMap.forEach(map1::put);
+			    RECIPES_TO_REMOVE.forEach(map1::remove);
+			});
+			event.getServer().getRecipeManager().recipes=ImmutableMap.copyOf(map);
+			ADVANCEMENTS_TO_REMOVE.forEach(event.getServer().getAdvancementManager().advancementList.advancements::remove);
         }
-
         if (Config.forceToolForWood) {
             setUseToolForWood();
         }
@@ -166,7 +141,6 @@ public class ForgeEventSubscriber {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void litTorch(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         if (Config.LitTorche) {
@@ -194,7 +168,6 @@ public class ForgeEventSubscriber {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void makeFireWithSticksAndDriedGrass(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         PlayerEntity player = event.getPlayer();
@@ -309,7 +282,7 @@ public class ForgeEventSubscriber {
     }
     static final ResourceLocation logs=new ResourceLocation("minecraft","logs");
     @SubscribeEvent
-    public static void axeHarvestCheck(@Nonnull PlayerEvent.BreakSpeed event) {
+    public static void axeBreakCheck(@Nonnull PlayerEvent.BreakSpeed event) {
         BlockState state = event.getState();
         PlayerEntity entity = event.getPlayer();
         ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
