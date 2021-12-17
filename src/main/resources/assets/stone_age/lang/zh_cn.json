@@ -80,6 +80,7 @@
   "block.stone_age.thatch_block": "干草块",
   "block.stone_age.thatch_stairs": "干草楼梯",
   "block.stone_age.thatch_slab": "干草台阶",
+  "block.stone_age.bed.cantsleep": "你睡不着,它太粗糙了",
   "entity.stone_age.deer": "鹿",
   "entity.stone_age.boar": "野猪",
   "entity.stone_age.auroch": "野牛",
