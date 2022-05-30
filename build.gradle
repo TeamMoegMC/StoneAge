@@ -106,10 +106,10 @@ sourceSets.main.resources {
 }
 
 reobf {
-    shadowJar { }
+    jar{dependsOn= ['shadowJar']}
 }
 
-task release(dependsOn: [build, 'reobfJar'])
+task release(dependsOn: [build, 'jar'])
 
 configurations {
     shade
@@ -151,6 +151,7 @@ dependencies {
 }
 
 shadowJar {
+	dependsOn= ['jar']
     configurations = [project.configurations.shade]
     classifier = null
 }
