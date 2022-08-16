@@ -30,7 +30,7 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.state.properties.BlockStateProperties.*;
 
-public class FishingNetBlock extends HorizontalBlock implements IWaterLoggable {
+public class FishingNetBlock extends Block implements IWaterLoggable {
     private static final VoxelShape SHAPE = VoxelShapes.or(
             Block.makeCuboidShape(0, 0, 0, 16, 1, 16),
             Block.makeCuboidShape(0, 1, 0, 2, 16, 2),
