@@ -275,7 +275,7 @@ public class ForgeEventSubscriber {
         ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
         Item item = stack.getItem();
 
-        if ((entity.getHeldItem(Hand.MAIN_HAND).getItem() instanceof AxeItem) && (state.getMaterial() == Material.WOOD) &&
+        if ((entity.getHeldItem(Hand.MAIN_HAND).getItem() instanceof AxeItem||stack.canHarvestBlock(state)) && (state.getMaterial() == Material.WOOD) &&
                 (state.getBlock().getHarvestLevel(state) <= item.getHarvestLevel(stack, ToolType.AXE, entity, state))) {
             event.setCanHarvest(true);
         }
@@ -288,7 +288,7 @@ public class ForgeEventSubscriber {
         ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
         
         if (state.getBlock().getTags().contains(logs)&&!(stack.getItem() instanceof AxeItem||stack.canHarvestBlock(state))) {
-            event.setNewSpeed(1e-10F);
+            event.setNewSpeed(0);
         }
     }
     @SubscribeEvent

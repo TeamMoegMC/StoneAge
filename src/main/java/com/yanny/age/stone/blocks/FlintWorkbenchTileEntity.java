@@ -137,74 +137,77 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
             recipeOutput = ItemStack.EMPTY;
             heldItemMainhand.damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
             world.playSound(null, getPos(), SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            this.markDirty();
+            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
             return ActionResultType.SUCCESS;
-        } else {
-            if (hit.getFace() == Direction.UP) {
-                Direction dir = getBlockState().get(HorizontalBlock.HORIZONTAL_FACING);
-                int x = 0;
-                int y = 0;
-
-                // handle rotation
-                switch (dir) {
-                    case NORTH:
-                        x = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-                        y = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-                        break;
-                    case SOUTH:
-                        x = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-                        y = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-                        break;
-                    case EAST:
-                        x = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-                        y = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-                        break;
-                    case WEST:
-                        x = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-                        y = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-                        break;
-                }
-
-                ItemStack stack = stacks.get(y * FlintWorkbenchRecipe.MAX_WIDTH + x);
-
-                if (!heldItemMainhand.isEmpty() && stack.isEmpty()) {
-                    stacks.set(y * FlintWorkbenchRecipe.MAX_WIDTH + x, heldItemMainhand.split(1));
-                    List<FlintWorkbenchRecipe> recipe = findMatchingRecipes();
-
-                    if (!recipe.isEmpty()) {
-                        if (recipes.size() > 1) {
-                            LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
-                        }
-
-                        recipeOutput = recipe.get(0).getRecipeOutput().copy();
-                    } else {
-                        recipeOutput = ItemStack.EMPTY;
-                    }
-
-                    return ActionResultType.SUCCESS;
-                }
-
-                if (heldItemMainhand.isEmpty() && !stacks.get(y * FlintWorkbenchRecipe.MAX_WIDTH + x).isEmpty()) {
-                    NonNullList<ItemStack> itemStacks = NonNullList.create();
-                    itemStacks.add(stack);
-                    InventoryHelper.dropItems(world, getPos(), itemStacks);
-                    stacks.set(y * FlintWorkbenchRecipe.MAX_WIDTH + x, ItemStack.EMPTY);
-                    world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                    List<FlintWorkbenchRecipe> recipe = findMatchingRecipes();
-
-                    if (!recipe.isEmpty()) {
-                        if (recipes.size() > 1) {
-                            LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
-                        }
-
-                        recipeOutput = recipe.get(0).getRecipeOutput().copy();
-                    } else {
-                        recipeOutput = ItemStack.EMPTY;
-                    }
-
-                    return ActionResultType.SUCCESS;
-                }
-            }
         }
+		if (hit.getFace() == Direction.UP) {
+		    Direction dir = getBlockState().get(HorizontalBlock.HORIZONTAL_FACING);
+		    int x = 0;
+		    int y = 0;
+
+		    // handle rotation
+		    switch (dir) {
+		        case NORTH:
+		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            break;
+		        case SOUTH:
+		            x = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            y = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            break;
+		        case EAST:
+		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            y = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            break;
+		        case WEST:
+		            x = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            break;
+		    }
+
+		    ItemStack stack = stacks.get(y * FlintWorkbenchRecipe.MAX_WIDTH + x);
+
+		    if (!heldItemMainhand.isEmpty() && stack.isEmpty()) {
+		        stacks.set(y * FlintWorkbenchRecipe.MAX_WIDTH + x, heldItemMainhand.split(1));
+		        List<FlintWorkbenchRecipe> recipe = findMatchingRecipes();
+
+		        if (!recipe.isEmpty()) {
+		            if (recipes.size() > 1) {
+		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
+		            }
+
+		            recipeOutput = recipe.get(0).getRecipeOutput().copy();
+		        } else {
+		            recipeOutput = ItemStack.EMPTY;
+		        }
+		        this.markDirty();
+	            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+		        return ActionResultType.SUCCESS;
+		    }
+
+		    if (heldItemMainhand.isEmpty() && !stacks.get(y * FlintWorkbenchRecipe.MAX_WIDTH + x).isEmpty()) {
+		        NonNullList<ItemStack> itemStacks = NonNullList.create();
+		        itemStacks.add(stack);
+		        InventoryHelper.dropItems(world, getPos(), itemStacks);
+		        stacks.set(y * FlintWorkbenchRecipe.MAX_WIDTH + x, ItemStack.EMPTY);
+		        world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+		        List<FlintWorkbenchRecipe> recipe = findMatchingRecipes();
+
+		        if (!recipe.isEmpty()) {
+		            if (recipes.size() > 1) {
+		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
+		            }
+
+		            recipeOutput = recipe.get(0).getRecipeOutput().copy();
+		        } else {
+		            recipeOutput = ItemStack.EMPTY;
+		        }
+		        this.markDirty();
+	            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+		        return ActionResultType.SUCCESS;
+		    }
+		}
 
         return ActionResultType.PASS;
     }
