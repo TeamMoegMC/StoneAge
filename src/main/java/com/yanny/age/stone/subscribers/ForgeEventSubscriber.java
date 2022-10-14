@@ -3,15 +3,10 @@ package com.yanny.age.stone.subscribers;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.Service.State;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import com.yanny.ages.api.enums.Age;
 import com.yanny.ages.api.utils.AgeUtils;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementList;
-import net.minecraft.advancements.AdvancementManager;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -27,7 +22,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.RecipeManager;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
@@ -52,13 +46,10 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -67,6 +58,7 @@ import static com.yanny.age.stone.Reference.MODID;
 import static com.yanny.age.stone.subscribers.EntitySubscriber.*;
 import static net.minecraft.block.Blocks.*;
 import static net.minecraft.entity.EntityClassification.CREATURE;
+import static net.minecraft.entity.EntityClassification.MISC;
 import static net.minecraft.entity.EntityType.*;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
@@ -265,6 +257,7 @@ public class ForgeEventSubscriber {
 
         if (Config.removeVanillaGeneratedAnimals) {
             spawns.getSpawner(CREATURE).removeIf(entry -> VANILLA_ENTITIES.contains(entry.type));
+            spawns.getSpawner(MISC).removeIf(entry -> entry.type == PIG);
         }
     }
 

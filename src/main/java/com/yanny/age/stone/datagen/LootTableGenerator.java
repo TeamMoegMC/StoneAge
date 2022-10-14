@@ -12,7 +12,10 @@ import net.minecraft.loot.*;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.system.NonnullDefault;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -20,7 +23,7 @@ import java.util.function.Supplier;
 @NonnullDefault
 public class LootTableGenerator extends LootTableProvider {
 
-    private static final Set<Block> BLOCKS = Sets.newHashSet(BlockSubscriber.aqueduct, BlockSubscriber.drying_rack, BlockSubscriber.feeder, BlockSubscriber.fishing_net,
+    private static final Set<Block> BLOCKS = Sets.newHashSet(BlockSubscriber.drying_rack, BlockSubscriber.feeder, BlockSubscriber.fishing_net,
             BlockSubscriber.flint_workbench, BlockSubscriber.millstone, BlockSubscriber.stone_chest, BlockSubscriber.tanning_rack, BlockSubscriber.thatch_block,
             BlockSubscriber.thatch_stairs, BlockSubscriber.tree_stump);
 

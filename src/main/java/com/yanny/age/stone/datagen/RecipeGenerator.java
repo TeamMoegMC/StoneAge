@@ -90,7 +90,6 @@ public class RecipeGenerator extends RecipeProvider {
 
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.bone_arrow_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"#"}));
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.cobweb_mesh, Items.STRING, Items.STRING, new String[]{"##", "##"}));
-        ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.aqueduct, Items.BRICK, Items.BRICK, new String[]{"# #", "# #", "###"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.drying_rack, Items.STICK, Items.STICK, new String[]{"# #", " # ", "# #"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.tanning_rack, Items.STICK, Items.STICK, new String[]{"# #", " # ", "###"}));
         ONE_ITEMS.add(new OneItemHolder(Items.FLOWER_POT, Items.BRICK, Items.BRICK, new String[]{"# #", " # "}));
