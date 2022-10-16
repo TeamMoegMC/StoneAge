@@ -16,10 +16,6 @@ class ServerConfig {
     final ForgeConfigSpec.BooleanValue removeVanillaGeneratedAnimals;
     final ForgeConfigSpec.IntValue domesticateAfterGenerations;
     final ForgeConfigSpec.DoubleValue tanningRackFinishChance;
-    final ForgeConfigSpec.IntValue aqueductTickChanceBoneMealEffect;
-    final ForgeConfigSpec.IntValue aqueductEffectRange;
-    final ForgeConfigSpec.IntValue aqueductFillPerTick;
-    final ForgeConfigSpec.IntValue aqueductUsePerTick;
     final ForgeConfigSpec.IntValue feederTickChanceBreedAnimalEffect;
     final ForgeConfigSpec.IntValue feederEffectRange;
     final ForgeConfigSpec.BooleanValue forceToolForWood;
@@ -107,7 +103,6 @@ class ServerConfig {
     final ForgeConfigSpec.BooleanValue spawnCoelacanthAllowedBiomesBlacklist;
     final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnCoelacanthAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue aqueductRemoveWaterSource;
     final ForgeConfigSpec.ConfigValue<List<? extends String>> infinityWaterSourceBiomeList;
 
     final ForgeConfigSpec.BooleanValue GrassBedSleep;
@@ -133,22 +128,6 @@ class ServerConfig {
                 .comment("Chance of finishing recipe in tanning rack")
                 .translation(Reference.MODID + ".config.tanning_rack_finish_chance")
                 .defineInRange("tanningRackFinishChance", 0.1, 0.001, 1.0);
-        aqueductTickChanceBoneMealEffect = builder
-                .comment("Chance of bonemeal efect from aqueduct every 1/X tick (randomly)")
-                .translation(Reference.MODID + ".config.aqueduct_tick_chance_bone_meal_effect")
-                .defineInRange("aqueductTickChanceBoneMealEffect", 200, 1, Integer.MAX_VALUE);
-        aqueductEffectRange = builder
-                .comment("Aqueduct area of bonemeal effect")
-                .translation(Reference.MODID + ".config.aqueduct_effect_range")
-                .defineInRange("aqueductEffectRange", 4, 0, 15);
-        aqueductFillPerTick = builder
-                .comment("Fill amount per tick when filling from water source")
-                .translation(Reference.MODID + ".config.aqueduct_fill_per_tick")
-                .defineInRange("aqueductFillPerTick", 4, 1, Integer.MAX_VALUE);
-        aqueductUsePerTick = builder
-                .comment("Usage of water per tick when activated aqueduct")
-                .translation(Reference.MODID + ".config.aqueduct_use_per_tick")
-                .defineInRange("aqueductUsePerTick", 1, 1, Integer.MAX_VALUE);
         feederTickChanceBreedAnimalEffect = builder
                 .comment("Chance of breed effect from feeder every 1/X tick")
                 .translation(Reference.MODID + ".config.feeder_tick_chance_breed_animal_effect")
@@ -503,10 +482,6 @@ class ServerConfig {
         builder.pop();
         builder.pop();
         builder.push("aqueduct");
-        aqueductRemoveWaterSource = builder
-                .comment("If aqueduct remove water source after draining 1000mB")
-                .translation(Reference.MODID + ".config.aqueduct_remove_water_source")
-                .define("aqueductRemoveWaterSource", true);
         infinityWaterSourceBiomeList = builder
                 .comment("List of biomes where aqueduct doesn't remove water source")
                 .translation(Reference.MODID + ".config.infinity_water_source_biome_list")

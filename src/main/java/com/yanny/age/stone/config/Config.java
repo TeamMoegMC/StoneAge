@@ -61,10 +61,6 @@ public class Config {
     public static boolean removeVanillaGeneratedAnimals = true;
     public static int domesticateAfterGenerations = 3;
     public static double tanningRackFinishChance = 0.1;
-    public static int aqueductTickChanceBoneMealEffect = 200;
-    public static int aqueductEffectRange = 4;
-    public static int aqueductFillPerTick = 4;
-    public static int aqueductUsePerTick = 1;
     public static int feederTickChanceBreedAnimalEffect = 200;
     public static int feederEffectRange = 4;
     public static boolean forceToolForWood = true;
@@ -152,7 +148,6 @@ public class Config {
     public static boolean spawnCoelacanthAllowedBiomesBlacklist = false;
     public static final Set<Biome> spawnCoelacanthAllowedBiomes = DEFAULT_COELACANTH_BIOMES;
 
-    public static boolean aqueductRemoveWaterSource = true;
     public static final Set<Biome> infinityWaterSourceBiomeList = DEFAULT_INFINITY_WATER_SOURCE_BIOMES;
 
     public static boolean GrassBedSleep = true;

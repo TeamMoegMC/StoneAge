@@ -12,10 +12,6 @@ public class ConfigHelper {
         Config.removeVanillaGeneratedAnimals = ConfigHolder.SERVER.removeVanillaGeneratedAnimals.get();
         Config.domesticateAfterGenerations = ConfigHolder.SERVER.domesticateAfterGenerations.get();
         Config.tanningRackFinishChance = ConfigHolder.SERVER.tanningRackFinishChance.get();
-        Config.aqueductTickChanceBoneMealEffect = ConfigHolder.SERVER.aqueductTickChanceBoneMealEffect.get();
-        Config.aqueductEffectRange = ConfigHolder.SERVER.aqueductEffectRange.get();
-        Config.aqueductFillPerTick = ConfigHolder.SERVER.aqueductFillPerTick.get();
-        Config.aqueductUsePerTick = ConfigHolder.SERVER.aqueductUsePerTick.get();
         Config.feederTickChanceBreedAnimalEffect = ConfigHolder.SERVER.feederTickChanceBreedAnimalEffect.get();
         Config.feederEffectRange = ConfigHolder.SERVER.feederEffectRange.get();
         Config.forceToolForWood = ConfigHolder.SERVER.forceToolForWood.get();
@@ -129,7 +125,6 @@ public class ConfigHelper {
         Config.spawnCoelacanthAllowedBiomes.addAll(ConfigHolder.SERVER.spawnCoelacanthAllowedBiomes.get().stream()
                 .map(value -> ForgeRegistries.BIOMES.getValue(new ResourceLocation(value))).collect(Collectors.toSet()));
 
-        Config.aqueductRemoveWaterSource = ConfigHolder.SERVER.aqueductRemoveWaterSource.get();
         Config.infinityWaterSourceBiomeList.clear();
         Config.infinityWaterSourceBiomeList.addAll(ConfigHolder.SERVER.infinityWaterSourceBiomeList.get().stream()
                 .map(value -> ForgeRegistries.BIOMES.getValue(new ResourceLocation(value))).collect(Collectors.toSet()));
