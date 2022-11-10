@@ -40,7 +40,6 @@ import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BiomeLoadingEvent;
-import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.StructureSpawnListGatherEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -148,15 +147,6 @@ public class ForgeEventSubscriber {
                     event.setUseItem(Event.Result.DENY);
                 }
             }
-        }
-    }
-
-    @SubscribeEvent
-    public static void disableInfinityWaterSource(@Nonnull BlockEvent.CreateFluidSourceEvent event) {
-        Biome biome = event.getWorld().getBiome(event.getPos());
-
-        if (Config.aqueductRemoveWaterSource && !Config.infinityWaterSourceBiomeList.contains(biome)) {
-            event.setResult(Event.Result.DENY);
         }
     }
 

@@ -25,9 +25,9 @@ import static net.minecraft.entity.EntityClassification.WATER_CREATURE;
 @Mod.EventBusSubscriber(modid = Reference.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntitySubscriber {
     public static final EntityType<DeerEntity> deer = (EntityType<DeerEntity>) EntityType.Builder.create(DeerEntity::new, CREATURE)
-            .size(0.9f, 1.5f).trackingRange(10).build("").setRegistryName(Reference.MODID,"deer");
+            .size(0.9f, 1.6f).trackingRange(10).build("").setRegistryName(Reference.MODID, "deer");
     public static final EntityType<BoarEntity> boar = (EntityType<BoarEntity>) EntityType.Builder.create(BoarEntity::new, CREATURE)
-            .size(0.9f, 1.5f).trackingRange(10).build("").setRegistryName(Reference.MODID,"boar");
+            .size(0.9f, 1.5f).trackingRange(10).build("").setRegistryName(Reference.MODID, "boar");
     public static final EntityType<AurochEntity> auroch = (EntityType<AurochEntity>) EntityType.Builder.create(AurochEntity::new, CREATURE)
             .size(0.9f, 1.5f).trackingRange(10).build("").setRegistryName(Reference.MODID,"auroch");
     public static final EntityType<FowlEntity> fowl = (EntityType<FowlEntity>) EntityType.Builder.create(FowlEntity::new, CREATURE)

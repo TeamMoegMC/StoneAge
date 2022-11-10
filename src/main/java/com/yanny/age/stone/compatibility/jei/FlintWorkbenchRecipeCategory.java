@@ -1,12 +1,14 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.FlintWorkbenchRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.gui.IRecipeLayout;
 import mezz.jei.api.gui.drawable.IDrawable;
+import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
@@ -25,12 +27,20 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
     private final String localizedName;
     private final IDrawableStatic background;
     private final IDrawable icon;
+    private IDrawableAnimated ARROW;
 
     FlintWorkbenchRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 0, 120, 60);
         localizedName = I18n.format("block.stone_age.flint_workbench");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.flint_workbench));
+        IDrawableStatic arrow = guiHelper.createDrawable(new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png"), 123, 24, 25, 14);
+        ARROW = guiHelper.createAnimatedDrawable(arrow, 50, IDrawableAnimated.StartDirection.LEFT, false);
+    }
+
+    @Override
+    public void draw(FlintWorkbenchRecipe recipe, MatrixStack transform, double mouseX, double mouseY) {
+        ARROW.draw(transform, 64, 22);
     }
 
     @Nonnull
@@ -97,7 +107,7 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
         recipeLayout.getItemStacks().init(width * height, false, 97, 21);
         recipeLayout.getItemStacks().set(width * height, ingredients.getOutputs(VanillaTypes.ITEM).get(0));
 
-        recipeLayout.getItemStacks().init(width * height + 1, false, 62, 38);
+        recipeLayout.getItemStacks().init(width * height + 1, false, 65, 38);
         recipeLayout.getItemStacks().set(width * height + 1, ingredients.getInputs(VanillaTypes.ITEM).get(width * height));
     }
 }
