@@ -35,7 +35,7 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
         localizedName = I18n.format("block.stone_age.flint_workbench");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.flint_workbench));
         IDrawableStatic arrow = guiHelper.createDrawable(new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png"), 123, 24, 25, 14);
-        ARROW = guiHelper.createAnimatedDrawable(arrow, 50, IDrawableAnimated.StartDirection.LEFT, false);
+        ARROW = guiHelper.createAnimatedDrawable(arrow, 80, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
     @Override
