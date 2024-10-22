@@ -1,8 +1,10 @@
 package com.yanny.age.stone.items;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 import javax.annotation.Nonnull;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class MeshItem extends Item {
 
@@ -11,7 +13,7 @@ public class MeshItem extends Item {
     }
 
     @Override
-    public int getItemEnchantability() {
+    public int getEnchantmentValue() {
         return 1;
     }
 }

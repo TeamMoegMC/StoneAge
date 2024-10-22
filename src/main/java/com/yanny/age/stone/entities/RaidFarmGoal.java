@@ -1,24 +1,30 @@
 package com.yanny.age.stone.entities;
 
 import net.minecraft.block.*;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
 
-class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
+import net.minecraft.world.level.block.BeetrootBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+
+class RaidFarmGoal<T extends Animal> extends MoveToBlockGoal {
     private final T entity;
-    private final Class<? extends CropsBlock> cropsBlock;
+    private final Class<? extends CropBlock> cropsBlock;
     private final IntegerProperty ageProperty;
     private boolean wantsToRaid;
     private boolean canRaid;
 
-    RaidFarmGoal(@Nonnull T entity, @Nonnull Class<? extends CropsBlock> cropsBlock, @Nonnull IntegerProperty ageProperty) {
+    RaidFarmGoal(@Nonnull T entity, @Nonnull Class<? extends CropBlock> cropsBlock, @Nonnull IntegerProperty ageProperty) {
         super(entity, 0.7F, 16);
         this.entity = entity;
         this.cropsBlock = cropsBlock;
@@ -26,9 +32,9 @@ class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
     }
 
     @Override
-    public boolean shouldExecute() {
-        if (this.runDelay <= 0) {
-            if (!ForgeEventFactory.getMobGriefingEvent(this.entity.world, this.entity)) {
+    public boolean canUse() {
+        if (this.nextStartTick <= 0) {
+            if (!ForgeEventFactory.getMobGriefingEvent(this.entity.level, this.entity)) {
                 return false;
             }
 
@@ -36,26 +42,26 @@ class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
             this.wantsToRaid = true;
         }
 
-        return super.shouldExecute();
+        return super.canUse();
     }
 
     @Override
-    public boolean shouldContinueExecuting() {
-        return this.canRaid && super.shouldContinueExecuting();
+    public boolean canContinueToUse() {
+        return this.canRaid && super.canContinueToUse();
     }
 
     @Override
     public void tick() {
         super.tick();
-        this.entity.getLookController().setLookPosition(
-                (double)this.destinationBlock.getX() + 0.5D,
-                this.destinationBlock.getY() + 1,
-                (double)this.destinationBlock.getZ() + 0.5D,
-                10.0F, (float)this.entity.getVerticalFaceSpeed());
+        this.entity.getLookControl().setLookAt(
+                (double)this.blockPos.getX() + 0.5D,
+                this.blockPos.getY() + 1,
+                (double)this.blockPos.getZ() + 0.5D,
+                10.0F, (float)this.entity.getMaxHeadXRot());
 
-        if (this.getIsAboveDestination()) {
-            World world = this.entity.world;
-            BlockPos blockpos = this.destinationBlock.up();
+        if (this.isReachedTarget()) {
+            Level world = this.entity.level;
+            BlockPos blockpos = this.blockPos.above();
             BlockState blockstate = world.getBlockState(blockpos);
             Block block = blockstate.getBlock();
 
@@ -63,31 +69,31 @@ class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
                 int integer;
 
                 if (block instanceof BeetrootBlock) {
-                    integer = blockstate.get(BeetrootBlock.BEETROOT_AGE);
+                    integer = blockstate.getValue(BeetrootBlock.AGE);
                 } else {
-                    integer = blockstate.get(ageProperty);
+                    integer = blockstate.getValue(ageProperty);
                 }
 
                 if (integer == 0) {
-                    world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 2);
+                    world.setBlock(blockpos, Blocks.AIR.defaultBlockState(), 2);
                     world.destroyBlock(blockpos, true);
                 } else {
-                    world.setBlockState(blockpos, blockstate.with((block instanceof BeetrootBlock ? BeetrootBlock.BEETROOT_AGE : ageProperty), integer - 1), 2);
-                    world.playEvent(2001, blockpos, Block.getStateId(blockstate));
+                    world.setBlock(blockpos, blockstate.setValue((block instanceof BeetrootBlock ? BeetrootBlock.AGE : ageProperty), integer - 1), 2);
+                    world.levelEvent(2001, blockpos, Block.getId(blockstate));
                 }
             }
 
             this.canRaid = false;
-            this.runDelay = 10;
+            this.nextStartTick = 10;
         }
 
     }
 
     @Override
-    protected boolean shouldMoveTo(IWorldReader worldIn, @Nonnull BlockPos pos) {
+    protected boolean isValidTarget(LevelReader worldIn, @Nonnull BlockPos pos) {
         Block block = worldIn.getBlockState(pos).getBlock();
         if (block == Blocks.FARMLAND && this.wantsToRaid && !this.canRaid) {
-            pos = pos.up();
+            pos = pos.above();
             BlockState blockstate = worldIn.getBlockState(pos);
             block = blockstate.getBlock();
 

@@ -4,16 +4,16 @@ import com.google.gson.JsonObject;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
 
@@ -26,27 +26,27 @@ public class MillstoneRecipeBuilder {
     private final Item result;
     private final int count;
     private final Ingredient input;
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     @Nullable private String group = null;
     private int activateCount = 1;
     private float secondChance = 0;
     private Item secondResult = Items.AIR;
 
-    public MillstoneRecipeBuilder(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public MillstoneRecipeBuilder(ItemLike resultIn, ItemLike input, int countIn) {
         this.result = resultIn.asItem();
-        this.input = Ingredient.fromItems(input);
+        this.input = Ingredient.of(input);
         this.count = countIn;
     }
 
-    public static MillstoneRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input) {
+    public static MillstoneRecipeBuilder recipe(ItemLike resultIn, ItemLike input) {
         return recipe(resultIn, input, 1);
     }
 
-    public static MillstoneRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public static MillstoneRecipeBuilder recipe(ItemLike resultIn, ItemLike input, int countIn) {
         return new MillstoneRecipeBuilder(resultIn, input, countIn);
     }
 
-    public MillstoneRecipeBuilder secondResult(IItemProvider secondResult, float secondChance) {
+    public MillstoneRecipeBuilder secondResult(ItemLike secondResult, float secondChance) {
         this.secondResult = secondResult.asItem();
         this.secondChance = secondChance;
         return this;
@@ -57,8 +57,8 @@ public class MillstoneRecipeBuilder {
         return this;
     }
 
-    public MillstoneRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+    public MillstoneRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -67,11 +67,11 @@ public class MillstoneRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn) {
+    public void build(Consumer<FinishedRecipe> consumerIn) {
         this.build(consumerIn, Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(this.result)));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, String save) {
+    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result);
 
         if ((new ResourceLocation(save)).equals(resourcelocation)) {
@@ -81,16 +81,16 @@ public class MillstoneRecipeBuilder {
         }
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
-        if (this.result.getGroup() == null) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
+        if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         }
 
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new Result(id, this.result, this.secondResult, this.secondChance, this.input, this.count, this.activateCount, this.group == null ? "" : this.group, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getGroup().getPath() + "/" + id.getPath())));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
+        consumerIn.accept(new Result(id, this.result, this.secondResult, this.secondChance, this.input, this.count, this.activateCount, this.group == null ? "" : this.group, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final Item result;
         private final Item secondResult;
@@ -115,12 +115,12 @@ public class MillstoneRecipeBuilder {
             this.advancementId = advancementIdIn;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
 
-            json.add("ingredient", input.serialize());
+            json.add("ingredient", input.toJson());
             json.addProperty("activateCount", activateCount);
 
             JsonObject jsonObject = new JsonObject();
@@ -140,14 +140,14 @@ public class MillstoneRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getSerializer() {
+        public RecipeSerializer<?> getType() {
             return RecipeSubscriber.millstone;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -155,8 +155,8 @@ public class MillstoneRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advancementBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advancementBuilder.serializeToJson();
         }
 
         /**
@@ -164,7 +164,7 @@ public class MillstoneRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
     }

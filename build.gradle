@@ -1,14 +1,13 @@
 buildscript {
     repositories {
         maven {
-            url = 'https://files.minecraftforge.net/maven'
+            url = 'https://maven.minecraftforge.net'
+            mavenCentral()
         }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.2"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forgegradle_version}", changing: true
     }
 }
 
@@ -17,21 +16,23 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.github.johnrengelman.shadow'
+//apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'maven-publish'
+apply plugin: 'idea'
 
 version = "${minecraft_version}-${mod_version}"
 group = 'com.yanny.age.stone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'stone-age'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
-
+//sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 minecraft {
     // The mappings can be changed at any time, and must be in the following format.
     // snapshot_YYYYMMDD   Snapshot are built nightly.
     // stable_#            Stables are built at the discretion of the MCP team.
     // Use non-default mappings at your own risk. they may not always work.
     // Simply re-run your setup task after changing the mappings to update your workspace.
-    mappings channel: 'snapshot', version: "${mappings_version}"
+    mappings channel: 'official', version: '1.16.5'
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
     
     accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
@@ -105,9 +106,7 @@ sourceSets.main.resources {
     exclude '**/.cache/**'
 }
 
-reobf {
-    jar{dependsOn= ['shadowJar']}
-}
+
 
 task release(dependsOn: [build, 'jar'])
 
@@ -131,26 +130,15 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-
     compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
     runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
 
     compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
     runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
 
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-
     compileOnly "org.joml:joml:1.9.25"
     runtimeOnly "org.joml:joml:1.9.25"
     shade "org.joml:joml:1.9.25"
-}
-
-shadowJar {
-	dependsOn= ['jar']
-    configurations = [project.configurations.shade]
-    classifier = null
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..
@@ -212,11 +200,5 @@ curseforge {
         changelogType = 'html'
         releaseType = project.curse_type
         addGameVersion project.minecraft_version
-
-        mainArtifact (shadowJar) {
-            relations {
-                requiredDependency 'ages-api'
-            }
-        }
     }
 }

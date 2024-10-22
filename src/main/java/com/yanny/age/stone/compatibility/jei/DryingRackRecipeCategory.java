@@ -11,9 +11,9 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class DryingRackRecipeCategory implements IRecipeCategory<DryingRackRecip
     DryingRackRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 61, 120, 60);
-        localizedName = I18n.format("block.stone_age.drying_rack");
+        localizedName = I18n.get("block.stone_age.drying_rack");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.drying_rack));
     }
 
@@ -69,8 +69,8 @@ public class DryingRackRecipeCategory implements IRecipeCategory<DryingRackRecip
         ImmutableList.Builder<List<ItemStack>> inputBuilder = ImmutableList.builder();
         ImmutableList.Builder<ItemStack> outputBuilder = ImmutableList.builder();
 
-        inputBuilder.add(Arrays.asList(dryingRackRecipe.getIngredients().get(0).getMatchingStacks()));
-        outputBuilder.add(dryingRackRecipe.getRecipeOutput());
+        inputBuilder.add(Arrays.asList(dryingRackRecipe.getIngredients().get(0).getItems()));
+        outputBuilder.add(dryingRackRecipe.getResultItem());
 
         ingredients.setInputLists(VanillaTypes.ITEM, inputBuilder.build());
         ingredients.setOutputLists(VanillaTypes.ITEM, ImmutableList.of(outputBuilder.build()));

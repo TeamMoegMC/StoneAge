@@ -1,87 +1,87 @@
 package com.yanny.age.stone.entities;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.ai.goal.PrioritizedGoal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.ai.goal.WrappedGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.Difficulty;
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.UUID;
 
-public abstract class WildAnimalEntity extends AnimalEntity implements IBecomeAngry {
-    static final DataParameter<Integer> GENERATION = EntityDataManager.createKey(WildAnimalEntity.class, DataSerializers.VARINT);
+public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
+    static final EntityDataAccessor<Integer> GENERATION = SynchedEntityData.defineId(WildAnimalEntity.class, EntityDataSerializers.INT);
 
     private int angerLevel;
     private UUID angerTargetUUID;
 
-    WildAnimalEntity(@Nonnull EntityType<? extends AnimalEntity> type, @Nonnull World worldIn) {
+    WildAnimalEntity(@Nonnull EntityType<? extends Animal> type, @Nonnull Level worldIn) {
         super(type, worldIn);
     }
 
-    public static boolean canMonsterSpawn(EntityType<? extends WildAnimalEntity> type, IWorld worldIn, SpawnReason reason, BlockPos pos, Random randomIn) {
-        return worldIn.getDifficulty() != Difficulty.PEACEFUL && canSpawnOn(type, worldIn, reason, pos, randomIn);
+    public static boolean canMonsterSpawn(EntityType<? extends WildAnimalEntity> type, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+        return worldIn.getDifficulty() != Difficulty.PEACEFUL && checkMobSpawnRules(type, worldIn, reason, pos, randomIn);
     }
 
     @Override
-    public void updateAITasks() {
-        LivingEntity livingentity = this.getAttackTarget();
-        if (livingentity != null && this.getDistanceSq(livingentity) < 16.0D) {
-            this.calculateRotationYaw(livingentity.getPosX(), livingentity.getPosZ());
-            this.moveController.setMoveTo(livingentity.getPosX(), livingentity.getPosY(), livingentity.getPosZ(), this.moveController.getSpeed());
+    public void customServerAiStep() {
+        LivingEntity livingentity = this.getTarget();
+        if (livingentity != null && this.distanceToSqr(livingentity) < 16.0D) {
+            this.calculateRotationYaw(livingentity.getX(), livingentity.getZ());
+            this.moveControl.setWantedPosition(livingentity.getX(), livingentity.getY(), livingentity.getZ(), this.moveControl.getSpeedModifier());
         }
 
         if (this.isAngry()) {
             --this.angerLevel;
             if (!this.isAngry()) {
-                this.setRevengeTarget(null);
-                this.setAttackTarget(null);
-                goalSelector.getRunningGoals().forEach(PrioritizedGoal::resetTask);
+                this.setLastHurtByMob(null);
+                this.setTarget(null);
+                goalSelector.getRunningGoals().forEach(WrappedGoal::stop);
             }
         }
 
         if (this.isAngry() && this.angerTargetUUID != null && livingentity == null) {
-            PlayerEntity playerentity = this.world.getPlayerByUuid(this.angerTargetUUID);
-            this.setRevengeTarget(playerentity);
-            this.attackingPlayer = playerentity;
-            this.recentlyHit = this.getRevengeTimer();
+            Player playerentity = this.level.getPlayerByUUID(this.angerTargetUUID);
+            this.setLastHurtByMob(playerentity);
+            this.lastHurtByPlayer = playerentity;
+            this.lastHurtByPlayerTime = this.getLastHurtByMobTimestamp();
         }
     }
 
     @Override
-    public boolean attackEntityFrom(@Nonnull DamageSource source, float amount) {
+    public boolean hurt(@Nonnull DamageSource source, float amount) {
         if (this.isInvulnerableTo(source)) {
             return false;
         } else {
-            Entity entity = source.getTrueSource();
+            Entity entity = source.getEntity();
 
-            if (entity instanceof PlayerEntity && !((PlayerEntity)entity).isCreative() && this.canEntityBeSeen(entity)) {
+            if (entity instanceof Player && !((Player)entity).isCreative() && this.canSee(entity)) {
                 this.becomeAngryAt(entity);
             }
 
-            return super.attackEntityFrom(source, amount);
+            return super.hurt(source, amount);
         }
     }
 
     @Override
-    public void writeAdditional(@Nonnull CompoundNBT compound) {
-        super.writeAdditional(compound);
+    public void addAdditionalSaveData(@Nonnull CompoundTag compound) {
+        super.addAdditionalSaveData(compound);
         compound.putShort("Anger", (short)this.angerLevel);
-        compound.putInt("Generation", dataManager.get(GENERATION));
+        compound.putInt("Generation", entityData.get(GENERATION));
         if (this.angerTargetUUID != null) {
             compound.putString("HurtBy", this.angerTargetUUID.toString());
         } else {
@@ -90,33 +90,33 @@ public abstract class WildAnimalEntity extends AnimalEntity implements IBecomeAn
     }
 
     @Override
-    public void readAdditional(@Nonnull CompoundNBT compound) {
-        super.readAdditional(compound);
+    public void readAdditionalSaveData(@Nonnull CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
         this.angerLevel = compound.getShort("Anger");
         this.setGeneration(compound.getInt("Generation"));
         String s = compound.getString("HurtBy");
         if (!s.isEmpty()) {
             this.angerTargetUUID = UUID.fromString(s);
-            PlayerEntity playerentity = this.world.getPlayerByUuid(this.angerTargetUUID);
-            this.setRevengeTarget(playerentity);
+            Player playerentity = this.level.getPlayerByUUID(this.angerTargetUUID);
+            this.setLastHurtByMob(playerentity);
             if (playerentity != null) {
-                this.attackingPlayer = playerentity;
-                this.recentlyHit = this.getRevengeTimer();
+                this.lastHurtByPlayer = playerentity;
+                this.lastHurtByPlayerTime = this.getLastHurtByMobTimestamp();
             }
         }
     }
 
     @Override
-    protected void registerData() {
-        super.registerData();
-        this.dataManager.register(GENERATION, 0);
+    protected void defineSynchedData() {
+        super.defineSynchedData();
+        this.entityData.define(GENERATION, 0);
     }
 
     @Override
-    public void setRevengeTarget(@Nullable LivingEntity livingBase) {
-        super.setRevengeTarget(livingBase);
+    public void setLastHurtByMob(@Nullable LivingEntity livingBase) {
+        super.setLastHurtByMob(livingBase);
         if (livingBase != null) {
-            this.angerTargetUUID = livingBase.getUniqueID();
+            this.angerTargetUUID = livingBase.getUUID();
         }
     }
 
@@ -124,7 +124,7 @@ public abstract class WildAnimalEntity extends AnimalEntity implements IBecomeAn
     public boolean becomeAngryAt(@Nonnull Entity entity) {
         this.angerLevel = this.nextRand();
         if (entity instanceof LivingEntity) {
-            this.setRevengeTarget((LivingEntity)entity);
+            this.setLastHurtByMob((LivingEntity)entity);
         }
 
         return true;
@@ -136,14 +136,14 @@ public abstract class WildAnimalEntity extends AnimalEntity implements IBecomeAn
     }
 
     void setGeneration(int generation) {
-        dataManager.set(GENERATION, generation);
+        entityData.set(GENERATION, generation);
     }
 
     private int nextRand() {
-        return 100 + this.rand.nextInt(100);
+        return 100 + this.random.nextInt(100);
     }
 
     private void calculateRotationYaw(double x, double z) {
-        this.rotationYaw = (float)(MathHelper.atan2(z - this.getPosZ(), x - this.getPosX()) * (double)(180F / (float)Math.PI)) - 90.0F;
+        this.yRot = (float)(Mth.atan2(z - this.getZ(), x - this.getX()) * (double)(180F / (float)Math.PI)) - 90.0F;
     }
 }

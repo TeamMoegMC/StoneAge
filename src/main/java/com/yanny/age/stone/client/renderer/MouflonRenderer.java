@@ -4,9 +4,9 @@ import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.models.MouflonModel;
 import com.yanny.age.stone.entities.MouflonEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -17,25 +17,25 @@ import javax.annotation.Nonnull;
 public class MouflonRenderer extends MobRenderer<MouflonEntity, MouflonModel> {
     private static final ResourceLocation MOUFLON_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/mouflon.png");
 
-    private MouflonRenderer(@Nonnull EntityRendererManager rendererManager) {
+    private MouflonRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
         super(rendererManager, new MouflonModel(), 0.5f);
     }
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull MouflonEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull MouflonEntity entity) {
         return MOUFLON_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(MouflonEntity entity) {
+    protected boolean shouldShowName(MouflonEntity entity) {
         return entity.hasCustomName();
     }
 
     public static class RenderFactory implements IRenderFactory<MouflonEntity> {
 
         @Override
-        public EntityRenderer<? super MouflonEntity> createRenderFor(EntityRendererManager manager) {
+        public EntityRenderer<? super MouflonEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new MouflonRenderer(manager);
         }
     }

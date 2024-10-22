@@ -4,16 +4,16 @@ import com.yanny.age.stone.ExampleMod;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.ContainerSubscriber;
 import com.yanny.age.stone.utils.ContainerUtils;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -24,24 +24,24 @@ import java.util.Objects;
 import static com.yanny.age.stone.blocks.StoneChestTileEntity.INVENTORY_HEIGHT;
 import static com.yanny.age.stone.blocks.StoneChestTileEntity.INVENTORY_WIDTH;
 
-public class StoneChestContainer extends Container {
+public class StoneChestContainer extends AbstractContainerMenu {
     private final StoneChestTileEntity tile;
-    private final PlayerEntity player;
+    private final Player player;
 
-    public StoneChestContainer(int windowId, @Nonnull PlayerInventory inv, @Nonnull PacketBuffer extraData) {
+    public StoneChestContainer(int windowId, @Nonnull Inventory inv, @Nonnull FriendlyByteBuf extraData) {
         this(windowId, extraData.readBlockPos(), Objects.requireNonNull(ExampleMod.proxy.getClientWorld()), inv, Objects.requireNonNull(ExampleMod.proxy.getClientPlayer()));
     }
 
-    StoneChestContainer(int id, @Nonnull BlockPos pos, @Nonnull World world, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player) {
+    StoneChestContainer(int id, @Nonnull BlockPos pos, @Nonnull Level world, @Nonnull Inventory inventory, @Nonnull Player player) {
         super(ContainerSubscriber.stone_chest, id);
-        tile = (StoneChestTileEntity) world.getTileEntity(pos);
+        tile = (StoneChestTileEntity) world.getBlockEntity(pos);
         this.player = player;
 
         if (tile == null) {
             throw new IllegalStateException("TileEntity does not exists!");
         }
 
-        tile.openInventory(player);
+        tile.startOpen(player);
         tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
             for (int y = 0; y < INVENTORY_HEIGHT; y++) {
                 for (int x = 0; x < INVENTORY_WIDTH; x++) {
@@ -55,36 +55,36 @@ public class StoneChestContainer extends Container {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-        if (tile == null || tile.getWorld() == null) {
+    public boolean stillValid(@Nonnull Player playerIn) {
+        if (tile == null || tile.getLevel() == null) {
             throw new IllegalStateException("Null pointer");
         }
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, BlockSubscriber.stone_chest);
+        return stillValid(ContainerLevelAccess.create(tile.getLevel(), tile.getBlockPos()), player, BlockSubscriber.stone_chest);
     }
 
     @Nonnull
     @Override
-    public ItemStack transferStackInSlot(@Nonnull PlayerEntity playerIn, int index) {
-        Slot slot = inventorySlots.get(index);
+    public ItemStack quickMoveStack(@Nonnull Player playerIn, int index) {
+        Slot slot = slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
             ItemStack itemstack = stack.copy();
             if (index < INVENTORY_WIDTH * INVENTORY_HEIGHT) {
-                if (!mergeItemStack(stack, INVENTORY_WIDTH * INVENTORY_HEIGHT + 1, INVENTORY_WIDTH * INVENTORY_HEIGHT + 36, true)) {
+                if (!moveItemStackTo(stack, INVENTORY_WIDTH * INVENTORY_HEIGHT + 1, INVENTORY_WIDTH * INVENTORY_HEIGHT + 36, true)) {
                     return ItemStack.EMPTY;
                 }
-                slot.onSlotChange(stack, itemstack);
+                slot.onQuickCraft(stack, itemstack);
             } else {
-                if (!mergeItemStack(stack, 0, INVENTORY_WIDTH * INVENTORY_HEIGHT, false)) {
+                if (!moveItemStackTo(stack, 0, INVENTORY_WIDTH * INVENTORY_HEIGHT, false)) {
                     return ItemStack.EMPTY;
                 }
             }
 
             if (stack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (stack.getCount() == itemstack.getCount()) {
@@ -98,13 +98,13 @@ public class StoneChestContainer extends Container {
     }
 
     @Override
-    public void onContainerClosed(@Nonnull PlayerEntity playerIn) {
-        super.onContainerClosed(playerIn);
-        tile.closeInventory(playerIn);
+    public void removed(@Nonnull Player playerIn) {
+        super.removed(playerIn);
+        tile.stopOpen(playerIn);
     }
 
     @Nonnull
-    public IInventory getIInventory() {
+    public Container getIInventory() {
         return player.inventory;
     }
 }

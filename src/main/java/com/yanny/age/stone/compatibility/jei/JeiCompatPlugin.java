@@ -9,10 +9,10 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.List;
@@ -40,13 +40,13 @@ public class JeiCompatPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        assert Minecraft.getInstance().world != null;
-        RecipeManager recipeManager = Minecraft.getInstance().world.getRecipeManager();
-        List<IRecipe<?>> dryingRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof DryingRackRecipe).collect(Collectors.toList());
-        List<IRecipe<?>> tanningRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof TanningRackRecipe).collect(Collectors.toList());
-        List<IRecipe<?>> flintWorkbenchRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof FlintWorkbenchRecipe).collect(Collectors.toList());
-        List<IRecipe<?>> treeStumpRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof TreeStumpRecipe).collect(Collectors.toList());
-        List<IRecipe<?>> millstoneRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof MillstoneRecipe).collect(Collectors.toList());
+        assert Minecraft.getInstance().level != null;
+        RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
+        List<Recipe<?>> dryingRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof DryingRackRecipe).collect(Collectors.toList());
+        List<Recipe<?>> tanningRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof TanningRackRecipe).collect(Collectors.toList());
+        List<Recipe<?>> flintWorkbenchRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof FlintWorkbenchRecipe).collect(Collectors.toList());
+        List<Recipe<?>> treeStumpRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof TreeStumpRecipe).collect(Collectors.toList());
+        List<Recipe<?>> millstoneRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof MillstoneRecipe).collect(Collectors.toList());
 
         registration.addRecipes(dryingRackRecipes, DryingRackRecipeCategory.UID);
         registration.addRecipes(tanningRackRecipes, TanningRackRecipeCategory.UID);

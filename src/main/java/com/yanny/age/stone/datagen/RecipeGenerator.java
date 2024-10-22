@@ -5,22 +5,28 @@ import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.FoodSubscriber;
 import com.yanny.age.stone.subscribers.ItemSubscriber;
 import com.yanny.age.stone.subscribers.ToolSubscriber;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import org.lwjgl.system.NonnullDefault;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 
 @SuppressWarnings("ConstantConditions")
 @NonnullDefault
@@ -44,7 +50,7 @@ public class RecipeGenerator extends RecipeProvider {
         SLABS.add(new SlabHolder(Items.BRICKS, Items.BRICK_SLAB));
         SLABS.add(new SlabHolder(Items.COBBLESTONE, Items.COBBLESTONE_SLAB));
         SLABS.add(new SlabHolder(Items.CUT_RED_SANDSTONE, Items.CUT_RED_SANDSTONE_SLAB));
-        SLABS.add(new SlabHolder(Items.CUT_SANDSTONE, Items.CUT_SANDSTONE_SLAB));
+        SLABS.add(new SlabHolder(Items.CUT_SANDSTONE, Items.CUT_STANDSTONE_SLAB));
         SLABS.add(new SlabHolder(Items.DIORITE, Items.DIORITE_SLAB));
         SLABS.add(new SlabHolder(Items.GRANITE, Items.GRANITE_SLAB));
         SLABS.add(new SlabHolder(Items.MOSSY_COBBLESTONE, Items.MOSSY_COBBLESTONE_SLAB));
@@ -88,7 +94,7 @@ public class RecipeGenerator extends RecipeProvider {
         FOODS.add(new FoodHolder(FoodSubscriber.venison, FoodSubscriber.cooked_venison));
         FOODS.add(new FoodHolder(ItemSubscriber.raw_bread, Items.BREAD));
 
-        ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.bone_arrow_head, com.yanny.ages.api.utils.Tags.Items.BONES, com.yanny.ages.api.utils.Tags.Items.BONES, new String[]{"#"}));
+        ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.bone_arrow_head, com.yanny.age.stone.api.utils.Tags.Items.BONES, com.yanny.age.stone.api.utils.Tags.Items.BONES, new String[]{"#"}));
         ONE_ITEMS.add(new OneItemHolder(ItemSubscriber.cobweb_mesh, Items.STRING, Items.STRING, new String[]{"##", "##"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.drying_rack, Items.STICK, Items.STICK, new String[]{"# #", " # ", "# #"}));
         ONE_ITEMS.add(new OneItemHolder(BlockSubscriber.tanning_rack, Items.STICK, Items.STICK, new String[]{"# #", " # ", "###"}));
@@ -108,35 +114,35 @@ public class RecipeGenerator extends RecipeProvider {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    protected void registerRecipes(Consumer<IFinishedRecipe> consumer) {
-        ShapedRecipeBuilder.shapedRecipe(ToolSubscriber.flint_knife)
-                .patternLine("F")
-                .patternLine("#")
-                .key('F', Items.FLINT)
-                .key('#', Items.STICK)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(BlockSubscriber.flint_workbench)
-                .patternLine("FG")
-                .patternLine("##")
-                .key('F', Items.FLINT)
-                .key('G', Tags.Items.GRAVEL)
-                .key('#', Items.STICK)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
-                .build(consumer);
-        ShapedRecipeBuilder.shapedRecipe(ItemSubscriber.unlit_torch)
-                .patternLine("F")
-                .patternLine("#")
-                .key('F', FoodSubscriber.fat)
-                .key('#', Items.STICK)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
-                .build(consumer, new ResourceLocation(Reference.MODID, ItemSubscriber.unlit_torch.getRegistryName().getPath() + "_shaped"));
+    protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
+        ShapedRecipeBuilder.shaped(ToolSubscriber.flint_knife)
+                .pattern("F")
+                .pattern("#")
+                .define('F', Items.FLINT)
+                .define('#', Items.STICK)
+                .unlockedBy("has_recipe", has(Items.STICK))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(BlockSubscriber.flint_workbench)
+                .pattern("FG")
+                .pattern("##")
+                .define('F', Items.FLINT)
+                .define('G', Tags.Items.GRAVEL)
+                .define('#', Items.STICK)
+                .unlockedBy("has_recipe", has(Items.STICK))
+                .save(consumer);
+        ShapedRecipeBuilder.shaped(ItemSubscriber.unlit_torch)
+                .pattern("F")
+                .pattern("#")
+                .define('F', FoodSubscriber.fat)
+                .define('#', Items.STICK)
+                .unlockedBy("has_recipe", has(Items.STICK))
+                .save(consumer, new ResourceLocation(Reference.MODID, ItemSubscriber.unlit_torch.getRegistryName().getPath() + "_shaped"));
 
-        ShapelessRecipeBuilder.shapelessRecipe(ItemSubscriber.raw_bread)
-                .addIngredient(ItemSubscriber.flour, 3)
-                .addIngredient(Items.SUGAR)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.flour))
-                .build(consumer, new ResourceLocation(Reference.MODID, ItemSubscriber.raw_bread.getRegistryName().getPath() + "_shapeless"));
+        ShapelessRecipeBuilder.shapeless(ItemSubscriber.raw_bread)
+                .requires(ItemSubscriber.flour, 3)
+                .requires(Items.SUGAR)
+                .unlockedBy("has_recipe", has(ItemSubscriber.flour))
+                .save(consumer, new ResourceLocation(Reference.MODID, ItemSubscriber.raw_bread.getRegistryName().getPath() + "_shapeless"));
 
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.ARROW)
                 .patternLine("A")
@@ -145,8 +151,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('A', ItemSubscriber.bone_arrow_head)
                 .key('#', Items.STICK)
                 .key('F', Items.FEATHER)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STICK))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(ItemSubscriber.backpack)
                 .patternLine("GBG")
@@ -157,8 +163,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('B', ItemSubscriber.fish_bone)
                 .key('S', ItemSubscriber.saber_teeth)
                 .key('M', ItemSubscriber.mammoth_tusk)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.LEATHER))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.LEATHER))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.BOW)
                 .patternLine(" #S")
@@ -166,8 +172,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .patternLine(" #S")
                 .key('#', Items.STICK)
                 .key('S', ItemSubscriber.leather_strip)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STICK))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.CAMPFIRE)
                 .patternLine(" S ")
@@ -177,8 +183,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('L', ItemTags.LOGS)
                 .key('S', Items.STICK)
                 .key('C', ItemTags.COALS)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemTags.COALS))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemTags.COALS))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.FURNACE)
                 .patternLine("###")
@@ -186,8 +192,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .patternLine("###")
                 .key('#', Items.COBBLESTONE)
                 .key('C', Items.CAMPFIRE)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.COBBLESTONE))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.COBBLESTONE))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.dried_grass_bed)
                 .patternLine("###")
@@ -195,8 +201,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .patternLine("CCC")
                 .key('#', ItemSubscriber.dried_grass)
                 .key('C', ItemTags.WOODEN_SLABS)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.dried_grass))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.dried_grass))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.feeder)
                 .patternLine("WSW")
@@ -205,8 +211,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('L', ItemTags.LOGS)
                 .key('S', ItemTags.WOODEN_SLABS)
                 .key('W', Items.WHEAT)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemTags.LOGS))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemTags.LOGS))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.fishing_net)
                 .patternLine("SLS")
@@ -215,8 +221,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('L', ItemSubscriber.leather_strip)
                 .key('S', Items.STICK)
                 .key('#', ItemTags.WOODEN_SLABS)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.leather_strip))
                 .build(consumer);
 
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.LEATHER_BOOTS)
@@ -225,8 +231,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('B', ItemSubscriber.fish_bone)
                 .key('S', ItemSubscriber.leather_strip)
                 .key('X', Items.LEATHER)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.leather_strip))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.LEATHER_CHESTPLATE)
                 .patternLine("XBX")
@@ -235,8 +241,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('B', ItemSubscriber.fish_bone)
                 .key('S', ItemSubscriber.leather_strip)
                 .key('X', Items.LEATHER)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.leather_strip))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.LEATHER_HELMET)
                 .patternLine("XXX")
@@ -245,8 +251,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('B', ItemSubscriber.fish_bone)
                 .key('S', ItemSubscriber.leather_strip)
                 .key('X', Items.LEATHER)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.leather_strip))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.LEATHER_LEGGINGS)
                 .patternLine("XXX")
@@ -255,24 +261,24 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('B', ItemSubscriber.fish_bone)
                 .key('S', ItemSubscriber.leather_strip)
                 .key('X', Items.LEATHER)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.leather_strip))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.leather_strip))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(ItemSubscriber.raw_bread)
                 .patternLine("FFF")
                 .patternLine("X  ")
                 .key('F', ItemSubscriber.flour)
                 .key('X', Items.SUGAR)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.flour))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.flour))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(ItemSubscriber.unlit_torch)
                 .patternLine("F")
                 .patternLine("X")
                 .key('F', FoodSubscriber.fat)
                 .key('X', Items.STICK)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.unlit_torch))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.unlit_torch))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.millstone)
                 .patternLine("#A#")
@@ -282,8 +288,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('A', Items.ANDESITE)
                 .key('G', Items.GRANITE)
                 .key('S', Items.SMOOTH_STONE_SLAB)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.ANDESITE))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.ANDESITE))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.stone_chest)
                 .patternLine("###")
@@ -292,8 +298,8 @@ public class RecipeGenerator extends RecipeProvider {
                 .key('#', Items.SMOOTH_STONE_SLAB)
                 .key('C', Items.CLAY_BALL)
                 .key('S', Items.STONE)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STONE))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STONE))
                 .build(consumer);
 
         FlintWorkbenchRecipeBuilder.shapedRecipe(BlockSubscriber.tree_stump)
@@ -301,63 +307,63 @@ public class RecipeGenerator extends RecipeProvider {
                 .patternLine("FFF")
                 .key('#', ItemTags.LOGS)
                 .key('F', Items.STONE)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STONE))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STONE))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(Items.TORCH)
                 .patternLine("F")
                 .patternLine("#")
                 .key('#', Items.STICK)
                 .key('F', FoodSubscriber.fat)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STICK))
                 .build(consumer);
 
         TreeStumpRecipeBuilder.recipe(BlockSubscriber.thatch_slab, BlockSubscriber.thatch_block, 2)
                 .chopTimes(2)
-                .tool(com.yanny.ages.api.utils.Tags.Items.AXES)
-                .addCriterion("has_recipe", hasItem(BlockSubscriber.thatch_block))
+//                .tool(com.yanny.ages.api.utils.Tags.Items.AXES)
+                .addCriterion("has_recipe", has(BlockSubscriber.thatch_block))
                 .build(consumer);
         TreeStumpRecipeBuilder.recipe(Items.BONE_MEAL, ItemSubscriber.mammoth_tusk, 8)
                 .chopTimes(3)
-                .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.mammoth_tusk))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
+                .addCriterion("has_recipe", has(ItemSubscriber.mammoth_tusk))
                 .build(consumer, new ResourceLocation(Reference.MODID, Items.BONE_MEAL.getRegistryName().getPath() + "_from_mammoth_tusk"));
         TreeStumpRecipeBuilder.recipe(Items.BONE_MEAL, ItemSubscriber.rhino_tusk, 4)
                 .chopTimes(1)
-                .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.rhino_tusk))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
+                .addCriterion("has_recipe", has(ItemSubscriber.rhino_tusk))
                 .build(consumer, new ResourceLocation(Reference.MODID, Items.BONE_MEAL.getRegistryName().getPath() + "_from_rhino_tusk"));
         TreeStumpRecipeBuilder.recipe(Items.BONE_MEAL, ItemSubscriber.saber_teeth, 3)
                 .chopTimes(1)
-                .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.saber_teeth))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
+                .addCriterion("has_recipe", has(ItemSubscriber.saber_teeth))
                 .build(consumer, new ResourceLocation(Reference.MODID, Items.BONE_MEAL.getRegistryName().getPath() + "_from_saber_teeth"));
         TreeStumpRecipeBuilder.recipe(Items.BONE_MEAL, Items.BONE, 1)
                 .chopTimes(1)
-                .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
-                .addCriterion("has_recipe", hasItem(Items.BONE))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
+                .addCriterion("has_recipe", has(Items.BONE))
                 .build(consumer, new ResourceLocation(Reference.MODID, Items.BONE_MEAL.getRegistryName().getPath() + "_from_bone"));
 
         MillstoneRecipeBuilder.recipe(ItemSubscriber.flour, Items.WHEAT, 2)
                 .activateCount(2)
                 .secondResult(ItemSubscriber.flour, 0.1f)
-                .addCriterion("has_recipe", hasItem(Items.WHEAT))
+                .addCriterion("has_recipe", has(Items.WHEAT))
                 .build(consumer);
         MillstoneRecipeBuilder.recipe(Items.SUGAR, Items.SUGAR_CANE, 2)
                 .activateCount(2)
                 .secondResult(Items.SUGAR, 0.1f)
-                .addCriterion("has_recipe", hasItem(Items.SUGAR_CANE))
+                .addCriterion("has_recipe", has(Items.SUGAR_CANE))
                 .build(consumer);
 
         DryingRackRecipeBuilder.recipe(ItemSubscriber.dried_grass, Items.GRASS)
                 .dryingTime(1200)
-                .addCriterion("has_recipe", hasItem(Items.GRASS))
+                .addCriterion("has_recipe", has(Items.GRASS))
                 .build(consumer);
 
         TanningRackRecipeBuilder.recipe(Items.LEATHER, ItemSubscriber.raw_hide)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(ItemSubscriber.raw_hide))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(ItemSubscriber.raw_hide))
                 .build(consumer);
 
         WOOD_ITEMS.forEach(item -> registerVanillaWoodRecipes(item, consumer));
@@ -368,7 +374,7 @@ public class RecipeGenerator extends RecipeProvider {
         ONE_ITEMS.forEach(item -> registerOneItemFlintWorkbenchRecipes(item, consumer));
     }
 
-    private static void registerOneItemFlintWorkbenchRecipes(OneItemHolder oneItemHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerOneItemFlintWorkbenchRecipes(OneItemHolder oneItemHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder recipe = FlintWorkbenchRecipeBuilder.shapedRecipe(oneItemHolder.result, oneItemHolder.count);
 
         for (String patternLine : oneItemHolder.patternLines) {
@@ -376,106 +382,106 @@ public class RecipeGenerator extends RecipeProvider {
         }
 
         recipe.key('#', oneItemHolder.item)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(oneItemHolder.criterion))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", inventoryTrigger(oneItemHolder.criterion))
                 .build(consumer);
     }
 
-    private static void registerToolRecipes(ToolHolder toolHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerToolRecipes(ToolHolder toolHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(toolHolder.output)
                 .patternLine("HL")
                 .patternLine("# ")
                 .key('H', toolHolder.input)
                 .key('L', toolHolder.lead)
                 .key('#', Items.STICK)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.STICK))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.STICK))
                 .build(consumer);
     }
 
-    private static void registerFoodRecipes(FoodHolder foodHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerFoodRecipes(FoodHolder foodHolder, Consumer<FinishedRecipe> consumer) {
         ResourceLocation location = foodHolder.output.asItem().getRegistryName();
 
         if (location == null) {
             throw new IllegalStateException("Null resource location! " + foodHolder.output);
         }
 
-        CookingRecipeBuilder.cookingRecipe(Ingredient.fromItems(foodHolder.input), foodHolder.output, 0.35f, 200, IRecipeSerializer.SMELTING)
-                .addCriterion("has_recipe", hasItem(foodHolder.input))
-                .build(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smelting"));
-        CookingRecipeBuilder.cookingRecipe(Ingredient.fromItems(foodHolder.input), foodHolder.output, 0.35f, 600, IRecipeSerializer.CAMPFIRE_COOKING)
-                .addCriterion("has_recipe", hasItem(foodHolder.input))
-                .build(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_campfire_cooking"));
-        CookingRecipeBuilder.cookingRecipe(Ingredient.fromItems(foodHolder.input), foodHolder.output, 0.35f, 100, IRecipeSerializer.SMOKING)
-                .addCriterion("has_recipe", hasItem(foodHolder.input))
-                .build(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smoking"));
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 200, RecipeSerializer.SMELTING_RECIPE)
+                .unlockedBy("has_recipe", has(foodHolder.input))
+                .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smelting"));
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 600, RecipeSerializer.CAMPFIRE_COOKING_RECIPE)
+                .unlockedBy("has_recipe", has(foodHolder.input))
+                .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_campfire_cooking"));
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 100, RecipeSerializer.SMOKING_RECIPE)
+                .unlockedBy("has_recipe", has(foodHolder.input))
+                .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smoking"));
     }
 
-    private static void registerVanillaTerracottaRecipes(TerracottaHolder terracottaHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaTerracottaRecipes(TerracottaHolder terracottaHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(terracottaHolder.item, 8)
                 .patternLine("###")
                 .patternLine("#G#")
                 .patternLine("###")
                 .key('G', terracottaHolder.color)
                 .key('#', Items.TERRACOTTA)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(Items.TERRACOTTA))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(Items.TERRACOTTA))
                 .build(consumer);
     }
 
-    private static void registerVanillaSlabRecipes(SlabHolder slabHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaSlabRecipes(SlabHolder slabHolder, Consumer<FinishedRecipe> consumer) {
         TreeStumpRecipeBuilder.recipe(slabHolder.slab, slabHolder.item, 2)
                 .chopTimes(2)
-                .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
-                .addCriterion("has_recipe", hasItem(slabHolder.item))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
+                .addCriterion("has_recipe", has(slabHolder.item))
                 .build(consumer);
     }
 
-    private static void registerVanillaWoodRecipes(WoodItemHolder woodItemHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaWoodRecipes(WoodItemHolder woodItemHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(woodItemHolder.boat)
                 .patternLine("# #")
                 .patternLine("###")
                 .key('#', woodItemHolder.planks)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(woodItemHolder.planks))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(woodItemHolder.planks))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(woodItemHolder.fence, 3)
                 .patternLine("#S#")
                 .patternLine("#S#")
                 .key('#', woodItemHolder.planks)
                 .key('S', Items.STICK)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(woodItemHolder.planks))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(woodItemHolder.planks))
                 .build(consumer);
         FlintWorkbenchRecipeBuilder.shapedRecipe(woodItemHolder.fenceGate)
                 .patternLine("S#S")
                 .patternLine("S#S")
                 .key('#', woodItemHolder.planks)
                 .key('S', Items.STICK)
-                .tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
-                .addCriterion("has_recipe", hasItem(woodItemHolder.planks))
+                //.tool(com.yanny.ages.api.utils.Tags.Items.KNIVES)
+                .addCriterion("has_recipe", has(woodItemHolder.planks))
                 .build(consumer);
         TreeStumpRecipeBuilder.recipe(woodItemHolder.planks, woodItemHolder.log, 2)
                 .chopTimes(2)
-                .tool(com.yanny.ages.api.utils.Tags.Items.AXES)
-                .addCriterion("has_recipe", hasItem(woodItemHolder.log))
+                .tool(com.yanny.age.stone.api.utils.Tags.Items.AXES)
+                .addCriterion("has_recipe", has(woodItemHolder.log))
                 .build(consumer);
         TreeStumpRecipeBuilder.recipe(woodItemHolder.slab, woodItemHolder.planks, 2)
                 .chopTimes(2)
-                .tool(com.yanny.ages.api.utils.Tags.Items.AXES)
-                .addCriterion("has_recipe", hasItem(woodItemHolder.planks))
+                .tool(com.yanny.age.stone.api.utils.Tags.Items.AXES)
+                .addCriterion("has_recipe", has(woodItemHolder.planks))
                 .build(consumer);
     }
 
     private static class WoodItemHolder {
-        final IItemProvider boat;
-        final IItemProvider fence;
-        final IItemProvider fenceGate;
-        final IItemProvider planks;
-        final IItemProvider slab;
-        final IItemProvider log;
+        final ItemLike boat;
+        final ItemLike fence;
+        final ItemLike fenceGate;
+        final ItemLike planks;
+        final ItemLike slab;
+        final ItemLike log;
 
-        WoodItemHolder(IItemProvider boat, IItemProvider fence, IItemProvider fenceGate, IItemProvider planks, IItemProvider slab, IItemProvider log) {
+        WoodItemHolder(ItemLike boat, ItemLike fence, ItemLike fenceGate, ItemLike planks, ItemLike slab, ItemLike log) {
             this.boat = boat;
             this.fence = fence;
             this.fenceGate = fenceGate;
@@ -486,41 +492,41 @@ public class RecipeGenerator extends RecipeProvider {
     }
 
     private static class SlabHolder {
-        final IItemProvider item;
-        final IItemProvider slab;
+        final ItemLike item;
+        final ItemLike slab;
 
-        SlabHolder(IItemProvider item, IItemProvider slab) {
+        SlabHolder(ItemLike item, ItemLike slab) {
             this.item = item;
             this.slab = slab;
         }
     }
 
     private static class TerracottaHolder {
-        final IItemProvider item;
-        final ITag<Item> color;
+        final ItemLike item;
+        final Tag<Item> color;
 
-        TerracottaHolder(IItemProvider item, ITag<Item> color) {
+        TerracottaHolder(ItemLike item, Tag<Item> color) {
             this.item = item;
             this.color = color;
         }
     }
 
     private static class FoodHolder {
-        final IItemProvider input;
-        final IItemProvider output;
+        final ItemLike input;
+        final ItemLike output;
 
-        FoodHolder(IItemProvider input, IItemProvider output) {
+        FoodHolder(ItemLike input, ItemLike output) {
             this.input = input;
             this.output = output;
         }
     }
 
     private static class ToolHolder {
-        final IItemProvider output;
-        final IItemProvider input;
-        final IItemProvider lead;
+        final ItemLike output;
+        final ItemLike input;
+        final ItemLike lead;
 
-        ToolHolder(IItemProvider output, IItemProvider input, IItemProvider lead) {
+        ToolHolder(ItemLike output, ItemLike input, ItemLike lead) {
             this.output = output;
             this.input = input;
             this.lead = lead;
@@ -528,40 +534,40 @@ public class RecipeGenerator extends RecipeProvider {
     }
 
     private static class OneItemHolder {
-        final IItemProvider result;
+        final ItemLike result;
         final Ingredient item;
         final String[] patternLines;
         final ItemPredicate criterion;
         final int count;
 
-        OneItemHolder(IItemProvider result, ITag<Item> item, ITag<Item> criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, Tag<Item> item, Tag<Item> criterion, String[] patternLines) {
             this.result = result;
-            this.item = Ingredient.fromTag(item);
-            this.criterion = ItemPredicate.Builder.create().tag(criterion).build();
+            this.item = Ingredient.of(item);
+            this.criterion = ItemPredicate.Builder.item().of(criterion).build();
             this.patternLines = patternLines;
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, ITag<Item> item, IItemProvider criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, Tag<Item> item, ItemLike criterion, String[] patternLines) {
             this.result = result;
-            this.item = Ingredient.fromTag(item);
-            this.criterion = ItemPredicate.Builder.create().item(criterion).build();
+            this.item = Ingredient.of(item);
+            this.criterion = ItemPredicate.Builder.item().of(criterion).build();
             this.patternLines = patternLines;
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, IItemProvider item, IItemProvider criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, ItemLike item, ItemLike criterion, String[] patternLines) {
             this.result = result;
-            this.item = Ingredient.fromItems(item);
-            this.criterion = ItemPredicate.Builder.create().item(criterion).build();
+            this.item = Ingredient.of(item);
+            this.criterion = ItemPredicate.Builder.item().of(criterion).build();
             this.patternLines = patternLines;
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, IItemProvider item, IItemProvider criterion, int count, String[] patternLines) {
+        OneItemHolder(ItemLike result, ItemLike item, ItemLike criterion, int count, String[] patternLines) {
             this.result = result;
-            this.item = Ingredient.fromItems(item);
-            this.criterion = ItemPredicate.Builder.create().item(criterion).build();
+            this.item = Ingredient.of(item);
+            this.criterion = ItemPredicate.Builder.item().of(criterion).build();
             this.patternLines = patternLines;
             this.count = count;
         }

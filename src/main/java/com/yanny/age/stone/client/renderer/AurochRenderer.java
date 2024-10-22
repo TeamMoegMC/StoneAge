@@ -4,9 +4,9 @@ import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.models.AurochModel;
 import com.yanny.age.stone.entities.AurochEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -17,25 +17,25 @@ import javax.annotation.Nonnull;
 public class AurochRenderer extends MobRenderer<AurochEntity, AurochModel> {
     private static final ResourceLocation AUROCH_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/auroch.png");
 
-    private AurochRenderer(@Nonnull EntityRendererManager rendererManager) {
+    private AurochRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
         super(rendererManager, new AurochModel(), 0.5f);
     }
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull AurochEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull AurochEntity entity) {
         return AUROCH_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(AurochEntity entity) {
+    protected boolean shouldShowName(AurochEntity entity) {
         return entity.hasCustomName();
     }
 
     public static class RenderFactory implements IRenderFactory<AurochEntity> {
 
         @Override
-        public EntityRenderer<? super AurochEntity> createRenderFor(EntityRendererManager manager) {
+        public EntityRenderer<? super AurochEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new AurochRenderer(manager);
         }
     }

@@ -8,7 +8,7 @@ import com.yanny.age.stone.datagen.LootTableGenerator;
 import com.yanny.age.stone.datagen.RecipeGenerator;
 import com.yanny.age.stone.entities.*;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -54,8 +54,8 @@ public class ModEventSubscriber {
     @SuppressWarnings("ConstantConditions")
     @SubscribeEvent
     public static void onClientSetupEvent(@Nonnull FMLClientSetupEvent event) {
-        RenderTypeLookup.setRenderLayer(BlockSubscriber.fishing_net, RenderType.getCutoutMipped());
-        RenderTypeLookup.setRenderLayer(BlockSubscriber.dried_grass_bed, RenderType.getCutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(BlockSubscriber.fishing_net, RenderType.cutoutMipped());
+        ItemBlockRenderTypes.setRenderLayer(BlockSubscriber.dried_grass_bed, RenderType.cutoutMipped());
     }
 
     @SubscribeEvent

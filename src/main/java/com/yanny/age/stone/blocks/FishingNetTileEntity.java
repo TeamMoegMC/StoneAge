@@ -1,31 +1,31 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
+import com.yanny.age.stone.api.utils.Tags;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
-import com.yanny.ages.api.utils.Tags;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.loot.*;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -37,7 +37,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class FishingNetTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity, INamedContainerProvider {
+import net.minecraft.world.level.storage.loot.BuiltInLootTables;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+
+public class FishingNetTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity, MenuProvider {
 
     static final int INVENTORY_WIDTH = 5;
     static final int INVENTORY_HEIGHT = 3;
@@ -56,68 +62,68 @@ public class FishingNetTileEntity extends TileEntity implements IInventoryInterf
 
     @Override
     public void tick() {
-        if (world != null && !world.isRemote) {
-            if (!stacks.get(0).isEmpty() && world.rand.nextInt(Config.fishingNetChance) == 0 && hasWaterAround()) {
-                if (stacks.get(0).attemptDamageItem(1, world.rand, null)) {
+        if (level != null && !level.isClientSide) {
+            if (!stacks.get(0).isEmpty() && level.random.nextInt(Config.fishingNetChance) == 0 && hasWaterAround()) {
+                if (stacks.get(0).hurt(1, level.random, null)) {
                     stacks.set(0, ItemStack.EMPTY);
-                    world.setBlockState(getPos(), getBlockState().with(BlockStateProperties.ATTACHED, false));
+                    level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockStateProperties.ATTACHED, false));
                 }
 
                 generateLoot();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     }
 
     @Nullable
     @Override
-    public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
-        assert world != null;
-        return new FishingNetContainer(id, pos, world, inventory, entity);
+    public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inventory, @Nonnull Player entity) {
+        assert level != null;
+        return new FishingNetContainer(id, worldPosition, level, inventory, entity);
     }
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.stone_age.fishing_net");
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.stone_age.fishing_net");
     }
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -136,26 +142,26 @@ public class FishingNetTileEntity extends TileEntity implements IInventoryInterf
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     public void updateState() {
-        assert world != null;
-        world.setBlockState(getPos(), getBlockState().with(BlockStateProperties.ATTACHED, !stacks.get(0).isEmpty()));
+        assert level != null;
+        level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockStateProperties.ATTACHED, !stacks.get(0).isEmpty()));
     }
 
     private void generateLoot() {
-        assert world != null;
-        LootTable lootTable = ((ServerWorld) world).getServer().getLootTableManager().getLootTableFromLocation(LootTables.GAMEPLAY_FISHING);
-        LootContext lootContext = new LootContext.Builder((ServerWorld) world)
-                .withParameter(LootParameters.ORIGIN, Vector3d.copyCenteredHorizontally(getPos()))
-                .withParameter(LootParameters.TOOL, stacks.get(0))
-                .build(LootParameterSets.FISHING);
+        assert level != null;
+        LootTable lootTable = ((ServerLevel) level).getServer().getLootTables().get(BuiltInLootTables.FISHING);
+        LootContext lootContext = new LootContext.Builder((ServerLevel) level)
+                .withParameter(LootContextParams.ORIGIN, Vec3.atBottomCenterOf(getBlockPos()))
+                .withParameter(LootContextParams.TOOL, stacks.get(0))
+                .create(LootContextParamSets.FISHING);
 
-        List<ItemStack> loot = lootTable.generate(lootContext);
+        List<ItemStack> loot = lootTable.getRandomItems(lootContext);
         ItemStackUtils.insertItems(loot, stacks, 1, ITEMS);
     }
 
@@ -167,8 +173,8 @@ public class FishingNetTileEntity extends TileEntity implements IInventoryInterf
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
                 if (slot == 0) {
-                    assert world != null;
-                    world.setBlockState(getPos(), getBlockState().with(BlockStateProperties.ATTACHED, true));
+                    assert level != null;
+                    level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockStateProperties.ATTACHED, true));
                 }
 
                 return super.insertItem(slot, stack, simulate);
@@ -178,8 +184,8 @@ public class FishingNetTileEntity extends TileEntity implements IInventoryInterf
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
                 if (slot == 0) {
-                    assert world != null;
-                    world.setBlockState(getPos(), getBlockState().with(BlockStateProperties.ATTACHED, false));
+                    assert level != null;
+                    level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockStateProperties.ATTACHED, false));
                 }
 
                 return super.extractItem(slot, amount, simulate);
@@ -192,20 +198,20 @@ public class FishingNetTileEntity extends TileEntity implements IInventoryInterf
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
 
     private boolean hasWaterAround() {
-        assert world != null;
+        assert level != null;
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            FluidState fluidState = world.getFluidState(pos.offset(direction));
+            FluidState fluidState = level.getFluidState(worldPosition.relative(direction));
 
-            if (!fluidState.isSource() || fluidState.getFluid() != Fluids.WATER) {
+            if (!fluidState.isSource() || fluidState.getType() != Fluids.WATER) {
                 return false;
             }
         }

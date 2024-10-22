@@ -1,7 +1,7 @@
 package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.recipes.*;
-import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -23,8 +23,8 @@ public class RecipeSubscriber {
     public static final MillstoneRecipeSerializer millstone = null;
 
     @SubscribeEvent
-    public static void registerTileEntity(@Nonnull RegistryEvent.Register<IRecipeSerializer<?>> event) {
-        IForgeRegistry<IRecipeSerializer<?>> registry = event.getRegistry();
+    public static void registerTileEntity(@Nonnull RegistryEvent.Register<RecipeSerializer<?>> event) {
+        IForgeRegistry<RecipeSerializer<?>> registry = event.getRegistry();
         registry.register(new FlintWorkbenchRecipeSerializer().setRegistryName(MODID, "flint_workbench"));
         registry.register(new DryingRackRecipeSerializer(DryingRackRecipe::new).setRegistryName(MODID, "drying_rack"));
         registry.register(new TanningRackRecipeSerializer(TanningRackRecipe::new).setRegistryName(MODID, "tanning_rack"));

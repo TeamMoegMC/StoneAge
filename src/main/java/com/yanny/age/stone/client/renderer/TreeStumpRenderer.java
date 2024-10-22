@@ -1,12 +1,12 @@
 package com.yanny.age.stone.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.TreeStumpTileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -14,28 +14,32 @@ import javax.annotation.Nonnull;
 
 import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 
+import net.net.minecraft.client.renderer.block.model.ItemTransformsnsformType;
+
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
+
 @OnlyIn(Dist.CLIENT)
-public class TreeStumpRenderer extends TileEntityRenderer<TreeStumpTileEntity> {
-    public TreeStumpRenderer(@Nonnull TileEntityRendererDispatcher rendererDispatcher) {
+public class TreeStumpRenderer extends BlockEntityRenderer<TreeStumpTileEntity> {
+    public TreeStumpRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }
 
     @Override
-    public void render(@Nonnull TreeStumpTileEntity tileEntity, float partialTicks, @Nonnull MatrixStack matrixStack,
-                       @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
-        matrixStack.push();
+    public void render(@Nonnull TreeStumpTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,
+                       @Nonnull MultiBufferSource renderTypeBuffer, int overlayUV, int lightmapUV) {
+        matrixStack.pushPose();
         matrixStack.translate(0.5, 0.77, 0.5);
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(90));
         matrixStack.scale(0.7f, 0.7f, 0.7f);
 
-        Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
+        Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.getInventory().getItem(0), TransformType.FIXED,
                 overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
-        if (tileEntity.getInventory().getStackInSlot(0).getCount() == 2) {
+        if (tileEntity.getInventory().getItem(0).getCount() == 2) {
             matrixStack.translate(0, 0, -0.05);
-            matrixStack.rotate(Vector3f.ZP.rotationDegrees(30));
-            Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(30));
+            Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.getInventory().getItem(0), TransformType.FIXED,
                     overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
         }
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

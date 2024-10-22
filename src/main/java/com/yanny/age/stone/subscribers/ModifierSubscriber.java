@@ -2,9 +2,9 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.conditions.MatchTagCondition;
 import com.yanny.age.stone.modifiers.LeavesDropModifier;
-import net.minecraft.loot.LootConditionType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.world.level.storage.loot.predicates.LootItemConditionType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.Registry;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -17,7 +17,7 @@ import static com.yanny.age.stone.Reference.MODID;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModifierSubscriber {
-    public static LootConditionType matchTag = null;
+    public static LootItemConditionType matchTag = null;
 
     @SubscribeEvent
     public static void registerModifierSerializers(@Nonnull final RegistryEvent.Register<GlobalLootModifierSerializer<?>> event) {
@@ -25,6 +25,6 @@ public class ModifierSubscriber {
 
         registry.register(new LeavesDropModifier.Serializer().setRegistryName(new ResourceLocation(MODID,"leaves_drop")));
 
-        matchTag = Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(MODID, "match_tag"), new LootConditionType(new MatchTagCondition.Serializer()));
+        matchTag = Registry.register(Registry.LOOT_CONDITION_TYPE, new ResourceLocation(MODID, "match_tag"), new LootItemConditionType(new MatchTagCondition.Serializer()));
     }
 }

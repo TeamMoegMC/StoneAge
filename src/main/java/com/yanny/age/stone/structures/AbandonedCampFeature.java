@@ -1,32 +1,24 @@
 package com.yanny.age.stone.structures;
 
 import com.mojang.serialization.Codec;
-import com.yanny.age.stone.Reference;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.ProbabilityConfig;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-import static com.yanny.age.stone.structures.FeatureUtils.*;
-import static net.minecraft.state.properties.BlockStateProperties.LIT;
+public class AbandonedCampFeature extends Feature<ProbabilityFeatureConfiguration> {
 
-public class AbandonedCampFeature extends Feature<ProbabilityConfig> {
-
-    public AbandonedCampFeature(Codec<ProbabilityConfig> configCodec) {
+    public AbandonedCampFeature(Codec<ProbabilityFeatureConfiguration> configCodec) {
         super(configCodec);
     }
 
-    public boolean generate(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
+    public boolean place(@Nonnull WorldGenLevel seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityFeatureConfiguration featureConfig) {
         if (random.nextFloat() < featureConfig.probability) {
+/*
             fillWithAir(seedReader, pos, -2, 0, -2, 2, 3, 2);
             fillWithBlocks(seedReader, pos, -2, -1, -2, 2, -1, 2, Blocks.GRASS_BLOCK.getDefaultState(), Blocks.GRASS_BLOCK.getDefaultState(), false);
 
@@ -46,6 +38,7 @@ public class AbandonedCampFeature extends Feature<ProbabilityConfig> {
             generateBed(seedReader, getRotatedPos(pos, 2, 0, 0, normal), direction);
             generateFlintWorkbench(seedReader, getRotatedPos(pos, -2, 0, 0, normal), random, direction.getOpposite().rotateY());
             generateStoneChest(seedReader, getRotatedPos(pos, -2, 0, -1, normal), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), direction.getOpposite().rotateY());
+*/
 
             return true;
         }

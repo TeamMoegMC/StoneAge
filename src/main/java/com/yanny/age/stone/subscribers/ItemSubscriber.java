@@ -3,7 +3,7 @@ package com.yanny.age.stone.subscribers;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.group.ModItemGroup;
 import com.yanny.age.stone.items.MeshItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -38,20 +38,20 @@ public class ItemSubscriber {
     @SubscribeEvent
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "raw_hide"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "antler"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "unlit_torch"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "bone_arrow_head"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "dried_grass"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "leather_strip"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "fish_bone"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "flour"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "raw_bread"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "mammoth_tusk"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "rhino_tusk"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "saber_teeth"));
-        registry.register(new MeshItem(new Item.Properties().group(ModItemGroup.AGES).maxDamage(15)).setRegistryName(MODID, "grass_mesh"));
-        registry.register(new MeshItem(new Item.Properties().group(ModItemGroup.AGES).maxDamage(30)).setRegistryName(MODID, "cobweb_mesh"));
-        registry.register(new Item(new Item.Properties().group(ModItemGroup.AGES).maxStackSize(64)).setRegistryName(MODID, "grass_lead"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "raw_hide"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "antler"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "unlit_torch"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "bone_arrow_head"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "dried_grass"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "leather_strip"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "fish_bone"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "flour"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "raw_bread"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "mammoth_tusk"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "rhino_tusk"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "saber_teeth"));
+        registry.register(new MeshItem(new Item.Properties().tab(ModItemGroup.AGES).durability(15)).setRegistryName(MODID, "grass_mesh"));
+        registry.register(new MeshItem(new Item.Properties().tab(ModItemGroup.AGES).durability(30)).setRegistryName(MODID, "cobweb_mesh"));
+        registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64)).setRegistryName(MODID, "grass_lead"));
     }
 }

@@ -2,12 +2,12 @@ package com.yanny.age.stone.recipes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,7 +16,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MillstoneRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<MillstoneRecipe> {
+public class MillstoneRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MillstoneRecipe> {
     private final MillstoneRecipeSerializer.IFactory<MillstoneRecipe> factory;
 
     public MillstoneRecipeSerializer(@Nonnull MillstoneRecipeSerializer.IFactory<MillstoneRecipe> factory) {
@@ -25,34 +25,34 @@ public class MillstoneRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
 
     @Override
     @Nonnull
-    public MillstoneRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        String group = JSONUtils.getString(json, "group", "");
-        JsonElement jsonelement = JSONUtils.isJsonArray(json, "ingredient")
-                ? JSONUtils.getJsonArray(json, "ingredient")
-                : JSONUtils.getJsonObject(json, "ingredient");
-        Ingredient ingredient = NBTIngredient.deserialize(jsonelement);
+    public MillstoneRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        String group = GsonHelper.getAsString(json, "group", "");
+        JsonElement jsonelement = GsonHelper.isArrayNode(json, "ingredient")
+                ? GsonHelper.getAsJsonArray(json, "ingredient")
+                : GsonHelper.getAsJsonObject(json, "ingredient");
+        Ingredient ingredient = NBTIngredient.fromJson(jsonelement);
         ItemStack result;
         ItemStack secondResult = ItemStack.EMPTY;
-        int activateCount = JSONUtils.getInt(json, "activateCount", 1);
-        double secondChance = JSONUtils.getFloat(json, "secondChance", 1.0f);
+        int activateCount = GsonHelper.getAsInt(json, "activateCount", 1);
+        double secondChance = GsonHelper.getAsFloat(json, "secondChance", 1.0f);
 
         if (!json.has("result")) {
             throw new com.google.gson.JsonSyntaxException("Missing result, expected to find a string or object");
         }
 
         if (json.get("result").isJsonObject()) {
-            result = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "result"), true);
+            result = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "result"), true);
         } else {
-            String s1 = JSONUtils.getString(json, "result");
+            String s1 = GsonHelper.getAsString(json, "result");
             ResourceLocation resourcelocation = new ResourceLocation(s1);
             result = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation));
         }
 
         if (json.has("secondResult")) {
             if (json.get("secondResult").isJsonObject()) {
-                secondResult = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "secondResult"), true);
+                secondResult = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "secondResult"), true);
             } else {
-                String string = JSONUtils.getString(json, "secondResult");
+                String string = GsonHelper.getAsString(json, "secondResult");
                 ResourceLocation resourceLocation = new ResourceLocation(string);
                 secondResult = new ItemStack(ForgeRegistries.ITEMS.getValue(resourceLocation));
             }
@@ -65,11 +65,11 @@ public class MillstoneRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
 
     @Nullable
     @Override
-    public MillstoneRecipe read(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
-        String group = buffer.readString(32767);
-        Ingredient ingredient = Ingredient.read(buffer);
-        ItemStack result = buffer.readItemStack();
-        ItemStack secondResult = buffer.readItemStack();
+    public MillstoneRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer) {
+        String group = buffer.readUtf(32767);
+        Ingredient ingredient = Ingredient.fromNetwork(buffer);
+        ItemStack result = buffer.readItem();
+        ItemStack secondResult = buffer.readItem();
         double secondChance = buffer.readDouble();
         int activateCount = buffer.readInt();
 
@@ -77,11 +77,11 @@ public class MillstoneRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
     }
 
     @Override
-    public void write(PacketBuffer buffer, MillstoneRecipe recipe) {
-        buffer.writeString(recipe.group);
-        recipe.ingredient.write(buffer);
-        buffer.writeItemStack(recipe.result);
-        buffer.writeItemStack(recipe.secondResult);
+    public void toNetwork(FriendlyByteBuf buffer, MillstoneRecipe recipe) {
+        buffer.writeUtf(recipe.group);
+        recipe.ingredient.toNetwork(buffer);
+        buffer.writeItem(recipe.result);
+        buffer.writeItem(recipe.secondResult);
         buffer.writeDouble(recipe.secondChance);
         buffer.writeInt(recipe.activateCount);
     }

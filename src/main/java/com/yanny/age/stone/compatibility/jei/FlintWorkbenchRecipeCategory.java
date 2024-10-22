@@ -1,7 +1,7 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.FlintWorkbenchRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
@@ -13,9 +13,9 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -32,14 +32,14 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
     FlintWorkbenchRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 0, 120, 60);
-        localizedName = I18n.format("block.stone_age.flint_workbench");
+        localizedName = I18n.get("block.stone_age.flint_workbench");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.flint_workbench));
         IDrawableStatic arrow = guiHelper.createDrawable(new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png"), 123, 24, 25, 14);
         ARROW = guiHelper.createAnimatedDrawable(arrow, 80, IDrawableAnimated.StartDirection.LEFT, false);
     }
 
     @Override
-    public void draw(FlintWorkbenchRecipe recipe, MatrixStack transform, double mouseX, double mouseY) {
+    public void draw(FlintWorkbenchRecipe recipe, PoseStack transform, double mouseX, double mouseY) {
         ARROW.draw(transform, 64, 22);
     }
 
@@ -82,12 +82,12 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getIngredients().get(x + y * width).getMatchingStacks()));
+                inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getIngredients().get(x + y * width).getItems()));
             }
         }
 
-        inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getTool().getMatchingStacks()));
-        outputBuilder.add(flintWorkbenchRecipe.getRecipeOutput());
+        inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getTool().getItems()));
+        outputBuilder.add(flintWorkbenchRecipe.getResultItem());
         ingredients.setInputLists(VanillaTypes.ITEM, inputBuilder.build());
         ingredients.setOutputLists(VanillaTypes.ITEM, ImmutableList.of(outputBuilder.build()));
     }

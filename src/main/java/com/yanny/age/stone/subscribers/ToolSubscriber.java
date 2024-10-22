@@ -2,9 +2,9 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.group.ModItemGroup;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemTier;
-import net.minecraft.item.SwordItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.SwordItem;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -26,8 +26,8 @@ public class ToolSubscriber {
     @SubscribeEvent
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        Item.Properties combatProperties = new Item.Properties().maxStackSize(1).group(ModItemGroup.AGES);
-        registry.register(new SwordItem(ItemTier.WOOD, 0, -1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
+        Item.Properties combatProperties = new Item.Properties().stacksTo(1).tab(ModItemGroup.AGES);
+        registry.register(new SwordItem(Tiers.WOOD, 0, -1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
     }
 }
 

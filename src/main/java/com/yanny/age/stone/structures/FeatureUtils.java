@@ -1,35 +1,12 @@
 package com.yanny.age.stone.structures;
 
-import com.yanny.age.stone.blocks.DryingRackTileEntity;
-import com.yanny.age.stone.blocks.FlintWorkbenchTileEntity;
-import com.yanny.age.stone.blocks.StoneChestTileEntity;
-import com.yanny.age.stone.blocks.TanningRackTileEntity;
-import com.yanny.age.stone.subscribers.BlockSubscriber;
-import com.yanny.age.stone.subscribers.ItemSubscriber;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.BedPart;
-import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import org.joml.Matrix3f;
-import org.joml.Vector3f;
+//import org.joml.Matrix3f;
+//import org.joml.Vector3f;
 
-import javax.annotation.Nonnull;
-import java.util.Random;
-
-import static net.minecraft.state.properties.BlockStateProperties.BED_PART;
-import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
 
 public class FeatureUtils {
 
-    public static void fillWithAir(ISeedReader seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+/*    public static void fillWithAir(ISeedReader seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         for(int i = minY; i <= maxY; ++i) {
             for(int j = minX; j <= maxX; ++j) {
                 for(int k = minZ; k <= maxZ; ++k) {
@@ -92,7 +69,7 @@ public class FeatureUtils {
     public static void generateBed(@Nonnull ISeedReader seedReader, @Nonnull BlockPos pos, Direction direction) {
         Direction bedDirection = direction.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? direction : direction.getOpposite();
         seedReader.setBlockState(pos, BlockSubscriber.dried_grass_bed.getDefaultState().with(HORIZONTAL_FACING, bedDirection).with(BED_PART, BedPart.HEAD), 2);
-        seedReader.setBlockState(pos.func_241872_a(direction.getAxis(), 1), BlockSubscriber.dried_grass_bed.getDefaultState().with(HORIZONTAL_FACING, bedDirection).with(BED_PART, BedPart.FOOT), 2);
+        seedReader.setBlockState(pos.relative(direction.getAxis(), 1), BlockSubscriber.dried_grass_bed.getDefaultState().with(HORIZONTAL_FACING, bedDirection).with(BED_PART, BedPart.FOOT), 2);
     }
 
     private static final Vector3f vector = new Vector3f();
@@ -142,5 +119,5 @@ public class FeatureUtils {
         BlockState state = seedReader.getBlockState(pos);
         return seedReader.isAirBlock(pos) || state.getMaterial().isLiquid() || state.getMaterial().isReplaceable() || state.getMaterial().equals(Material.SAND)
                 || state.getMaterial().equals(Material.EARTH) || state.getMaterial().equals(Material.ORGANIC);
-    }
+    }*/
 }

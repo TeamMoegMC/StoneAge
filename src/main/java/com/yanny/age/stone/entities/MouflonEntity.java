@@ -6,49 +6,59 @@ import com.yanny.age.stone.subscribers.EntitySubscriber;
 import mcjty.theoneprobe.api.IProbeHitEntityData;
 import mcjty.theoneprobe.api.IProbeInfo;
 import mcjty.theoneprobe.api.ProbeMode;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CropsBlock;
-import net.minecraft.entity.AgeableEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.attributes.AttributeModifierMap;
-import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.entity.AgableMob;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.DamageSource;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.world.level.Level;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.ai.goal.BreedGoal;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.FollowParentGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.TemptGoal;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+
 public class MouflonEntity extends WildAnimalEntity implements TopEntityInfoProvider {
 
-    public MouflonEntity(@Nonnull EntityType<MouflonEntity> type, @Nonnull World worldIn) {
+    public MouflonEntity(@Nonnull EntityType<MouflonEntity> type, @Nonnull Level worldIn) {
         super(type, worldIn);
     }
 
     @Nullable
     @Override
-    public AgeableEntity createChild(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
-        if (Math.min(dataManager.get(GENERATION), ageable.getDataManager().get(GENERATION)) >= Config.domesticateAfterGenerations) {
+    public AgableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgableMob ageable) {
+        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
             EntityType<?> child = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(Config.mouflonBreedingResult));
 
             if (child != null) {
-                Entity result = child.create(world);
+                Entity result = child.create(level);
 
-                if (result instanceof AgeableEntity) {
-                    return (AgeableEntity) child.create(world);
+                if (result instanceof AgableMob) {
+                    return (AgableMob) child.create(level);
                 } else {
                     LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default SHEEP entity", Config.mouflonBreedingResult);
                 }
@@ -56,12 +66,12 @@ public class MouflonEntity extends WildAnimalEntity implements TopEntityInfoProv
                 LOGGER.warn("'{}' does not exists! Spawning default SHEEP entity", Config.mouflonBreedingResult);
             }
 
-            return EntityType.SHEEP.create(world);
+            return EntityType.SHEEP.create(level);
         } else {
-            MouflonEntity entity = EntitySubscriber.mouflon.create(world);
+            MouflonEntity entity = EntitySubscriber.mouflon.create(level);
 
             if (entity != null) {
-                entity.setGeneration(dataManager.get(GENERATION) + 1);
+                entity.setGeneration(entityData.get(GENERATION) + 1);
             }
 
             return entity;
@@ -70,57 +80,57 @@ public class MouflonEntity extends WildAnimalEntity implements TopEntityInfoProv
 
     @Override
     public void registerGoals() {
-        this.goalSelector.addGoal(0, new SwimGoal(this));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.fromItems(Items.WHEAT), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(Items.WHEAT), false));
         this.goalSelector.addGoal(4, new AvoidEntityGoal<>(this, SaberToothTigerEntity.class, 14.0F, 1.5D, 2.2D));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25D));
-        this.goalSelector.addGoal(5, new RaidFarmGoal<>(this, CropsBlock.class, CropsBlock.AGE));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
-        this.goalSelector.addGoal(6, new LookAtGoal(this, PlayerEntity.class, 6.0F));
-        this.goalSelector.addGoal(6, new LookRandomlyGoal(this));
+        this.goalSelector.addGoal(5, new RaidFarmGoal<>(this, CropBlock.class, CropBlock.AGE));
+        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new AgroTargetGoal(this, MouflonEntity.class));
         this.targetSelector.addGoal(2, new TargetAggressorGoal<>(this, MouflonEntity.class));
     }
 
-    public static AttributeModifierMap getAttributes() {
-        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 20.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3F).create();
+    public static AttributeSupplier getAttributes() {
+        return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
     @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        this.playSound(SoundEvents.ENTITY_SHEEP_HURT, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 5.0F);
+    public boolean doHurtTarget(Entity entityIn) {
+        this.playSound(SoundEvents.SHEEP_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+        return entityIn.hurt(DamageSource.mobAttack(this), 5.0F);
     }
 
     @Override
     public SoundEvent getAmbientSound() {
-        return SoundEvents.ENTITY_SHEEP_AMBIENT;
+        return SoundEvents.SHEEP_AMBIENT;
     }
 
     @Override
     public SoundEvent getHurtSound(@Nonnull DamageSource damageSourceIn) {
-        return SoundEvents.ENTITY_SHEEP_HURT;
+        return SoundEvents.SHEEP_HURT;
     }
 
     @Override
     public SoundEvent getDeathSound() {
-        return SoundEvents.ENTITY_SHEEP_DEATH;
+        return SoundEvents.SHEEP_DEATH;
     }
 
     @Override
     public void playStepSound(@Nonnull BlockPos pos, @Nonnull BlockState blockIn) {
-        this.playSound(SoundEvents.ENTITY_SHEEP_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.SHEEP_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) {
+    public boolean isFood(ItemStack stack) {
         return stack.getItem() == Items.WHEAT;
     }
 
     @Override
-    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull PlayerEntity player, @Nonnull World world, @Nonnull Entity entity, @Nonnull IProbeHitEntityData data) {
-        probeInfo.horizontal().text(new StringTextComponent("Generation: " + dataManager.get(GENERATION)));
+    public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull Player player, @Nonnull Level world, @Nonnull Entity entity, @Nonnull IProbeHitEntityData data) {
+        probeInfo.horizontal().text(new TextComponent("Generation: " + entityData.get(GENERATION)));
     }
 }

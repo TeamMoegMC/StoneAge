@@ -1,23 +1,23 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class DryingRackTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity {
+public class DryingRackTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity {
     public static final int ITEMS = 4;
 
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(ITEMS * 2, ItemStack.EMPTY);
@@ -51,17 +51,17 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Override
     public void tick() {
-        assert world != null;
-        if (!world.isRemote) {
+        assert level != null;
+        if (!level.isClientSide) {
             if (Config.DryingRackNeedDaytime) {
-                if (world.isDaytime()) {
+                if (level.isDay()) {
                     for (int i = 0; i < ITEMS; i++) {
                         if (items[i].active) {
                             if (items[i].isDried()) {
                                 stacks.set(i + ITEMS, items[i].result);
                                 stacks.set(i, ItemStack.EMPTY);
                                 items[i].reset();
-                                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                             } else {
                                 items[i].remaining--;
                             }
@@ -75,7 +75,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
                             stacks.set(i + ITEMS, items[i].result);
                             stacks.set(i, ItemStack.EMPTY);
                             items[i].reset();
-                            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                         } else {
                             items[i].remaining--;
                         }
@@ -88,7 +88,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
@@ -98,45 +98,45 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
 
         for (int i = 0; i < ITEMS; i++) {
             items[i].read(tag.getCompound("items" + i));
         }
 
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
 
         for (int i = 0; i < ITEMS; i++) {
             tag.put("items" + i, items[i].write());
         }
 
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -154,10 +154,10 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
@@ -165,11 +165,11 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
         return items[index];
     }
 
-    void blockActivated(@Nonnull PlayerEntity player) {
-        assert world != null;
+    void blockActivated(@Nonnull Player player) {
+        assert level != null;
 
-        if (!world.isRemote) {
-            ItemStack itemStack = player.getHeldItemMainhand();
+        if (!level.isClientSide) {
+            ItemStack itemStack = player.getMainHandItem();
             DryingRackRecipe recipe = getRecipe(itemStack).orElse(null);
 
             for (int i = 0; i < ITEMS; i++) {
@@ -177,9 +177,9 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
                     DryingItem item = items[i];
 
                     stacks.set(i, itemStack.split(1));
-                    item.setup(true, recipe.getDryingTime(), recipe.getCraftingResult(null));
+                    item.setup(true, recipe.getDryingTime(), recipe.assemble(null));
 
-                    world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     return;
                 }
 
@@ -190,10 +190,10 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
                     stacks.set(i + ITEMS, ItemStack.EMPTY);
                     stacks.set(i, ItemStack.EMPTY);
 
-                    InventoryHelper.dropItems(world, getPos(), itemStacks);
+                    Containers.dropContents(level, getBlockPos(), itemStacks);
 
-                    world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-                    world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                    level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
                     return;
                 }
             }
@@ -202,18 +202,18 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Nonnull
     private Optional<DryingRackRecipe> getRecipe(@Nonnull ItemStack item) {
-        assert world != null;
+        assert level != null;
         tmpItemHandler.setStackInSlot(0, item);
-        return world.getRecipeManager().getRecipe(DryingRackRecipe.drying_rack, tmpItemHandlerWrapper, world);
+        return level.getRecipeManager().getRecipeFor(DryingRackRecipe.drying_rack, tmpItemHandlerWrapper, level);
     }
 
     private IItemHandlerModifiable createNonSidedInventoryHandler(@Nonnull NonNullList<ItemStack> stacks) {
         return new ItemStackHandler(stacks) {
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -233,11 +233,11 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (slot < ITEMS && getStackInSlot(slot).isEmpty() && world != null) {
+                if (slot < ITEMS && getStackInSlot(slot).isEmpty() && level != null) {
                     DryingRackRecipe recipe = getRecipe(stack).orElse(null);
 
                     if (recipe != null) {
-                        items[slot].setup(true, recipe.getDryingTime(), recipe.getCraftingResult(null));
+                        items[slot].setup(true, recipe.getDryingTime(), recipe.assemble(null));
                         return super.insertItem(slot, stack, simulate);
                     }
                 }
@@ -247,9 +247,9 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -279,22 +279,22 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
             this.result = ItemStack.EMPTY;
         }
 
-        CompoundNBT write() {
-            CompoundNBT nbt = new CompoundNBT();
+        CompoundTag write() {
+            CompoundTag nbt = new CompoundTag();
             nbt.putBoolean("active", active);
             nbt.putInt("dryingTime", dryingTime);
             nbt.putInt("remaining", remaining);
-            CompoundNBT item = new CompoundNBT();
-            result.write(item);
+            CompoundTag item = new CompoundTag();
+            result.save(item);
             nbt.put("item", item);
             return nbt;
         }
 
-        void read(CompoundNBT nbt) {
+        void read(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             dryingTime = nbt.getInt("dryingTime");
             remaining = nbt.getInt("remaining");
-            result = ItemStack.read(nbt.getCompound("item"));
+            result = ItemStack.of(nbt.getCompound("item"));
         }
     }
 }

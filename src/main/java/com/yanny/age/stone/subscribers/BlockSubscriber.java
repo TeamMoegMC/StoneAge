@@ -2,14 +2,14 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.blocks.*;
 import com.yanny.age.stone.group.ModItemGroup;
-import net.minecraft.block.Block;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BedItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BedItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -40,7 +40,7 @@ public class BlockSubscriber {
     @SuppressWarnings({"ConstantConditions", "Convert2MethodRef"})
     @SubscribeEvent
     public static void registerBlocks(@Nonnull RegistryEvent.Register<Block> event) {
-        Block.Properties thatchProperties = Block.Properties.create(Material.ORGANIC).hardnessAndResistance(1.0f).sound(SoundType.PLANT);
+        Block.Properties thatchProperties = Block.Properties.of(Material.GRASS).strength(1.0f).sound(SoundType.GRASS);
 
         IForgeRegistry<Block> registry = event.getRegistry();
         registry.register(new FlintWorkbenchBlock().setRegistryName(MODID, "flint_workbench"));
@@ -53,7 +53,7 @@ public class BlockSubscriber {
         registry.register(new MillstoneBlock().setRegistryName(MODID, "millstone"));
         registry.register(new FishingNetBlock().setRegistryName(MODID, "fishing_net"));
         registry.register(new Block(thatchProperties).setRegistryName(MODID, "thatch_block"));
-        registry.register(new StairsBlock(() -> thatch_block.getDefaultState(), thatchProperties).setRegistryName(MODID, "thatch_stairs"));
+        registry.register(new StairBlock(() -> thatch_block.defaultBlockState(), thatchProperties).setRegistryName(MODID, "thatch_stairs"));
         registry.register(new SlabBlock(thatchProperties).setRegistryName(MODID, "thatch_slab"));
     }
 
@@ -61,29 +61,29 @@ public class BlockSubscriber {
     @SubscribeEvent
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        registry.register(new BlockItem(flint_workbench, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(flint_workbench, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "flint_workbench"));
-        registry.register(new BlockItem(drying_rack, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(drying_rack, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "drying_rack"));
-        registry.register(new BlockItem(tanning_rack, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(tanning_rack, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "tanning_rack"));
-        registry.register(new BlockItem(stone_chest, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(stone_chest, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "stone_chest"));
-        registry.register(new BlockItem(tree_stump, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(tree_stump, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "tree_stump"));
-        registry.register(new BedItem(dried_grass_bed, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BedItem(dried_grass_bed, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "dried_grass_bed"));
-        registry.register(new BlockItem(feeder, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(feeder, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "feeder"));
-        registry.register(new BlockItem(millstone, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(millstone, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "millstone"));
-        registry.register(new BlockItem(fishing_net, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(fishing_net, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "fishing_net"));
-        registry.register(new BlockItem(thatch_block, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(thatch_block, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "thatch_block"));
-        registry.register(new BlockItem(thatch_stairs, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(thatch_stairs, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "thatch_stairs"));
-        registry.register(new BlockItem(thatch_slab, new Item.Properties().group(ModItemGroup.AGES))
+        registry.register(new BlockItem(thatch_slab, new Item.Properties().tab(ModItemGroup.AGES))
                 .setRegistryName(MODID, "thatch_slab"));
     }
 }

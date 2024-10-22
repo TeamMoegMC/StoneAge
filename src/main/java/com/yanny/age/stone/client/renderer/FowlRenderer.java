@@ -4,10 +4,10 @@ import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.models.FowlModel;
 import com.yanny.age.stone.entities.FowlEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -18,32 +18,32 @@ import javax.annotation.Nonnull;
 public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
     private static final ResourceLocation FOWL_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/fowl.png");
 
-    private FowlRenderer(@Nonnull EntityRendererManager rendererManager) {
+    private FowlRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
         super(rendererManager, new FowlModel(), 0.3f);
     }
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull FowlEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull FowlEntity entity) {
         return FOWL_TEXTURE;
     }
 
     @Override
-    protected float handleRotationFloat(FowlEntity livingBase, float partialTicks) {
-        float f = MathHelper.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
-        float f1 = MathHelper.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
-        return (MathHelper.sin(f) + 1.0F) * f1;
+    protected float getBob(FowlEntity livingBase, float partialTicks) {
+        float f = Mth.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
+        float f1 = Mth.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
+        return (Mth.sin(f) + 1.0F) * f1;
     }
 
     @Override
-    protected boolean canRenderName(FowlEntity entity) {
+    protected boolean shouldShowName(FowlEntity entity) {
         return entity.hasCustomName();
     }
 
     public static class RenderFactory implements IRenderFactory<FowlEntity> {
 
         @Override
-        public EntityRenderer<? super FowlEntity> createRenderFor(EntityRendererManager manager) {
+        public EntityRenderer<? super FowlEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new FowlRenderer(manager);
         }
     }

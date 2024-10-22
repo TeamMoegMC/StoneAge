@@ -1,24 +1,24 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -30,7 +30,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class MillstoneTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity, INamedContainerProvider {
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.inventory.ContainerData;
+
+public class MillstoneTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity, MenuProvider {
     static final int ITEMS = 3;
     private static final double PI2 = Math.PI * 2;
 
@@ -41,7 +47,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     private final RecipeWrapper inventoryWrapper = new RecipeWrapper(nonSidedItemHandler);
     private final IItemHandlerModifiable tmpItemHandler = new ItemStackHandler(1);
     private final RecipeWrapper tmpItemHandlerWrapper = new RecipeWrapper(tmpItemHandler);
-    private final IIntArray data = getData();
+    private final ContainerData data = getData();
 
     private float rotation = 0f;
     private boolean active = false;
@@ -58,14 +64,14 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
     @Override
     public void tick() {
-        assert world != null;
+        assert level != null;
 
         if (active) {
-            if (world.rand.nextInt(5) == 0) {
-                double d0 = pos.getX() + world.rand.nextFloat() / 2 + 0.25;
-                double d1 = pos.getY() + 7 / 16f + 0.025D;
-                double d2 = pos.getZ() + world.rand.nextFloat() / 2 + 0.25;
-                world.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0, world.rand.nextFloat(), 0);
+            if (level.random.nextInt(5) == 0) {
+                double d0 = worldPosition.getX() + level.random.nextFloat() / 2 + 0.25;
+                double d1 = worldPosition.getY() + 7 / 16f + 0.025D;
+                double d2 = worldPosition.getZ() + level.random.nextFloat() / 2 + 0.25;
+                level.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0, level.random.nextFloat(), 0);
             }
 
             rotation += PI2 / 80;
@@ -82,7 +88,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
                         stacks.get(1).grow(result.getCount());
                     }
 
-                    if (world.rand.nextDouble() < secondChance) {
+                    if (level.random.nextDouble() < secondChance) {
                         if (stacks.get(2).isEmpty()) {
                             stacks.set(2, secondResult);
                         } else {
@@ -94,8 +100,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
                     secondResult = ItemStack.EMPTY;
                     ticks = 0;
 
-                    if (!world.isRemote) {
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                    if (!level.isClientSide) {
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     }
                 }
             }
@@ -104,67 +110,67 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
     @Nullable
     @Override
-    public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
-        assert world != null;
-        return new MillstoneContainer(id, pos, world, inventory, entity, data);
+    public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inventory, @Nonnull Player entity) {
+        assert level != null;
+        return new MillstoneContainer(id, worldPosition, level, inventory, entity, data);
     }
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.stone_age.millstone");
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.stone_age.millstone");
     }
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         active = tag.getBoolean("active");
         rotation = tag.getFloat("rotation");
         ticks = tag.getInt("ticks");
-        result = ItemStack.read(tag.getCompound("result"));
-        secondResult = ItemStack.read(tag.getCompound("secondResult"));
+        result = ItemStack.of(tag.getCompound("result"));
+        secondResult = ItemStack.of(tag.getCompound("secondResult"));
         secondChance = tag.getDouble("secondChance");
         activateTicks = tag.getInt("activateTicks");
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         tag.putBoolean("active", active);
         tag.putFloat("rotation", rotation);
         tag.putInt("ticks", ticks);
-        tag.put("result", result.write(new CompoundNBT()));
-        tag.put("secondResult", secondResult.write(new CompoundNBT()));
+        tag.put("result", result.save(new CompoundTag()));
+        tag.put("secondResult", secondResult.save(new CompoundTag()));
         tag.putDouble("secondChance", secondChance);
         tag.putInt("activateTicks", activateTicks);
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -181,10 +187,10 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
@@ -215,9 +221,9 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -247,9 +253,9 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -259,7 +265,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     public void onActivated() {
-        assert world != null;
+        assert level != null;
 
         if (!active) {
             ItemStack inputStack = stacks.get(0);
@@ -267,37 +273,37 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
             if (result.isEmpty() && !inputStack.isEmpty()) {
                 getRecipe(inputStack).ifPresent(millstoneRecipe -> {
                     if (canCraft(millstoneRecipe)) {
-                        inputStack.shrink(millstoneRecipe.getIngredients().get(0).getMatchingStacks()[0].getCount());
-                        result = millstoneRecipe.getCraftingResult(null);
+                        inputStack.shrink(millstoneRecipe.getIngredients().get(0).getItems()[0].getCount());
+                        result = millstoneRecipe.assemble(null);
                         secondResult = millstoneRecipe.getCraftingSecondResult();
                         secondChance = millstoneRecipe.getSecondChance();
                         active = true;
                         activateTicks = millstoneRecipe.getActivateCount() * 20;
                         ticks = 0;
 
-                        world.playSound(null, getPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                        level.playSound(null, getBlockPos(), SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5f, 1.0f);
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     }
                 });
             } else if (!result.isEmpty() || !secondResult.isEmpty()) {
                 active = true;
 
-                world.playSound(null, getPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                level.playSound(null, getBlockPos(), SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5f, 1.0f);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     }
 
     @Nonnull
     private Optional<MillstoneRecipe> getRecipe(@Nonnull ItemStack item) {
-        assert world != null;
+        assert level != null;
         tmpItemHandler.setStackInSlot(0, item);
-        return world.getRecipeManager().getRecipe(MillstoneRecipe.millstone, tmpItemHandlerWrapper, world);
+        return level.getRecipeManager().getRecipeFor(MillstoneRecipe.millstone, tmpItemHandlerWrapper, level);
     }
 
     @Nonnull
-    private IIntArray getData() {
-        return new IIntArray() {
+    private ContainerData getData() {
+        return new ContainerData() {
             @Override
             public int get(int index) {
                 return Math.round(ticks / (float) activateTicks * 100);
@@ -309,7 +315,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
             }
 
             @Override
-            public int size() {
+            public int getCount() {
                 return 1;
             }
         };
@@ -319,8 +325,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
         ItemStack inputStack = stacks.get(0);
         ItemStack outputStack = stacks.get(1);
         ItemStack outputSecondStack = stacks.get(2);
-        ItemStack recipeInput = recipe.getIngredients().get(0).getMatchingStacks()[0];
-        ItemStack recipeOutput = recipe.getRecipeOutput();
+        ItemStack recipeInput = recipe.getIngredients().get(0).getItems()[0];
+        ItemStack recipeOutput = recipe.getResultItem();
         ItemStack recipeSecondOutput = recipe.getRecipeSecondOutput();
         boolean emptyOutput = outputStack.isEmpty();
         boolean emptyRecipe = recipeOutput.isEmpty();
@@ -336,8 +342,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
         int outputRecipeSecondCount = recipeSecondOutput.getCount();
 
         if (inputCount >= inputRecipeCount) {
-            return (emptyOutput || emptyRecipe || (outputStack.isItemEqual(recipeOutput) && outputCount <= outputMaxCount - outputRecipeCount)) &&
-                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.isItemEqual(recipeSecondOutput) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
+            return (emptyOutput || emptyRecipe || (outputStack.sameItem(recipeOutput) && outputCount <= outputMaxCount - outputRecipeCount)) &&
+                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.sameItem(recipeSecondOutput) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
         }
 
         return false;

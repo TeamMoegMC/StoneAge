@@ -1,10 +1,10 @@
 package com.yanny.age.stone.blocks;
 
-import net.minecraft.inventory.IInventory;
+import net.minecraft.world.Container;
 
 import javax.annotation.Nonnull;
 
 interface IInventoryInterface {
     @Nonnull
-    IInventory getInventory();
+    Container getInventory();
 }

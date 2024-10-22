@@ -1,23 +1,23 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.TreeStumpRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class TreeStumpTileEntity extends TileEntity implements IInventoryInterface {
+public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterface {
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
     private final IItemHandlerModifiable nonSidedItemHandler = createNonSidedInventoryHandler(stacks);
     private final LazyOptional<IItemHandlerModifiable> sidedInventoryHandler = LazyOptional.of(() -> createSidedInventoryHandler(stacks));
@@ -52,51 +52,51 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         chopLeft = tag.getInt("chopLeft");
         totalChops = tag.getInt("totalChops");
-        recipeResult = ItemStack.read(tag.getCompound("result"));
-        CompoundNBT toolTag = tag.getCompound("tool");
+        recipeResult = ItemStack.of(tag.getCompound("result"));
+        CompoundTag toolTag = tag.getCompound("tool");
         ItemStackUtils.deserializeIngredients(toolTag, tools);
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         tag.putInt("chopLeft", chopLeft);
         tag.putInt("totalChops", totalChops);
-        CompoundNBT resTag = new CompoundNBT();
-        recipeResult.write(resTag);
+        CompoundTag resTag = new CompoundTag();
+        recipeResult.save(resTag);
         tag.put("result", resTag);
         tag.put("tool", ItemStackUtils.serializeIngredients(tools));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -113,46 +113,46 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
-    void onBlockRightClicked(@Nonnull PlayerEntity player) {
-        assert world != null;
+    void onBlockRightClicked(@Nonnull Player player) {
+        assert level != null;
 
-        if (hasTool(player.getHeldItemMainhand())) {
-            if (stacks.get(0).getCount() == getRecipe(stacks.get(0)).getIngredients().get(0).getMatchingStacks()[0].getCount()) {
+        if (hasTool(player.getMainHandItem())) {
+            if (stacks.get(0).getCount() == getRecipe(stacks.get(0)).getIngredients().get(0).getItems()[0].getCount()) {
                 chopLeft--;
 
                 if (chopLeft == 0) {
                     NonNullList<ItemStack> itemStacks = NonNullList.create();
                     itemStacks.add(recipeResult);
                     stacks.set(0, ItemStack.EMPTY);
-                    InventoryHelper.dropItems(world, getPos(), itemStacks);
+                    Containers.dropContents(level, getBlockPos(), itemStacks);
                     recipeResult = ItemStack.EMPTY;
                     tools.clear();
-                    player.getHeldItemMainhand().damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+                    player.getMainHandItem().hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
 
-                    world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_BREAK, SoundCategory.BLOCKS, 1.0f, 1.0f);
-                    world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                    level.playSound(null, getBlockPos(), SoundEvents.WOOD_BREAK, SoundSource.BLOCKS, 1.0f, 1.0f);
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                 } else {
-                    world.playSound(null, getPos(), SoundEvents.BLOCK_WOOD_HIT, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    level.playSound(null, getBlockPos(), SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1.0f, 1.0f);
                 }
             }
         } else {
-            world.playSound(null, getPos(), SoundEvents.ITEM_SHIELD_BLOCK, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            level.playSound(null, getBlockPos(), SoundEvents.SHIELD_BLOCK, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
     }
 
-    void blockActivated(@Nonnull PlayerEntity player) {
-        assert world != null;
-        ItemStack itemStack = player.getHeldItemMainhand();
+    void blockActivated(@Nonnull Player player) {
+        assert level != null;
+        ItemStack itemStack = player.getMainHandItem();
         TreeStumpRecipe recipe = getRecipe(itemStack);
 
         if (recipe == null) {
-            itemStack = player.getHeldItemOffhand();
+            itemStack = player.getOffhandItem();
             recipe = getRecipe(itemStack);
         }
 
@@ -160,21 +160,21 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
             stacks.set(0, itemStack.split(1));
             totalChops = recipe.getChopTimes();
             chopLeft = recipe.getChopTimes();
-            recipeResult = recipe.getCraftingResult(null);
+            recipeResult = recipe.assemble(null);
             tools.addAll(recipe.getTools());
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             return;
         } else if (stacks.get(0).getCount() == 1 && recipe != null
-                && recipe.getIngredients().get(0).getMatchingStacks()[0].getCount() == 2
+                && recipe.getIngredients().get(0).getItems()[0].getCount() == 2
                 && stacks.get(0).getItem() == itemStack.getItem()) {
             stacks.get(0).grow(itemStack.split(1).getCount());
             totalChops = recipe.getChopTimes();
             chopLeft = recipe.getChopTimes();
-            recipeResult = recipe.getCraftingResult(null);
+            recipeResult = recipe.assemble(null);
             tools.addAll(recipe.getTools());
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             return;
         }
 
@@ -182,17 +182,17 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
             NonNullList<ItemStack> itemStacks = NonNullList.create();
             itemStacks.add(stacks.get(0).copy());
             stacks.set(0, ItemStack.EMPTY);
-            InventoryHelper.dropItems(world, getPos(), itemStacks);
+            Containers.dropContents(level, getBlockPos(), itemStacks);
             recipeResult = ItemStack.EMPTY;
             tools.clear();
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-            world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
         }
     }
 
     boolean hasTool(@Nonnull ItemStack toolInHand) {
-        return tools.stream().anyMatch(ingredient -> Arrays.stream(ingredient.getMatchingStacks()).anyMatch(itemStack -> itemStack.getItem() == toolInHand.getItem()));
+        return tools.stream().anyMatch(ingredient -> Arrays.stream(ingredient.getItems()).anyMatch(itemStack -> itemStack.getItem() == toolInHand.getItem()));
     }
 
     @Nonnull
@@ -206,9 +206,9 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
 
     @Nullable
     private TreeStumpRecipe getRecipe(@Nonnull ItemStack item) {
-        assert world != null;
+        assert level != null;
         tmpItemHandler.setStackInSlot(0, item);
-        return world.getRecipeManager().getRecipe(TreeStumpRecipe.tree_stump, tmpItemHandlerWrapper, world).orElse(null);
+        return level.getRecipeManager().getRecipeFor(TreeStumpRecipe.tree_stump, tmpItemHandlerWrapper, level).orElse(null);
     }
 
     @Nonnull
@@ -216,9 +216,9 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
         return new ItemStackHandler(stacks) {
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -235,16 +235,16 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (getStackInSlot(slot).isEmpty() && world != null) {
+                if (getStackInSlot(slot).isEmpty() && level != null) {
                     TreeStumpRecipe recipe = getRecipe(stack);
 
                     if (recipe != null && stacks.get(0).isEmpty()) {
                         totalChops = recipe.getChopTimes();
                         chopLeft = recipe.getChopTimes();
-                        recipeResult = recipe.getCraftingResult(null);
+                        recipeResult = recipe.assemble(null);
                         tools.addAll(recipe.getTools());
 
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                         return super.insertItem(slot, stack, simulate);
                     }
                 }
@@ -254,9 +254,9 @@ public class TreeStumpTileEntity extends TileEntity implements IInventoryInterfa
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
