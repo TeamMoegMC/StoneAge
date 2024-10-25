@@ -1,7 +1,7 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.FlintWorkbenchRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
@@ -13,9 +13,9 @@ import mezz.jei.api.gui.drawable.IDrawableStatic;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
     }
 
     @Override
-    public void draw(FlintWorkbenchRecipe recipe, MatrixStack transform, double mouseX, double mouseY) {
+    public void draw(FlintWorkbenchRecipe recipe, PoseStack transform, double mouseX, double mouseY) {
         ARROW.draw(transform, 64, 22);
     }
 

@@ -1,7 +1,7 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
@@ -13,9 +13,9 @@ import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.ingredients.IIngredients;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
@@ -98,7 +98,7 @@ public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe>
     }
 
     @Override
-    public void draw(MillstoneRecipe recipe, @Nonnull MatrixStack matrixStack, double mouseX, double mouseY) {
+    public void draw(MillstoneRecipe recipe, @Nonnull PoseStack matrixStack, double mouseX, double mouseY) {
         if (!recipe.getRecipeSecondOutput().isEmpty()) {
             Minecraft.getInstance().font.draw(matrixStack, String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100), 96, 38, -1);
         }

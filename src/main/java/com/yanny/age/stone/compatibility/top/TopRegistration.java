@@ -1,10 +1,10 @@
 package com.yanny.age.stone.compatibility.top;
 
 import mcjty.theoneprobe.api.*;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 import java.util.function.Function;
@@ -23,7 +23,7 @@ public class TopRegistration implements Function<ITheOneProbe, Void> {
             }
 
             @Override
-            public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, PlayerEntity player, World world, BlockState blockState, IProbeHitData data) {
+            public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level world, BlockState blockState, IProbeHitData data) {
                 if (blockState.getBlock() instanceof TopBlockInfoProvider) {
                     TopBlockInfoProvider provider = (TopBlockInfoProvider) blockState.getBlock();
                     provider.addProbeInfo(mode, probeInfo, player, world, blockState, data);
@@ -37,7 +37,7 @@ public class TopRegistration implements Function<ITheOneProbe, Void> {
             }
 
             @Override
-            public void addProbeEntityInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, PlayerEntity playerEntity, World world, Entity entity, IProbeHitEntityData iProbeHitEntityData) {
+            public void addProbeEntityInfo(ProbeMode probeMode, IProbeInfo iProbeInfo, Player playerEntity, Level world, Entity entity, IProbeHitEntityData iProbeHitEntityData) {
                 if (entity instanceof TopEntityInfoProvider) {
                     TopEntityInfoProvider provider = (TopEntityInfoProvider) entity;
                     provider.addProbeInfo(probeMode, iProbeInfo, playerEntity, world, entity, iProbeHitEntityData);
