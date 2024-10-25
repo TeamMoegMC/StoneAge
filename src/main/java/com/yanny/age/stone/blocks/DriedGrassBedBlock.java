@@ -45,20 +45,10 @@ public class DriedGrassBedBlock extends BedBlock {
         super(DyeColor.BLACK, Properties.of(Material.WOOL).strength(2.0f));
     }
 
-    @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new DriedGrassBedTileEntity();
-    }
 
     @Override
-    public BlockEntity newBlockEntity(@Nonnull BlockGetter worldIn) {
-        return new DriedGrassBedTileEntity();
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new DriedGrassBedTileEntity(pos,state);
     }
 
     @SuppressWarnings("deprecation")
