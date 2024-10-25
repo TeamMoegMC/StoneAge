@@ -8,7 +8,7 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
-        classpath "com.github.jengelman.gradle.plugins:shadow:4.0.2"
+
     }
 }
 
@@ -17,7 +17,7 @@ plugins {
 }
 
 apply plugin: 'net.minecraftforge.gradle'
-apply plugin: 'com.github.johnrengelman.shadow'
+
 apply from: 'https://raw.gitmirror.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
 version = "${minecraft_version}-${mod_version}"
 group = 'com.yanny.age.stone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -105,27 +105,27 @@ sourceSets.main.resources {
     exclude '**/.cache/**'
 }
 
-reobf {
-    jar{dependsOn= ['shadowJar']}
-}
+//reobf {
+//    jar{dependsOn= ['shadowJar']}
+//}
 
-task release(dependsOn: [build, 'jar'])
+//task release(dependsOn: [build, 'jar'])
 
-configurations {
-    shade
-}
+//configurations {
+//    shade
+//}
 
 repositories {
     mavenLocal()
-    maven {
-        url "https://dvs1.progwml6.com/files/maven"
-    }
-    maven {
-        url "https://maven.tterrag.com/"
-    }
-    maven {
-        url "https://maven.blamejared.com/"
-    }
+//    maven {
+//        url "https://dvs1.progwml6.com/files/maven"
+//    }
+//    maven {
+//        url "https://maven.tterrag.com/"
+//    }
+//    maven {
+//        url "https://maven.blamejared.com/"
+//    }
 }
 
 dependencies {
@@ -147,11 +147,11 @@ dependencies {
     shade "org.joml:joml:1.9.25"
 }
 
-shadowJar {
-	dependsOn= ['jar']
-    configurations = [project.configurations.shade]
-    classifier = null
-}
+//shadowJar {
+//	dependsOn= ['jar']
+//    configurations = [project.configurations.shade]
+//    classifier = null
+//}
 
 // Example for how to get properties into the manifest for reading by the runtime..
 jar {
@@ -168,6 +168,19 @@ jar {
     }
 }
 
+jar.finalizedBy('reobfJar')
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveBaseName.set(project.archivesBaseName)
+    archiveVersion.set("${project.version}")
+    archiveClassifier.set('sources')
+}
+
+artifacts {
+    archives jar, sourcesJar
+}
+
 String getChangelogText() {
     def changelogFile = file('changelog.txt')
     String str = ''
@@ -180,8 +193,8 @@ String getChangelogText() {
         if (it.size() > 1) {
             def temp = it
             if (lineCount == 0) {
-                temp = "Stone Age ${version}"
-                temp = "<span style=\"font-size: 18px; color: #333399;\">Stone Age v${mod_version}</span>&nbsp;&nbsp;<em>for Minecraft ${minecraft_version}</em><br/>"
+                temp = "Stone Age"
+                temp = "<span style=\"font-size: 18px; color: #333399;\">Charcoal Pit: Reloaded v${mod_version}</span>&nbsp;&nbsp;<em>for Minecraft ${minecraft_version}</em><br/>"
             } else if (it.startsWith('-')) {
                 temp = "&nbsp;&nbsp;&nbsp;$temp<br/>"
                 temp = temp.replaceAll("(\\S+\\/\\S+)#([0-9]+)\\b", "<a href=\"https://github.com/\$1/issues/\$2\">\$0</a>");
@@ -213,10 +226,8 @@ curseforge {
         releaseType = project.curse_type
         addGameVersion project.minecraft_version
 
-        mainArtifact (shadowJar) {
-            relations {
-                requiredDependency 'ages-api'
-            }
+        mainArtifact (jar) {
+
         }
     }
 }
