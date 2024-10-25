@@ -1,34 +1,34 @@
 package com.yanny.age.stone.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.FlintWorkbenchTileEntity;
 import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.HorizontalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.core.Direction;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-import static net.minecraft.client.renderer.model.ItemCameraTransforms.*;
+import static net.minecraft.client.renderer.block.model.ItemTransforms.*;
 
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 
 @OnlyIn(Dist.CLIENT)
-public class FlintWorkbenchRenderer extends TileEntityRenderer<FlintWorkbenchTileEntity> {
-    public FlintWorkbenchRenderer(@Nonnull TileEntityRendererDispatcher rendererDispatcher) {
+public class FlintWorkbenchRenderer extends BlockEntityRenderer<FlintWorkbenchTileEntity> {
+    public FlintWorkbenchRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }
 
     @Override
-    public void render(@Nonnull FlintWorkbenchTileEntity tileEntity, float partialTicks, @Nonnull MatrixStack matrixStack,
-                       @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
-        Direction direction = tileEntity.getBlockState().getValue(HorizontalBlock.FACING);
+    public void render(@Nonnull FlintWorkbenchTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,
+                       @Nonnull MultiBufferSource renderTypeBuffer, int overlayUV, int lightmapUV) {
+        Direction direction = tileEntity.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
         float border = 0.0625f;
         float part = (1 - 4 * border) / 3f;
         float t = border + part / 2f;

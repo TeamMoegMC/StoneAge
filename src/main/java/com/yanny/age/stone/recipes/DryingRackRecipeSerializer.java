@@ -2,12 +2,12 @@ package com.yanny.age.stone.recipes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<DryingRackRecipe> {
+public class DryingRackRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<DryingRackRecipe> {
     private final DryingRackRecipeSerializer.IFactory<DryingRackRecipe> factory;
 
     public DryingRackRecipeSerializer(@Nonnull DryingRackRecipeSerializer.IFactory<DryingRackRecipe> factory) {
@@ -25,10 +25,10 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
     @Override
     @Nonnull
     public DryingRackRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        JsonElement jsonelement = JSONUtils.isArrayNode(json, "ingredient")
-                ? JSONUtils.getAsJsonArray(json, "ingredient")
-                : JSONUtils.getAsJsonObject(json, "ingredient");
+        String s = GsonHelper.getAsString(json, "group", "");
+        JsonElement jsonelement = GsonHelper.isArrayNode(json, "ingredient")
+                ? GsonHelper.getAsJsonArray(json, "ingredient")
+                : GsonHelper.getAsJsonObject(json, "ingredient");
         Ingredient ingredient = Ingredient.fromJson(jsonelement);
         ItemStack itemstack;
 
@@ -37,21 +37,21 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
         }
 
         if (json.get("result").isJsonObject()) {
-            itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
+            itemstack = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "result"), true);
         } else {
-            String s1 = JSONUtils.getAsString(json, "result");
+            String s1 = GsonHelper.getAsString(json, "result");
             ResourceLocation resourcelocation = new ResourceLocation(s1);
             itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation));
         }
 
-        int i = JSONUtils.getAsInt(json, "dryingTime", 200);
+        int i = GsonHelper.getAsInt(json, "dryingTime", 200);
 
         return this.factory.create(recipeId, s, ingredient, itemstack, i);
     }
 
     @Nullable
     @Override
-    public DryingRackRecipe fromNetwork(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
+    public DryingRackRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer) {
         String s = buffer.readUtf(32767);
         Ingredient ingredient = Ingredient.fromNetwork(buffer);
         ItemStack itemstack = buffer.readItem();
@@ -62,7 +62,7 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, DryingRackRecipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, DryingRackRecipe recipe) {
         buffer.writeUtf(recipe.group);
         recipe.ingredient.toNetwork(buffer);
         buffer.writeItem(recipe.result);

@@ -1,16 +1,16 @@
 package com.yanny.age.stone.modifiers;
 
 import com.google.gson.JsonObject;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.enchantment.Enchantments;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.loot.LootContext;
-import net.minecraft.loot.LootParameters;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.loot.GlobalLootModifierSerializer;
 import net.minecraftforge.common.loot.LootModifier;
 
@@ -20,7 +20,7 @@ import java.util.List;
 public class LeavesDropModifier extends LootModifier {
     private final float chance;
 
-    private LeavesDropModifier(ILootCondition[] conditionsIn, float chance) {
+    private LeavesDropModifier(LootItemCondition[] conditionsIn, float chance) {
         super(conditionsIn);
         this.chance = chance;
     }
@@ -28,8 +28,8 @@ public class LeavesDropModifier extends LootModifier {
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        if(context.hasParam(LootParameters.THIS_ENTITY)) {//only by hand
-        	ItemStack ctxTool = context.getParamOrNull(LootParameters.TOOL);
+        if(context.hasParam(LootContextParams.THIS_ENTITY)) {//only by hand
+        	ItemStack ctxTool = context.getParamOrNull(LootContextParams.TOOL);
             float chanceAfterLooting = chance;
 	        if (ctxTool != null) {
 	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) {
@@ -52,8 +52,8 @@ public class LeavesDropModifier extends LootModifier {
     public static class Serializer extends GlobalLootModifierSerializer<LeavesDropModifier> {
 
         @Override
-        public LeavesDropModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
-            float chance = JSONUtils.getAsFloat(object, "chance");
+        public LeavesDropModifier read(ResourceLocation location, JsonObject object, LootItemCondition[] conditions) {
+            float chance = GsonHelper.getAsFloat(object, "chance");
             return new LeavesDropModifier(conditions, chance);
         }
 

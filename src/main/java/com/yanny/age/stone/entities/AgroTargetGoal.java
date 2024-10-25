@@ -1,13 +1,13 @@
 package com.yanny.age.stone.entities;
 
-import net.minecraft.entity.CreatureEntity;
-import net.minecraft.entity.EntityPredicate;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MobEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.goal.TargetGoal;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.goal.target.TargetGoal;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.Difficulty;
 
 import javax.annotation.Nonnull;
@@ -16,12 +16,12 @@ import java.util.List;
 import java.util.Objects;
 
 class AgroTargetGoal extends TargetGoal {
-    private static final EntityPredicate predicate = (new EntityPredicate()).allowUnseeable().ignoreInvisibilityTesting();
+    private static final TargetingConditions predicate = (new TargetingConditions()).allowUnseeable().ignoreInvisibilityTesting();
     private int revengeTimerOld;
     private final Class<? extends IBecomeAngry> reinforcement;
     private final Class<?>[] excludedReinforcementTypes;
 
-    AgroTargetGoal(@Nonnull CreatureEntity creatureIn, @Nonnull Class<? extends IBecomeAngry> reinforcement, @Nonnull Class<?>... excludeReinforcement) {
+    AgroTargetGoal(@Nonnull PathfinderMob creatureIn, @Nonnull Class<? extends IBecomeAngry> reinforcement, @Nonnull Class<?>... excludeReinforcement) {
         super(creatureIn, true);
         this.reinforcement = reinforcement;
         this.excludedReinforcementTypes = excludeReinforcement;
@@ -58,13 +58,13 @@ class AgroTargetGoal extends TargetGoal {
 
     private void alertOthers() {
         double d0 = this.getFollowDistance();
-        List<MobEntity> list = this.mob.level.getEntitiesOfClass(this.mob.getClass(),
-                (new AxisAlignedBB(this.mob.getX(), this.mob.getY(), this.mob.getZ(),
+        List<Mob> list = this.mob.level.getEntitiesOfClass(this.mob.getClass(),
+                (new AABB(this.mob.getX(), this.mob.getY(), this.mob.getZ(),
                         this.mob.getX() + 1.0D, this.mob.getY() + 1.0D, this.mob.getZ() + 1.0D)).inflate(d0, 10.0D, d0));
 
-        for (MobEntity mobentity : list) {
+        for (Mob mobentity : list) {
             if (this.mob != mobentity && mobentity.getTarget() == null
-                    && (!(this.mob instanceof TameableEntity) || ((TameableEntity) this.mob).getOwner() == ((TameableEntity) mobentity).getOwner())
+                    && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal) this.mob).getOwner() == ((TamableAnimal) mobentity).getOwner())
                     && !mobentity.isAlliedTo(Objects.requireNonNull(this.mob.getLastHurtByMob()))) {
 
                 boolean flag = false;
@@ -82,7 +82,7 @@ class AgroTargetGoal extends TargetGoal {
         }
     }
 
-    private void setAttackTarget(@Nonnull MobEntity mobIn, @Nonnull LivingEntity targetIn) {
+    private void setAttackTarget(@Nonnull Mob mobIn, @Nonnull LivingEntity targetIn) {
         if (reinforcement.isAssignableFrom(mobIn.getClass()) && this.mob.canSee(targetIn) && reinforcement.cast(mobIn).becomeAngryAt(targetIn)) {
             mobIn.setTarget(targetIn);
         }

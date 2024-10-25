@@ -2,8 +2,8 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.group.ModItemGroup;
-import net.minecraft.item.Food;
-import net.minecraft.item.Item;
+import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -37,24 +37,24 @@ public class FoodSubscriber {
     public static final Item tiger_meat = null;
     public static final Item cooked_tiger_meat = null;
 
-    private static final Food FAT = (new Food.Builder()).nutrition(1).saturationMod(0.1f).meat().build();
-    private static final Food COOKED_FAT = (new Food.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
-    private static final Food VENISON = (new Food.Builder()).nutrition(1).saturationMod(0.15f).meat().build();
-    private static final Food COOKED_VENISON = (new Food.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
-    private static final Food FOWL_MEAT = (new Food.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
-    private static final Food COOKED_FOWL_MEAT = (new Food.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
-    private static final Food AUROCH_MEAT = (new Food.Builder()).nutrition(2).saturationMod(0.25f).meat().build();
-    private static final Food COOKED_AUROCH_MEAT = (new Food.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
-    private static final Food MOUFLON_MEAT = (new Food.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
-    private static final Food COOKED_MOUFLON_MEAT = (new Food.Builder()).nutrition(6).saturationMod(0.6f).meat().build();
-    private static final Food BOAR_MEAT = (new Food.Builder()).nutrition(3).saturationMod(0.35f).meat().build();
-    private static final Food COOKED_BOAR_MEAT = (new Food.Builder()).nutrition(7).saturationMod(0.7f).meat().build();
-    private static final Food MAMMOTH_MEAT = (new Food.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
-    private static final Food COOKED_MAMMOTH_MEAT = (new Food.Builder()).nutrition(8).saturationMod(0.8f).meat().build();
-    private static final Food RHINO_MEAT = (new Food.Builder()).nutrition(4).saturationMod(0.45f).meat().build();
-    private static final Food COOKED_RHINO_MEAT = (new Food.Builder()).nutrition(9).saturationMod(0.9f).meat().build();
-    private static final Food TIGER_MEAT = (new Food.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
-    private static final Food COOKED_TIGER_MEAT = (new Food.Builder()).nutrition(10).saturationMod(1.0f).meat().build();
+    private static final FoodProperties FAT = (new FoodProperties.Builder()).nutrition(1).saturationMod(0.1f).meat().build();
+    private static final FoodProperties COOKED_FAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
+    private static final FoodProperties VENISON = (new FoodProperties.Builder()).nutrition(1).saturationMod(0.15f).meat().build();
+    private static final FoodProperties COOKED_VENISON = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
+    private static final FoodProperties FOWL_MEAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
+    private static final FoodProperties COOKED_FOWL_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
+    private static final FoodProperties AUROCH_MEAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.25f).meat().build();
+    private static final FoodProperties COOKED_AUROCH_MEAT = (new FoodProperties.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
+    private static final FoodProperties MOUFLON_MEAT = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
+    private static final FoodProperties COOKED_MOUFLON_MEAT = (new FoodProperties.Builder()).nutrition(6).saturationMod(0.6f).meat().build();
+    private static final FoodProperties BOAR_MEAT = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.35f).meat().build();
+    private static final FoodProperties COOKED_BOAR_MEAT = (new FoodProperties.Builder()).nutrition(7).saturationMod(0.7f).meat().build();
+    private static final FoodProperties MAMMOTH_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
+    private static final FoodProperties COOKED_MAMMOTH_MEAT = (new FoodProperties.Builder()).nutrition(8).saturationMod(0.8f).meat().build();
+    private static final FoodProperties RHINO_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.45f).meat().build();
+    private static final FoodProperties COOKED_RHINO_MEAT = (new FoodProperties.Builder()).nutrition(9).saturationMod(0.9f).meat().build();
+    private static final FoodProperties TIGER_MEAT = (new FoodProperties.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
+    private static final FoodProperties COOKED_TIGER_MEAT = (new FoodProperties.Builder()).nutrition(10).saturationMod(1.0f).meat().build();
 
     @SubscribeEvent
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {

@@ -4,16 +4,16 @@ import com.google.gson.JsonObject;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
 
@@ -30,25 +30,25 @@ public class TanningRackRecipeBuilder {
     @Nullable private String group = null;
     @Nullable private Ingredient tool = null;
 
-    public TanningRackRecipeBuilder(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public TanningRackRecipeBuilder(ItemLike resultIn, ItemLike input, int countIn) {
         this.result = resultIn.asItem();
         this.input = Ingredient.of(input);
         this.count = countIn;
     }
 
-    public static TanningRackRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input) {
+    public static TanningRackRecipeBuilder recipe(ItemLike resultIn, ItemLike input) {
         return recipe(resultIn, input, 1);
     }
 
-    public static TanningRackRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public static TanningRackRecipeBuilder recipe(ItemLike resultIn, ItemLike input, int countIn) {
         return new TanningRackRecipeBuilder(resultIn, input, countIn);
     }
 
-    public TanningRackRecipeBuilder tool(ITag<Item> tool) {
+    public TanningRackRecipeBuilder tool(Tag<Item> tool) {
         return this.tool(Ingredient.of(tool));
     }
 
-    public TanningRackRecipeBuilder tool(IItemProvider tool) {
+    public TanningRackRecipeBuilder tool(ItemLike tool) {
         return this.tool(Ingredient.of(tool));
     }
 
@@ -61,7 +61,7 @@ public class TanningRackRecipeBuilder {
         }
     }
 
-    public TanningRackRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
+    public TanningRackRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
         this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
@@ -71,11 +71,11 @@ public class TanningRackRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn) {
+    public void build(Consumer<FinishedRecipe> consumerIn) {
         this.build(consumerIn, Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(this.result)));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, String save) {
+    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result);
 
         if ((new ResourceLocation(save)).equals(resourcelocation)) {
@@ -85,18 +85,18 @@ public class TanningRackRecipeBuilder {
         }
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         } else if (this.tool == null) {
             throw new IllegalStateException("Tool is not set!");
         }
 
-        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumerIn.accept(new Result(id, this.result, this.input, this.count, this.group == null ? "" : this.group, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final Item result;
         private final int count;
@@ -136,7 +136,7 @@ public class TanningRackRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return RecipeSubscriber.tanning_rack;
         }
 

@@ -18,7 +18,7 @@ plugins {
 
 apply plugin: 'net.minecraftforge.gradle'
 
-apply from: 'https://raw.gitmirror.com/SizableShrimp/Forge-Class-Remapper/main/classremapper.gradle'
+apply from: 'https://raw.githubusercontent.com/LukeGrahamLandry/modding-tutorials/forge-1.17.1/classname_update_script.gradle'
 version = "${minecraft_version}-${mod_version}"
 group = 'com.yanny.age.stone' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'stone-age'
@@ -133,18 +133,18 @@ dependencies {
 
     compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 
-    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
-
-    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
-    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
-
-    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
-    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
-
-    compileOnly "org.joml:joml:1.9.25"
-    runtimeOnly "org.joml:joml:1.9.25"
-    shade "org.joml:joml:1.9.25"
+//    compileOnly fg.deobf("mezz.jei:jei-${jei_version}:api")
+//    runtimeOnly fg.deobf("mezz.jei:jei-${jei_version}")
+//
+//    compileOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}:api")
+//    runtimeOnly fg.deobf("mcjty.theoneprobe:TheOneProbe-1.16:${top_version}")
+//
+//    compileOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}:api")
+//    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:${patchouli_version}")
+//
+//    compileOnly "org.joml:joml:1.9.25"
+//    runtimeOnly "org.joml:joml:1.9.25"
+//    shade "org.joml:joml:1.9.25"
 }
 
 //shadowJar {

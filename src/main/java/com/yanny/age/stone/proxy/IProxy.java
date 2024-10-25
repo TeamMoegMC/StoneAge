@@ -1,14 +1,14 @@
 package com.yanny.age.stone.proxy;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
 
 public interface IProxy {
     void init();
     @Nullable
-    World getClientWorld();
+    Level getClientWorld();
     @Nullable
-    PlayerEntity getClientPlayer();
+    Player getClientPlayer();
 }

@@ -2,12 +2,12 @@ package com.yanny.age.stone.recipes;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.ForgeRegistryEntry;
@@ -15,7 +15,7 @@ import net.minecraftforge.registries.ForgeRegistryEntry;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TanningRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<TanningRackRecipe> {
+public class TanningRackRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<TanningRackRecipe> {
     private final TanningRackRecipeSerializer.IFactory<TanningRackRecipe> factory;
 
     public TanningRackRecipeSerializer(@Nonnull TanningRackRecipeSerializer.IFactory<TanningRackRecipe> factory) {
@@ -25,10 +25,10 @@ public class TanningRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSeria
     @Override
     @Nonnull
     public TanningRackRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        JsonElement jsonelement = JSONUtils.isArrayNode(json, "ingredient")
-                ? JSONUtils.getAsJsonArray(json, "ingredient")
-                : JSONUtils.getAsJsonObject(json, "ingredient");
+        String s = GsonHelper.getAsString(json, "group", "");
+        JsonElement jsonelement = GsonHelper.isArrayNode(json, "ingredient")
+                ? GsonHelper.getAsJsonArray(json, "ingredient")
+                : GsonHelper.getAsJsonObject(json, "ingredient");
         Ingredient ingredient = Ingredient.fromJson(jsonelement);
         ItemStack itemstack;
 
@@ -37,16 +37,16 @@ public class TanningRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSeria
         }
 
         if (json.get("result").isJsonObject()) {
-            itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
+            itemstack = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "result"), true);
         } else {
-            String s1 = JSONUtils.getAsString(json, "result");
+            String s1 = GsonHelper.getAsString(json, "result");
             ResourceLocation resourcelocation = new ResourceLocation(s1);
             itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation));
         }
 
-        JsonElement toolElement = JSONUtils.isArrayNode(json, "tool")
-                ? JSONUtils.getAsJsonArray(json, "tool")
-                : JSONUtils.getAsJsonObject(json, "tool");
+        JsonElement toolElement = GsonHelper.isArrayNode(json, "tool")
+                ? GsonHelper.getAsJsonArray(json, "tool")
+                : GsonHelper.getAsJsonObject(json, "tool");
         Ingredient tool = Ingredient.fromJson(toolElement);
 
         return this.factory.create(recipeId, s, ingredient, itemstack, tool);
@@ -54,7 +54,7 @@ public class TanningRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSeria
 
     @Nullable
     @Override
-    public TanningRackRecipe fromNetwork(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
+    public TanningRackRecipe fromNetwork(@Nonnull ResourceLocation recipeId, FriendlyByteBuf buffer) {
         String s = buffer.readUtf(32767);
         Ingredient ingredient = Ingredient.fromNetwork(buffer);
         ItemStack itemstack = buffer.readItem();
@@ -64,7 +64,7 @@ public class TanningRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSeria
     }
 
     @Override
-    public void toNetwork(PacketBuffer buffer, TanningRackRecipe recipe) {
+    public void toNetwork(FriendlyByteBuf buffer, TanningRackRecipe recipe) {
         buffer.writeUtf(recipe.group);
         recipe.ingredient.toNetwork(buffer);
         buffer.writeItem(recipe.result);

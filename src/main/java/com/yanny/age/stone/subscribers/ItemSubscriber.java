@@ -3,7 +3,7 @@ package com.yanny.age.stone.subscribers;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.group.ModItemGroup;
 import com.yanny.age.stone.items.MeshItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

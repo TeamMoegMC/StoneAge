@@ -2,14 +2,14 @@ package com.yanny.age.stone.structures;
 
 import com.mojang.serialization.Codec;
 import com.yanny.age.stone.Reference;
-import net.minecraft.block.Blocks;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
-import net.minecraft.world.gen.ChunkGenerator;
-import net.minecraft.world.gen.feature.Feature;
-import net.minecraft.world.gen.feature.ProbabilityConfig;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 
 import javax.annotation.Nonnull;
 import java.util.Random;
@@ -17,14 +17,14 @@ import java.util.Random;
 import static com.yanny.age.stone.structures.FeatureUtils.generateStoneChest;
 import static com.yanny.age.stone.structures.FeatureUtils.replaceAirAndLiquidDownwards;
 
-public class BurialPlaceFeature extends Feature<ProbabilityConfig> {
+public class BurialPlaceFeature extends Feature<ProbabilityFeatureConfiguration> {
 
-    public BurialPlaceFeature(Codec<ProbabilityConfig> configCodec) {
+    public BurialPlaceFeature(Codec<ProbabilityFeatureConfiguration> configCodec) {
         super(configCodec);
     }
 
     @Override
-    public boolean place(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
+    public boolean place(@Nonnull WorldGenLevel seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityFeatureConfiguration featureConfig) {
         if (random.nextFloat() < featureConfig.probability) {
             generateStoneChest(seedReader, pos.offset(0, -2, 0), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), Direction.Plane.HORIZONTAL.getRandomDirection(random));
 

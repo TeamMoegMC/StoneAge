@@ -4,16 +4,16 @@ import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -26,7 +26,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
-public class TanningRackTileEntity extends TileEntity implements IInventoryInterface {
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionResult;
+
+public class TanningRackTileEntity extends BlockEntity implements IInventoryInterface {
     public static final int ITEMS = 1;
     private static final Random random = new Random(System.currentTimeMillis());
 
@@ -45,7 +51,7 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
@@ -55,33 +61,33 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
         load(getBlockState(), pkt.getTag());
     }
@@ -107,7 +113,7 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
     }
 
     @Nonnull
-    ActionResultType blockActivated(@Nonnull PlayerEntity player) {
+    InteractionResult blockActivated(@Nonnull Player player) {
         assert level != null;
         ItemStack itemMainhand = player.getMainHandItem();
         TanningRackRecipe recipe = getRecipe(itemMainhand);
@@ -117,13 +123,13 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
             stacks.set(pos, itemMainhand.split(1));
 
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         recipe = getRecipe(stacks.get(pos));
 
         if (recipe != null && recipe.getTool().test(itemMainhand) && !stacks.get(pos).isEmpty()) {
-            itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+            itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
 
             if (random.nextDouble() < Config.tanningRackFinishChance) {
                 stacks.set(pos + ITEMS, recipe.assemble(null));
@@ -131,7 +137,7 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
 
-            return ActionResultType.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
 
         if (!stacks.get(pos + ITEMS).isEmpty()) {
@@ -139,14 +145,14 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
             itemStacks.add(stacks.get(pos + ITEMS).copy());
             stacks.set(pos + ITEMS, ItemStack.EMPTY);
             stacks.set(pos, ItemStack.EMPTY);
-            InventoryHelper.dropContents(level, getBlockPos(), itemStacks);
+            Containers.dropContents(level, getBlockPos(), itemStacks);
 
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-            level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
-            return ActionResultType.SUCCESS;
+            level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
+            return InteractionResult.SUCCESS;
         }
 
-        return ActionResultType.PASS;
+        return InteractionResult.PASS;
     }
 
     @Nullable

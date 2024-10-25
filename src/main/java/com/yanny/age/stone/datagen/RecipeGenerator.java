@@ -5,22 +5,28 @@ import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.FoodSubscriber;
 import com.yanny.age.stone.subscribers.ItemSubscriber;
 import com.yanny.age.stone.subscribers.ToolSubscriber;
-import net.minecraft.advancements.criterion.ItemPredicate;
+import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.*;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.Tag;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import org.lwjgl.system.NonnullDefault;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Consumer;
+
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 
 @SuppressWarnings("ConstantConditions")
 @NonnullDefault
@@ -108,7 +114,7 @@ public class RecipeGenerator extends RecipeProvider {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    protected void buildShapelessRecipes(Consumer<IFinishedRecipe> consumer) {
+    protected void buildShapelessRecipes(Consumer<FinishedRecipe> consumer) {
         ShapedRecipeBuilder.shaped(ToolSubscriber.flint_knife)
                 .pattern("F")
                 .pattern("#")
@@ -368,7 +374,7 @@ public class RecipeGenerator extends RecipeProvider {
         ONE_ITEMS.forEach(item -> registerOneItemFlintWorkbenchRecipes(item, consumer));
     }
 
-    private static void registerOneItemFlintWorkbenchRecipes(OneItemHolder oneItemHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerOneItemFlintWorkbenchRecipes(OneItemHolder oneItemHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder recipe = FlintWorkbenchRecipeBuilder.shapedRecipe(oneItemHolder.result, oneItemHolder.count);
 
         for (String patternLine : oneItemHolder.patternLines) {
@@ -381,7 +387,7 @@ public class RecipeGenerator extends RecipeProvider {
                 .build(consumer);
     }
 
-    private static void registerToolRecipes(ToolHolder toolHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerToolRecipes(ToolHolder toolHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(toolHolder.output)
                 .patternLine("HL")
                 .patternLine("# ")
@@ -393,25 +399,25 @@ public class RecipeGenerator extends RecipeProvider {
                 .build(consumer);
     }
 
-    private static void registerFoodRecipes(FoodHolder foodHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerFoodRecipes(FoodHolder foodHolder, Consumer<FinishedRecipe> consumer) {
         ResourceLocation location = foodHolder.output.asItem().getRegistryName();
 
         if (location == null) {
             throw new IllegalStateException("Null resource location! " + foodHolder.output);
         }
 
-        CookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 200, IRecipeSerializer.SMELTING_RECIPE)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 200, RecipeSerializer.SMELTING_RECIPE)
                 .unlockedBy("has_recipe", has(foodHolder.input))
                 .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smelting"));
-        CookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 600, IRecipeSerializer.CAMPFIRE_COOKING_RECIPE)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 600, RecipeSerializer.CAMPFIRE_COOKING_RECIPE)
                 .unlockedBy("has_recipe", has(foodHolder.input))
                 .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_campfire_cooking"));
-        CookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 100, IRecipeSerializer.SMOKING_RECIPE)
+        SimpleCookingRecipeBuilder.cooking(Ingredient.of(foodHolder.input), foodHolder.output, 0.35f, 100, RecipeSerializer.SMOKING_RECIPE)
                 .unlockedBy("has_recipe", has(foodHolder.input))
                 .save(consumer, new ResourceLocation(location.getNamespace(), location.getPath() + "_from_smoking"));
     }
 
-    private static void registerVanillaTerracottaRecipes(TerracottaHolder terracottaHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaTerracottaRecipes(TerracottaHolder terracottaHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(terracottaHolder.item, 8)
                 .patternLine("###")
                 .patternLine("#G#")
@@ -423,7 +429,7 @@ public class RecipeGenerator extends RecipeProvider {
                 .build(consumer);
     }
 
-    private static void registerVanillaSlabRecipes(SlabHolder slabHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaSlabRecipes(SlabHolder slabHolder, Consumer<FinishedRecipe> consumer) {
         TreeStumpRecipeBuilder.recipe(slabHolder.slab, slabHolder.item, 2)
                 .chopTimes(2)
                 .tool(com.yanny.ages.api.utils.Tags.Items.HAMMERS)
@@ -431,7 +437,7 @@ public class RecipeGenerator extends RecipeProvider {
                 .build(consumer);
     }
 
-    private static void registerVanillaWoodRecipes(WoodItemHolder woodItemHolder, Consumer<IFinishedRecipe> consumer) {
+    private static void registerVanillaWoodRecipes(WoodItemHolder woodItemHolder, Consumer<FinishedRecipe> consumer) {
         FlintWorkbenchRecipeBuilder.shapedRecipe(woodItemHolder.boat)
                 .patternLine("# #")
                 .patternLine("###")
@@ -468,14 +474,14 @@ public class RecipeGenerator extends RecipeProvider {
     }
 
     private static class WoodItemHolder {
-        final IItemProvider boat;
-        final IItemProvider fence;
-        final IItemProvider fenceGate;
-        final IItemProvider planks;
-        final IItemProvider slab;
-        final IItemProvider log;
+        final ItemLike boat;
+        final ItemLike fence;
+        final ItemLike fenceGate;
+        final ItemLike planks;
+        final ItemLike slab;
+        final ItemLike log;
 
-        WoodItemHolder(IItemProvider boat, IItemProvider fence, IItemProvider fenceGate, IItemProvider planks, IItemProvider slab, IItemProvider log) {
+        WoodItemHolder(ItemLike boat, ItemLike fence, ItemLike fenceGate, ItemLike planks, ItemLike slab, ItemLike log) {
             this.boat = boat;
             this.fence = fence;
             this.fenceGate = fenceGate;
@@ -486,41 +492,41 @@ public class RecipeGenerator extends RecipeProvider {
     }
 
     private static class SlabHolder {
-        final IItemProvider item;
-        final IItemProvider slab;
+        final ItemLike item;
+        final ItemLike slab;
 
-        SlabHolder(IItemProvider item, IItemProvider slab) {
+        SlabHolder(ItemLike item, ItemLike slab) {
             this.item = item;
             this.slab = slab;
         }
     }
 
     private static class TerracottaHolder {
-        final IItemProvider item;
-        final ITag<Item> color;
+        final ItemLike item;
+        final Tag<Item> color;
 
-        TerracottaHolder(IItemProvider item, ITag<Item> color) {
+        TerracottaHolder(ItemLike item, Tag<Item> color) {
             this.item = item;
             this.color = color;
         }
     }
 
     private static class FoodHolder {
-        final IItemProvider input;
-        final IItemProvider output;
+        final ItemLike input;
+        final ItemLike output;
 
-        FoodHolder(IItemProvider input, IItemProvider output) {
+        FoodHolder(ItemLike input, ItemLike output) {
             this.input = input;
             this.output = output;
         }
     }
 
     private static class ToolHolder {
-        final IItemProvider output;
-        final IItemProvider input;
-        final IItemProvider lead;
+        final ItemLike output;
+        final ItemLike input;
+        final ItemLike lead;
 
-        ToolHolder(IItemProvider output, IItemProvider input, IItemProvider lead) {
+        ToolHolder(ItemLike output, ItemLike input, ItemLike lead) {
             this.output = output;
             this.input = input;
             this.lead = lead;
@@ -528,13 +534,13 @@ public class RecipeGenerator extends RecipeProvider {
     }
 
     private static class OneItemHolder {
-        final IItemProvider result;
+        final ItemLike result;
         final Ingredient item;
         final String[] patternLines;
         final ItemPredicate criterion;
         final int count;
 
-        OneItemHolder(IItemProvider result, ITag<Item> item, ITag<Item> criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, Tag<Item> item, Tag<Item> criterion, String[] patternLines) {
             this.result = result;
             this.item = Ingredient.of(item);
             this.criterion = ItemPredicate.Builder.item().of(criterion).build();
@@ -542,7 +548,7 @@ public class RecipeGenerator extends RecipeProvider {
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, ITag<Item> item, IItemProvider criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, Tag<Item> item, ItemLike criterion, String[] patternLines) {
             this.result = result;
             this.item = Ingredient.of(item);
             this.criterion = ItemPredicate.Builder.item().of(criterion).build();
@@ -550,7 +556,7 @@ public class RecipeGenerator extends RecipeProvider {
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, IItemProvider item, IItemProvider criterion, String[] patternLines) {
+        OneItemHolder(ItemLike result, ItemLike item, ItemLike criterion, String[] patternLines) {
             this.result = result;
             this.item = Ingredient.of(item);
             this.criterion = ItemPredicate.Builder.item().of(criterion).build();
@@ -558,7 +564,7 @@ public class RecipeGenerator extends RecipeProvider {
             this.count = 1;
         }
 
-        OneItemHolder(IItemProvider result, IItemProvider item, IItemProvider criterion, int count, String[] patternLines) {
+        OneItemHolder(ItemLike result, ItemLike item, ItemLike criterion, int count, String[] patternLines) {
             this.result = result;
             this.item = Ingredient.of(item);
             this.criterion = ItemPredicate.Builder.item().of(criterion).build();

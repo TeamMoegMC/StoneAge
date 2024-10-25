@@ -1,10 +1,10 @@
 package com.yanny.age.stone.items;
 
-import net.minecraft.item.Item;
+import net.minecraft.world.item.Item;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.item.Item.Properties;
+import net.minecraft.world.item.Item.Properties;
 
 public class MeshItem extends Item {
 

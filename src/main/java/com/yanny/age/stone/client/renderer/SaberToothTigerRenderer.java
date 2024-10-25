@@ -1,14 +1,14 @@
 package com.yanny.age.stone.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.models.SaberToothTigerModel;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererManager;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.MobRenderer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -19,12 +19,12 @@ import javax.annotation.Nonnull;
 public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, SaberToothTigerModel> {
     private static final ResourceLocation SABER_TOOTH_TIGER_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/saber_tooth_tiger.png");
 
-    private SaberToothTigerRenderer(@Nonnull EntityRendererManager rendererManager) {
+    private SaberToothTigerRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
         super(rendererManager, new SaberToothTigerModel(), 0.5f);
     }
 
     @Override
-    public void render(@Nonnull SaberToothTigerEntity entityIn, float entityYaw, float partialTicks, MatrixStack matrixStackIn, @Nonnull IRenderTypeBuffer bufferIn, int packedLightIn) {
+    public void render(@Nonnull SaberToothTigerEntity entityIn, float entityYaw, float partialTicks, PoseStack matrixStackIn, @Nonnull MultiBufferSource bufferIn, int packedLightIn) {
         matrixStackIn.scale(1.2f, 1.2f, 1.2f);
         super.render(entityIn, entityYaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
     }
@@ -43,7 +43,7 @@ public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, 
     public static class RenderFactory implements IRenderFactory<SaberToothTigerEntity> {
 
         @Override
-        public EntityRenderer<? super SaberToothTigerEntity> createRenderFor(EntityRendererManager manager) {
+        public EntityRenderer<? super SaberToothTigerEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new SaberToothTigerRenderer(manager);
         }
     }

@@ -1,18 +1,18 @@
 package com.yanny.age.stone.utils;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.fluid.Fluid;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockDisplayReader;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockAndTintGetter;
 
 import javax.annotation.Nonnull;
 
 public class RendererUtils {
 
-    public static void add(@Nonnull Fluid fluid, @Nonnull IBlockDisplayReader lightReader, @Nonnull BlockPos posIn, @Nonnull IVertexBuilder renderer,
-                           @Nonnull MatrixStack stack, float x, float y, float z, float u, float v) {
+    public static void add(@Nonnull Fluid fluid, @Nonnull BlockAndTintGetter lightReader, @Nonnull BlockPos posIn, @Nonnull VertexConsumer renderer,
+                           @Nonnull PoseStack stack, float x, float y, float z, float u, float v) {
         int i = fluid.getFluid().getAttributes().getColor(lightReader, posIn);
         float alpha = (float)(i >> 24 & 255) / 255.0F;
         float r = (float)(i >> 16 & 255) / 255.0F;
@@ -27,9 +27,9 @@ public class RendererUtils {
                 .endVertex();
     }
 
-    public static int getCombinedAverageLight(@Nonnull IBlockDisplayReader lightReaderIn, @Nonnull BlockPos posIn) {
-        int i = WorldRenderer.getLightColor(lightReaderIn, posIn);
-        int j = WorldRenderer.getLightColor(lightReaderIn, posIn.above());
+    public static int getCombinedAverageLight(@Nonnull BlockAndTintGetter lightReaderIn, @Nonnull BlockPos posIn) {
+        int i = LevelRenderer.getLightColor(lightReaderIn, posIn);
+        int j = LevelRenderer.getLightColor(lightReaderIn, posIn.above());
         int k = i & 255;
         int l = j & 255;
         int i1 = i >> 16 & 255;

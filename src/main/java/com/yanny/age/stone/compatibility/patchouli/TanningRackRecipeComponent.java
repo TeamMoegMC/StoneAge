@@ -1,11 +1,11 @@
 package com.yanny.age.stone.compatibility.patchouli;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.util.IReorderingProcessor;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.ResourceLocation;
 import vazkii.patchouli.api.IComponentRenderContext;
 import vazkii.patchouli.api.IVariable;
@@ -16,7 +16,7 @@ import java.util.function.UnaryOperator;
 @SuppressWarnings("unused")
 public class TanningRackRecipeComponent extends BaseComponent {
     private transient TanningRackRecipe recipe = null;
-    private transient IReorderingProcessor title;
+    private transient FormattedCharSequence title;
 
     @Override
     public void build(int componentX, int componentY, int pageNum) {
@@ -26,7 +26,7 @@ public class TanningRackRecipeComponent extends BaseComponent {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public void render(@Nonnull MatrixStack matrixStack, @Nonnull IComponentRenderContext context, float partialTicks, int mouseX, int mouseY) {
+    public void render(@Nonnull PoseStack matrixStack, @Nonnull IComponentRenderContext context, float partialTicks, int mouseX, int mouseY) {
         if (recipe == null) {
             return;
         }

@@ -6,18 +6,18 @@ import com.yanny.age.stone.blocks.StoneChestTileEntity;
 import com.yanny.age.stone.blocks.TanningRackTileEntity;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.ItemSubscriber;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.state.properties.BedPart;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.state.properties.BedPart;
 import net.minecraft.state.properties.BlockStateProperties;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.ISeedReader;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.WorldGenLevel;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 
@@ -25,11 +25,13 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static net.minecraft.state.properties.BlockStateProperties.BED_PART;
-import static net.minecraft.state.properties.BlockStateProperties.HORIZONTAL_FACING;
+import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.HORIZONTAL_FACING;
+
+import Vector3f;
 
 public class FeatureUtils {
 
-    public static void fillWithAir(ISeedReader seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    public static void fillWithAir(WorldGenLevel seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         for(int i = minY; i <= maxY; ++i) {
             for(int j = minX; j <= maxX; ++j) {
                 for(int k = minZ; k <= maxZ; ++k) {
@@ -40,7 +42,7 @@ public class FeatureUtils {
 
     }
 
-    public static void fillWithBlocks(ISeedReader seedReader, BlockPos pos, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, BlockState boundaryBlockState, BlockState insideBlockState, boolean existingOnly) {
+    public static void fillWithBlocks(WorldGenLevel seedReader, BlockPos pos, int xMin, int yMin, int zMin, int xMax, int yMax, int zMax, BlockState boundaryBlockState, BlockState insideBlockState, boolean existingOnly) {
         for(int i = yMin; i <= yMax; ++i) {
             for(int j = xMin; j <= xMax; ++j) {
                 for(int k = zMin; k <= zMax; ++k) {
@@ -58,10 +60,10 @@ public class FeatureUtils {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void generateRandomRack(@Nonnull ISeedReader seedReader, @Nonnull BlockPos pos, @Nonnull Random random, @Nonnull Direction direction) {
+    public static void generateRandomRack(@Nonnull WorldGenLevel seedReader, @Nonnull BlockPos pos, @Nonnull Random random, @Nonnull Direction direction) {
         if (random.nextDouble() < 0.5) {
             seedReader.setBlock(pos, BlockSubscriber.drying_rack.defaultBlockState().setValue(HORIZONTAL_FACING, direction), 2);
-            TileEntity tileentity = seedReader.getBlockEntity(pos);
+            BlockEntity tileentity = seedReader.getBlockEntity(pos);
 
             if (tileentity instanceof DryingRackTileEntity) {
                 NonNullList<ItemStack> stacks = ((DryingRackTileEntity)tileentity).getStacks();
@@ -74,7 +76,7 @@ public class FeatureUtils {
             }
         } else {
             seedReader.setBlock(pos, BlockSubscriber.tanning_rack.defaultBlockState().setValue(HORIZONTAL_FACING, direction), 2);
-            TileEntity tileentity = seedReader.getBlockEntity(pos);
+            BlockEntity tileentity = seedReader.getBlockEntity(pos);
 
             if (tileentity instanceof TanningRackTileEntity) {
                 NonNullList<ItemStack> stacks = ((TanningRackTileEntity)tileentity).getStacks();
@@ -89,7 +91,7 @@ public class FeatureUtils {
     }
 
     @SuppressWarnings("ConstantConditions")
-    public static void generateBed(@Nonnull ISeedReader seedReader, @Nonnull BlockPos pos, Direction direction) {
+    public static void generateBed(@Nonnull WorldGenLevel seedReader, @Nonnull BlockPos pos, Direction direction) {
         Direction bedDirection = direction.getAxisDirection() == Direction.AxisDirection.NEGATIVE ? direction : direction.getOpposite();
         seedReader.setBlock(pos, BlockSubscriber.dried_grass_bed.defaultBlockState().setValue(HORIZONTAL_FACING, bedDirection).setValue(BED_PART, BedPart.HEAD), 2);
         seedReader.setBlock(pos.relative(direction.getAxis(), 1), BlockSubscriber.dried_grass_bed.defaultBlockState().setValue(HORIZONTAL_FACING, bedDirection).setValue(BED_PART, BedPart.FOOT), 2);

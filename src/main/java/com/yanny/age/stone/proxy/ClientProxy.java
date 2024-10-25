@@ -9,9 +9,9 @@ import com.yanny.age.stone.subscribers.ContainerSubscriber;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.ScreenManager;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.World;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 
@@ -21,10 +21,10 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init() {
-        ScreenManager.register(ContainerSubscriber.stone_chest, StoneChestGui::new);
-        ScreenManager.register(ContainerSubscriber.feeder, FeederGui::new);
-        ScreenManager.register(ContainerSubscriber.millstone, MillstoneGui::new);
-        ScreenManager.register(ContainerSubscriber.fishing_net, FishingNetGui::new);
+        MenuScreens.register(ContainerSubscriber.stone_chest, StoneChestGui::new);
+        MenuScreens.register(ContainerSubscriber.feeder, FeederGui::new);
+        MenuScreens.register(ContainerSubscriber.millstone, MillstoneGui::new);
+        MenuScreens.register(ContainerSubscriber.fishing_net, FishingNetGui::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.deer, new DeerRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.boar, new BoarRenderer.RenderFactory());
@@ -48,13 +48,13 @@ public class ClientProxy implements IProxy {
 
     @Override
     @Nullable
-    public World getClientWorld() {
+    public Level getClientWorld() {
         return Minecraft.getInstance().level;
     }
 
     @Override
     @Nullable
-    public PlayerEntity getClientPlayer() {
+    public Player getClientPlayer() {
         return Minecraft.getInstance().player;
     }
 }

@@ -2,14 +2,14 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.blocks.*;
 import com.yanny.age.stone.group.ModItemGroup;
-import net.minecraft.block.Block;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.BedItem;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.item.BedItem;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -53,7 +53,7 @@ public class BlockSubscriber {
         registry.register(new MillstoneBlock().setRegistryName(MODID, "millstone"));
         registry.register(new FishingNetBlock().setRegistryName(MODID, "fishing_net"));
         registry.register(new Block(thatchProperties).setRegistryName(MODID, "thatch_block"));
-        registry.register(new StairsBlock(() -> thatch_block.defaultBlockState(), thatchProperties).setRegistryName(MODID, "thatch_stairs"));
+        registry.register(new StairBlock(() -> thatch_block.defaultBlockState(), thatchProperties).setRegistryName(MODID, "thatch_stairs"));
         registry.register(new SlabBlock(thatchProperties).setRegistryName(MODID, "thatch_slab"));
     }
 

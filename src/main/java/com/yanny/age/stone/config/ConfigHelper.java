@@ -1,6 +1,6 @@
 package com.yanny.age.stone.config;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.stream.Collectors;

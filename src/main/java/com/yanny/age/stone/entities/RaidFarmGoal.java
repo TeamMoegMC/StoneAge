@@ -1,24 +1,30 @@
 package com.yanny.age.stone.entities;
 
 import net.minecraft.block.*;
-import net.minecraft.entity.ai.goal.MoveToBlockGoal;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.state.IntegerProperty;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IWorldReader;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.ForgeEventFactory;
 
 import javax.annotation.Nonnull;
 
-class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
+import net.minecraft.world.level.block.BeetrootBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.CropBlock;
+import net.minecraft.world.level.block.state.BlockState;
+
+class RaidFarmGoal<T extends Animal> extends MoveToBlockGoal {
     private final T entity;
-    private final Class<? extends CropsBlock> cropsBlock;
+    private final Class<? extends CropBlock> cropsBlock;
     private final IntegerProperty ageProperty;
     private boolean wantsToRaid;
     private boolean canRaid;
 
-    RaidFarmGoal(@Nonnull T entity, @Nonnull Class<? extends CropsBlock> cropsBlock, @Nonnull IntegerProperty ageProperty) {
+    RaidFarmGoal(@Nonnull T entity, @Nonnull Class<? extends CropBlock> cropsBlock, @Nonnull IntegerProperty ageProperty) {
         super(entity, 0.7F, 16);
         this.entity = entity;
         this.cropsBlock = cropsBlock;
@@ -54,7 +60,7 @@ class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
                 10.0F, (float)this.entity.getMaxHeadXRot());
 
         if (this.isReachedTarget()) {
-            World world = this.entity.level;
+            Level world = this.entity.level;
             BlockPos blockpos = this.blockPos.above();
             BlockState blockstate = world.getBlockState(blockpos);
             Block block = blockstate.getBlock();
@@ -84,7 +90,7 @@ class RaidFarmGoal<T extends AnimalEntity> extends MoveToBlockGoal {
     }
 
     @Override
-    protected boolean isValidTarget(IWorldReader worldIn, @Nonnull BlockPos pos) {
+    protected boolean isValidTarget(LevelReader worldIn, @Nonnull BlockPos pos) {
         Block block = worldIn.getBlockState(pos).getBlock();
         if (block == Blocks.FARMLAND && this.wantsToRaid && !this.canRaid) {
             pos = pos.above();

@@ -6,13 +6,13 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.util.GsonHelper;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
@@ -20,23 +20,23 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
-public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<FlintWorkbenchRecipe> {
+public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<FlintWorkbenchRecipe> {
     @Nonnull
     @Override
     public FlintWorkbenchRecipe fromJson(@Nonnull final ResourceLocation recipeID, @Nonnull final JsonObject json) {
-        String s = JSONUtils.getAsString(json, "group", "");
-        Map<String, Ingredient> map = deserializeKey(JSONUtils.getAsJsonObject(json, "key"));
-        String[] astring = shrink(patternFromJson(JSONUtils.getAsJsonArray(json, "pattern")));
+        String s = GsonHelper.getAsString(json, "group", "");
+        Map<String, Ingredient> map = deserializeKey(GsonHelper.getAsJsonObject(json, "key"));
+        String[] astring = shrink(patternFromJson(GsonHelper.getAsJsonArray(json, "pattern")));
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
-        ItemStack itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
-        Ingredient tool = Ingredient.fromJson(JSONUtils.getAsJsonObject(json, "tool"));
+        ItemStack itemstack = CraftingHelper.getItemStack(GsonHelper.getAsJsonObject(json, "result"), true);
+        Ingredient tool = Ingredient.fromJson(GsonHelper.getAsJsonObject(json, "tool"));
         return new FlintWorkbenchRecipe(recipeID, s, i, j, tool, nonnulllist, itemstack);
     }
 
     @Override
-    public FlintWorkbenchRecipe fromNetwork(@Nonnull final ResourceLocation recipeID, final PacketBuffer buffer) {
+    public FlintWorkbenchRecipe fromNetwork(@Nonnull final ResourceLocation recipeID, final FriendlyByteBuf buffer) {
         final int width = buffer.readVarInt();
         final int height = buffer.readVarInt();
         final String group = buffer.readUtf(Short.MAX_VALUE);
@@ -52,7 +52,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
     }
 
     @Override
-    public void toNetwork(final PacketBuffer buffer, final FlintWorkbenchRecipe recipe) {
+    public void toNetwork(final FriendlyByteBuf buffer, final FlintWorkbenchRecipe recipe) {
         buffer.writeVarInt(recipe.getWidth());
         buffer.writeVarInt(recipe.getHeight());
         buffer.writeUtf(recipe.getGroup());
@@ -172,7 +172,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for(int i = 0; i < astring.length; ++i) {
-                String s = JSONUtils.convertToString(jsonArr.get(i), "pattern[" + i + "]");
+                String s = GsonHelper.convertToString(jsonArr.get(i), "pattern[" + i + "]");
                 if (s.length() > 3) {
                     throw new JsonSyntaxException("Invalid pattern: too many columns, " + 3 + " is maximum");
                 }

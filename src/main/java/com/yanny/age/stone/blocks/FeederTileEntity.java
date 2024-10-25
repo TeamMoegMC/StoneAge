@@ -3,25 +3,25 @@ package com.yanny.age.stone.blocks;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
@@ -34,7 +34,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class FeederTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity, INamedContainerProvider {
+public class FeederTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity, MenuProvider {
     private static final Set<Item> VALID_ITEMS = new HashSet<>();
     static {
         VALID_ITEMS.addAll(Tags.Items.SEEDS.getValues());
@@ -49,7 +49,7 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     private final LazyOptional<IItemHandlerModifiable> nonSidedInventoryHandler = LazyOptional.of(() -> nonSidedItemHandler);
     private final RecipeWrapper inventoryWrapper = new RecipeWrapper(nonSidedItemHandler);
 
-    private AxisAlignedBB boundingBox = new AxisAlignedBB(getBlockPos());
+    private AABB boundingBox = new AABB(getBlockPos());
 
     public FeederTileEntity() {
         //noinspection ConstantConditions
@@ -68,51 +68,51 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
 
     @Nullable
     @Override
-    public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
+    public AbstractContainerMenu createMenu(int id, @Nonnull Inventory inventory, @Nonnull Player entity) {
         assert level != null;
         return new FeederContainer(id, worldPosition, level, inventory, entity);
     }
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.stone_age.feeder");
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.stone_age.feeder");
     }
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         return super.save(tag);
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
         load(getBlockState(), pkt.getTag());
     }
@@ -135,7 +135,7 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     @Override
     public void clearRemoved() {
         super.clearRemoved();
-        boundingBox = new AxisAlignedBB(worldPosition.getX() - Config.feederEffectRange, worldPosition.getY() - 1, worldPosition.getZ() - Config.feederEffectRange,
+        boundingBox = new AABB(worldPosition.getX() - Config.feederEffectRange, worldPosition.getY() - 1, worldPosition.getZ() - Config.feederEffectRange,
                 worldPosition.getX() + Config.feederEffectRange + 1, worldPosition.getY() + 2, worldPosition.getZ() + Config.feederEffectRange + 1);
     }
 
@@ -208,18 +208,18 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
 
     private void useOnEntity() {
         assert level != null;
-        List<AnimalEntity> entities = level.getEntitiesOfClass(AnimalEntity.class, boundingBox, AnimalEntity::canBreed);
+        List<Animal> entities = level.getEntitiesOfClass(Animal.class, boundingBox, Animal::canBreed);
         Collections.shuffle(entities);
 
         if (!entities.isEmpty()) {
             getItem().ifPresent(itemStack -> {
-                AnimalEntity winner = entities.get(0);
+                Animal winner = entities.get(0);
 
                 if (winner.isBaby()) {
                     winner.ageUp((int)((float)(-winner.getAge() / 20) * 0.1F), true);
                     itemStack.shrink(1);
                 } else {
-                    List<AnimalEntity> entities1 = level.getEntitiesOfClass(winner.getClass(), boundingBox,
+                    List<Animal> entities1 = level.getEntitiesOfClass(winner.getClass(), boundingBox,
                             livingEntity -> !livingEntity.is(winner) && !livingEntity.isBaby() && livingEntity.canBreed());
 
                     if (winner.getAge() == 0 && entities1.size() < 30) {
@@ -229,7 +229,7 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
                         getItem().ifPresent(itemStack1 -> {
                             if (!entities1.isEmpty()) {
                                 Collections.shuffle(entities1);
-                                AnimalEntity winner1 = entities1.get(0);
+                                Animal winner1 = entities1.get(0);
 
                                 if (winner1.getAge() == 0 && winner1.canBreed()) {
                                     winner1.setInLove(null);

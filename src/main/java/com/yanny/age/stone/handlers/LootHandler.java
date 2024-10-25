@@ -3,15 +3,15 @@ package com.yanny.age.stone.handlers;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.loot.*;
-import net.minecraft.loot.conditions.ILootCondition;
-import net.minecraft.loot.conditions.MatchTool;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -30,31 +30,39 @@ import java.util.Map;
 
 import static com.yanny.age.stone.Reference.MODID;
 
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.entries.AlternativesEntry;
+import net.minecraft.world.level.storage.loot.entries.CompositeEntryBase;
+import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
+import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class LootHandler {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<String, Pair<String, Item>> REMOVE_LOOT = Maps.newHashMap();
     private static final Map<String, String> INJECT_POOL = Maps.newHashMap();
-    private static final Map<String, Pair<Block, ITag.INamedTag<Item>>> INJECT_ITEM_POOL = Maps.newHashMap();
-    private static final Map<String, Pair<Block, ITag.INamedTag<Item>>> INJECT_ALTERNATE_ENTRIES = Maps.newHashMap();
-    private static final Map<String, Pair<Block, ITag.INamedTag<Item>>> CHANGE_ALTERNATE_ENTRIES = Maps.newHashMap();
+    private static final Map<String, Pair<Block, Tag.Named<Item>>> INJECT_ITEM_POOL = Maps.newHashMap();
+    private static final Map<String, Pair<Block, Tag.Named<Item>>> INJECT_ALTERNATE_ENTRIES = Maps.newHashMap();
+    private static final Map<String, Pair<Block, Tag.Named<Item>>> CHANGE_ALTERNATE_ENTRIES = Maps.newHashMap();
 
     private static final Field lootEntries;
     private static final Field entryItem;
     private static final Field alternativeEntries;
     private static final Field alternativeConditions;
-    private static final Constructor<AlternativesLootEntry> constructAlternative;
+    private static final Constructor<AlternativesEntry> constructAlternative;
 
     static {
         lootEntries = ObfuscationReflectionHelper.findField(LootPool.class, "entries");
         lootEntries.setAccessible(true);
-        alternativeEntries = ObfuscationReflectionHelper.findField(ParentedLootEntry.class, "children");
+        alternativeEntries = ObfuscationReflectionHelper.findField(CompositeEntryBase.class, "children");
         alternativeEntries.setAccessible(true);
-        alternativeConditions = ObfuscationReflectionHelper.findField(LootEntry.class, "conditions");
+        alternativeConditions = ObfuscationReflectionHelper.findField(LootPoolEntryContainer.class, "conditions");
         alternativeConditions.setAccessible(true);
-        constructAlternative = ObfuscationReflectionHelper.findConstructor(AlternativesLootEntry.class, LootEntry[].class, ILootCondition[].class);
+        constructAlternative = ObfuscationReflectionHelper.findConstructor(AlternativesEntry.class, LootPoolEntryContainer[].class, LootItemCondition[].class);
         constructAlternative.setAccessible(true);
-        entryItem = ObfuscationReflectionHelper.findField(ItemLootEntry.class, "item");
+        entryItem = ObfuscationReflectionHelper.findField(LootItem.class, "item");
         entryItem.setAccessible(true);
 
         REMOVE_LOOT.put("minecraft:entities/horse", new Pair<>("main", Items.LEATHER));
@@ -111,36 +119,36 @@ public class LootHandler {
     }
 
     @Nonnull
-    private static LootEntry.Builder<?> getInjectEntry(@Nonnull String name) {
+    private static LootPoolEntryContainer.Builder<?> getInjectEntry(@Nonnull String name) {
         ResourceLocation table = new ResourceLocation(name);
-        return TableLootEntry.lootTableReference(table).setWeight(1);
+        return LootTableReference.lootTableReference(table).setWeight(1);
     }
 
-    private static void injectItemPool(@Nonnull LootTable table, @Nonnull Pair<Block, ITag.INamedTag<Item>> data) {
+    private static void injectItemPool(@Nonnull LootTable table, @Nonnull Pair<Block, Tag.Named<Item>> data) {
         ItemPredicate.Builder predicate = ItemPredicate.Builder.item().of(data.getSecond());
-        LootEntry.Builder<?> itemLootEntry = ItemLootEntry.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate)).setWeight(1);
+        LootPoolEntryContainer.Builder<?> itemLootEntry = LootItem.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate)).setWeight(1);
         LootPool.Builder pool = LootPool.lootPool().add(itemLootEntry).bonusRolls(0, 1).name("stone_age:inject");
         table.addPool(pool.build());
     }
 
     @SuppressWarnings("unchecked")
-    private static void injectMainAlternativeEntries(@Nonnull LootTable table, @Nonnull Pair<Block, ITag.INamedTag<Item>> data) {
+    private static void injectMainAlternativeEntries(@Nonnull LootTable table, @Nonnull Pair<Block, Tag.Named<Item>> data) {
         try {
             LootPool pool = table.getPool("main");
             //noinspection ConstantConditions
             if (pool != null) {
-                List<LootEntry> entries = (List<LootEntry>) lootEntries.get(pool);
+                List<LootPoolEntryContainer> entries = (List<LootPoolEntryContainer>) lootEntries.get(pool);
 
-                if (entries != null && entries.size() > 0 && entries.get(0) instanceof AlternativesLootEntry) {
+                if (entries != null && entries.size() > 0 && entries.get(0) instanceof AlternativesEntry) {
                     ItemPredicate.Builder predicate = ItemPredicate.Builder.item().of(data.getSecond());
-                    LootEntry itemLootEntry = ItemLootEntry.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate)).build();
-                    LootEntry[] aEntries = (LootEntry[]) alternativeEntries.get(entries.get(0));
-                    ILootCondition[] aConditions = (ILootCondition[]) alternativeConditions.get(entries.get(0));
+                    LootPoolEntryContainer itemLootEntry = LootItem.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate)).build();
+                    LootPoolEntryContainer[] aEntries = (LootPoolEntryContainer[]) alternativeEntries.get(entries.get(0));
+                    LootItemCondition[] aConditions = (LootItemCondition[]) alternativeConditions.get(entries.get(0));
 
                     if (aEntries != null && aConditions != null) {
-                        List<LootEntry> list = Lists.newArrayList(itemLootEntry);
+                        List<LootPoolEntryContainer> list = Lists.newArrayList(itemLootEntry);
                         list.addAll(Arrays.asList(aEntries));
-                        AlternativesLootEntry newAlternative = constructAlternative.newInstance(list.toArray(new LootEntry[0]), aConditions);
+                        AlternativesEntry newAlternative = constructAlternative.newInstance(list.toArray(new LootPoolEntryContainer[0]), aConditions);
                         entries.set(0, newAlternative);
                     } else {
                         LOGGER.warn("Fields not available! {}", data.toString());
@@ -157,19 +165,19 @@ public class LootHandler {
     }
 
     @SuppressWarnings("unchecked")
-    private static void changeToMainAlternativeEntries(@Nonnull LootTable table, @Nonnull Pair<Block, ITag.INamedTag<Item>> data) {
+    private static void changeToMainAlternativeEntries(@Nonnull LootTable table, @Nonnull Pair<Block, Tag.Named<Item>> data) {
         try {
             LootPool pool = table.getPool("main");
             //noinspection ConstantConditions
             if (pool != null) {
-                List<LootEntry> entries = (List<LootEntry>) lootEntries.get(pool);
+                List<LootPoolEntryContainer> entries = (List<LootPoolEntryContainer>) lootEntries.get(pool);
 
                 if (entries != null && entries.size() > 0) {
                     ItemPredicate.Builder predicate = ItemPredicate.Builder.item().of(data.getSecond());
-                    LootEntry.Builder<?> itemLootEntry = ItemLootEntry.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate));
-                    List<LootEntry> list = Lists.newArrayList(itemLootEntry.build());
+                    LootPoolEntryContainer.Builder<?> itemLootEntry = LootItem.lootTableItem(data.getFirst()).when(MatchTool.toolMatches(predicate));
+                    List<LootPoolEntryContainer> list = Lists.newArrayList(itemLootEntry.build());
                     list.addAll(entries);
-                    AlternativesLootEntry a = constructAlternative.newInstance(list.toArray(new LootEntry[0]), new ILootCondition[0]);
+                    AlternativesEntry a = constructAlternative.newInstance(list.toArray(new LootPoolEntryContainer[0]), new LootItemCondition[0]);
                     entries.set(0, a);
                 } else {
                     LOGGER.warn("Alternatives not available! {}", data.toString());
@@ -187,14 +195,14 @@ public class LootHandler {
     public static void removeLootFromTable(@Nonnull LootTable table, @Nonnull Pair<String, Item> data) {
         try {
             LootPool pool = table.getPool(data.getFirst());
-            List<LootEntry> entries = (List<LootEntry>) lootEntries.get(pool);
-            Iterator<LootEntry> it = entries.iterator();
+            List<LootPoolEntryContainer> entries = (List<LootPoolEntryContainer>) lootEntries.get(pool);
+            Iterator<LootPoolEntryContainer> it = entries.iterator();
 
             while(it.hasNext()) {
-                LootEntry entry = it.next();
+                LootPoolEntryContainer entry = it.next();
 
-                if(entry instanceof ItemLootEntry) {
-                    ItemLootEntry lootEntry = (ItemLootEntry)entry;
+                if(entry instanceof LootItem) {
+                    LootItem lootEntry = (LootItem)entry;
                     Item i = (Item) entryItem.get(lootEntry);
 
                     if(i == data.getSecond()) {

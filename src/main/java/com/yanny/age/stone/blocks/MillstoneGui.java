@@ -1,31 +1,31 @@
 package com.yanny.age.stone.blocks;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 
 import javax.annotation.Nonnull;
 
-public class MillstoneGui extends ContainerScreen<MillstoneContainer> {
+public class MillstoneGui extends AbstractContainerScreen<MillstoneContainer> {
 
     private final ResourceLocation GUI = new ResourceLocation(Reference.MODID, "textures/gui/container/millstone.png");
 
-    public MillstoneGui(@Nonnull MillstoneContainer screenContainer, @Nonnull PlayerInventory inv, @Nonnull ITextComponent titleIn) {
+    public MillstoneGui(@Nonnull MillstoneContainer screenContainer, @Nonnull Inventory inv, @Nonnull Component titleIn) {
         super(screenContainer, inv, titleIn);
     }
 
     @Override
-    public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void renderBg(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull PoseStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         if (minecraft == null) {
             return;
         }

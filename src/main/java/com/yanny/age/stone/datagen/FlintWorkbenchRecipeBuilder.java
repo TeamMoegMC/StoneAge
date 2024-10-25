@@ -8,16 +8,16 @@ import com.google.gson.JsonObject;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.advancements.RequirementsStrategy;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.FinishedRecipe;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.ItemLike;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
 
@@ -39,24 +39,24 @@ public class FlintWorkbenchRecipeBuilder {
     @Nullable private Ingredient tool = null;
 
 
-    public FlintWorkbenchRecipeBuilder(IItemProvider resultIn, int countIn) {
+    public FlintWorkbenchRecipeBuilder(ItemLike resultIn, int countIn) {
         this.result = resultIn.asItem();
         this.count = countIn;
     }
 
-    public static FlintWorkbenchRecipeBuilder shapedRecipe(IItemProvider resultIn) {
+    public static FlintWorkbenchRecipeBuilder shapedRecipe(ItemLike resultIn) {
         return shapedRecipe(resultIn, 1);
     }
 
-    public static FlintWorkbenchRecipeBuilder shapedRecipe(IItemProvider resultIn, int countIn) {
+    public static FlintWorkbenchRecipeBuilder shapedRecipe(ItemLike resultIn, int countIn) {
         return new FlintWorkbenchRecipeBuilder(resultIn, countIn);
     }
 
-    public FlintWorkbenchRecipeBuilder key(Character symbol, ITag<Item> tagIn) {
+    public FlintWorkbenchRecipeBuilder key(Character symbol, Tag<Item> tagIn) {
         return this.key(symbol, Ingredient.of(tagIn));
     }
 
-    public FlintWorkbenchRecipeBuilder key(Character symbol, IItemProvider itemIn) {
+    public FlintWorkbenchRecipeBuilder key(Character symbol, ItemLike itemIn) {
         return this.key(symbol, Ingredient.of(itemIn));
     }
 
@@ -71,11 +71,11 @@ public class FlintWorkbenchRecipeBuilder {
         }
     }
 
-    public FlintWorkbenchRecipeBuilder tool(ITag<Item> tool) {
+    public FlintWorkbenchRecipeBuilder tool(Tag<Item> tool) {
         return this.tool(Ingredient.of(tool));
     }
 
-    public FlintWorkbenchRecipeBuilder tool(IItemProvider tool) {
+    public FlintWorkbenchRecipeBuilder tool(ItemLike tool) {
         return this.tool(Ingredient.of(tool));
     }
 
@@ -97,7 +97,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
     }
 
-    public FlintWorkbenchRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
+    public FlintWorkbenchRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
         this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
@@ -107,11 +107,11 @@ public class FlintWorkbenchRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn) {
+    public void build(Consumer<FinishedRecipe> consumerIn) {
         this.build(consumerIn, Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(this.result)));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, String save) {
+    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result);
 
         if ((new ResourceLocation(save)).equals(resourcelocation)) {
@@ -121,7 +121,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         } else if (this.tool == null) {
@@ -129,7 +129,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
 
         this.validate(id);
-        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumerIn.accept(new Result(id, this.result, this.count, this.group == null ? "" : this.group, this.pattern, this.key, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
@@ -159,7 +159,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final Item result;
         private final int count;
@@ -213,7 +213,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return RecipeSubscriber.flint_workbench;
         }
 

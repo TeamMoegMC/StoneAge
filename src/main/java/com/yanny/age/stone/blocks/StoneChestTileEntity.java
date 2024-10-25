@@ -2,27 +2,27 @@ package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.IChestLid;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.LockableLootTileEntity;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.Container;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.util.*;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
@@ -35,8 +35,13 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-@OnlyIn(value = Dist.CLIENT, _interface = IChestLid.class)
-public class StoneChestTileEntity extends LockableLootTileEntity implements IInventoryInterface, INamedContainerProvider, IChestLid, ITickableTileEntity {
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+
+@OnlyIn(value = Dist.CLIENT, _interface = LidBlockEntity.class)
+public class StoneChestTileEntity extends RandomizableContainerBlockEntity implements IInventoryInterface, MenuProvider, LidBlockEntity, TickableBlockEntity {
     static final int INVENTORY_WIDTH = 5;
     static final int INVENTORY_HEIGHT = 3;
 
@@ -95,13 +100,13 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
 
         if (!this.tryLoadLootTable(tag)) {
             ItemStackUtils.deserializeStacks(invTag, stacks);
@@ -112,7 +117,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
 
     @Override
     @Nonnull
-    public CompoundNBT save(@Nonnull CompoundNBT tag) {
+    public CompoundTag save(@Nonnull CompoundTag tag) {
         if (!this.trySaveLootTable(tag)) {
             tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         }
@@ -122,18 +127,18 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
         load(getBlockState(), pkt.getTag());
     }
@@ -166,27 +171,27 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
 
     @Nonnull
     @Override
-    protected Container createMenu(int id, @Nonnull PlayerInventory player) {
+    protected AbstractContainerMenu createMenu(int id, @Nonnull Inventory player) {
         assert level != null;
         return new StoneChestContainer(id, worldPosition, level, player, player.player);
     }
 
     @Nonnull
     @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("block.stone_age.stone_chest");
+    public Component getDisplayName() {
+        return new TranslatableComponent("block.stone_age.stone_chest");
     }
 
     @Nonnull
     @Override
-    protected ITextComponent getDefaultName() {
-        return new StringTextComponent("StoneChest");
+    protected Component getDefaultName() {
+        return new TextComponent("StoneChest");
     }
 
     @OnlyIn(Dist.CLIENT)
     @Override
     public float getOpenNess(float partialTicks) {
-        return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
+        return Mth.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
     }
 
     @Override
@@ -209,7 +214,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         return false;
     }
 
-    public void startOpen(@Nonnull PlayerEntity player) {
+    public void startOpen(@Nonnull Player player) {
         if (!player.isSpectator()) {
             assert this.level != null;
 
@@ -222,7 +227,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         }
     }
 
-    public void stopOpen(@Nonnull PlayerEntity player) {
+    public void stopOpen(@Nonnull Player player) {
         if (!player.isSpectator()) {
             --this.numPlayersUsing;
             this.onOpenOrClose();
@@ -244,7 +249,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         double d0 = (double)this.worldPosition.getX() + 0.5D;
         double d1 = (double)this.worldPosition.getY() + 0.5D;
         double d2 = (double)this.worldPosition.getZ() + 0.5D;
-        this.level.playSound(null, d0, d1, d2, SoundEvents.GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+        this.level.playSound(null, d0, d1, d2, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
 
     @Nonnull
@@ -259,7 +264,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         };
     }
 
-    private static int calculatePlayersUsingSync(@Nonnull World world, @Nonnull StoneChestTileEntity tileEntity, int tickSinceSync, int x, int y, int z, int numUsing) {
+    private static int calculatePlayersUsingSync(@Nonnull Level world, @Nonnull StoneChestTileEntity tileEntity, int tickSinceSync, int x, int y, int z, int numUsing) {
         if (!world.isClientSide && numUsing != 0 && (tickSinceSync + x + y + z) % 200 == 0) {
             numUsing = calculatePlayersUsing(world, tileEntity, x, y, z);
         }
@@ -267,14 +272,14 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         return numUsing;
     }
 
-    private static int calculatePlayersUsing(@Nonnull World world, @Nonnull StoneChestTileEntity tileEntity, int x, int y, int z) {
+    private static int calculatePlayersUsing(@Nonnull Level world, @Nonnull StoneChestTileEntity tileEntity, int x, int y, int z) {
         int i = 0;
         float f = 5.0F;
 
-        for(PlayerEntity playerentity : world.getEntitiesOfClass(PlayerEntity.class,
-                new AxisAlignedBB(x - f, y - f, z - f, (x + 1) + f, (y + 1) + f, (z + 1) + f))) {
+        for(Player playerentity : world.getEntitiesOfClass(Player.class,
+                new AABB(x - f, y - f, z - f, (x + 1) + f, (y + 1) + f, (z + 1) + f))) {
             if (playerentity.containerMenu instanceof StoneChestContainer) {
-                IInventory inventory = ((StoneChestContainer)playerentity.containerMenu).getIInventory();
+                Container inventory = ((StoneChestContainer)playerentity.containerMenu).getIInventory();
 
                 if (inventory == tileEntity.inventoryWrapper) {
                     ++i;

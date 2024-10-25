@@ -4,20 +4,20 @@ import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.ITickableTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.level.block.entity.TickableBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class DryingRackTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity {
+public class DryingRackTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity {
     public static final int ITEMS = 4;
 
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(ITEMS * 2, ItemStack.EMPTY);
@@ -88,7 +88,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Nonnull
     @Override
-    public IInventory getInventory() {
+    public Container getInventory() {
         return inventoryWrapper;
     }
 
@@ -98,8 +98,8 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
-        CompoundNBT invTag = tag.getCompound("inv");
+    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+        CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
 
         for (int i = 0; i < ITEMS; i++) {
@@ -111,7 +111,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Override
     @Nonnull
-    public CompoundNBT save(CompoundNBT tag) {
+    public CompoundTag save(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
 
         for (int i = 0; i < ITEMS; i++) {
@@ -123,18 +123,18 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+    public ClientboundBlockEntityDataPacket getUpdatePacket() {
+        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
-    public CompoundNBT getUpdateTag() {
-        return save(new CompoundNBT());
+    public CompoundTag getUpdateTag() {
+        return save(new CompoundTag());
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
         load(getBlockState(), pkt.getTag());
     }
@@ -165,7 +165,7 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
         return items[index];
     }
 
-    void blockActivated(@Nonnull PlayerEntity player) {
+    void blockActivated(@Nonnull Player player) {
         assert level != null;
 
         if (!level.isClientSide) {
@@ -190,10 +190,10 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
                     stacks.set(i + ITEMS, ItemStack.EMPTY);
                     stacks.set(i, ItemStack.EMPTY);
 
-                    InventoryHelper.dropContents(level, getBlockPos(), itemStacks);
+                    Containers.dropContents(level, getBlockPos(), itemStacks);
 
                     level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
-                    level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+                    level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1.0f, 1.0f);
                     return;
                 }
             }
@@ -279,18 +279,18 @@ public class DryingRackTileEntity extends TileEntity implements IInventoryInterf
             this.result = ItemStack.EMPTY;
         }
 
-        CompoundNBT write() {
-            CompoundNBT nbt = new CompoundNBT();
+        CompoundTag write() {
+            CompoundTag nbt = new CompoundTag();
             nbt.putBoolean("active", active);
             nbt.putInt("dryingTime", dryingTime);
             nbt.putInt("remaining", remaining);
-            CompoundNBT item = new CompoundNBT();
+            CompoundTag item = new CompoundTag();
             result.save(item);
             nbt.put("item", item);
             return nbt;
         }
 
-        void read(CompoundNBT nbt) {
+        void read(CompoundTag nbt) {
             active = nbt.getBoolean("active");
             dryingTime = nbt.getInt("dryingTime");
             remaining = nbt.getInt("remaining");

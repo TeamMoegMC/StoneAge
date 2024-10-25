@@ -4,21 +4,13 @@ import com.google.gson.JsonObject;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.ICriterionInstance;
-import net.minecraft.advancements.IRequirementsStrategy;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
-import net.minecraft.data.IFinishedRecipe;
 import net.minecraft.item.Item;
-import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.IItemProvider;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 @NonnullDefault
 public class DryingRackRecipeBuilder {
@@ -29,17 +21,17 @@ public class DryingRackRecipeBuilder {
     @Nullable private String group = null;
     private int dryingTime = 300;
 
-    public DryingRackRecipeBuilder(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public DryingRackRecipeBuilder(ItemLike resultIn, ItemLike input, int countIn) {
         this.result = resultIn.asItem();
         this.input = Ingredient.of(input);
         this.count = countIn;
     }
 
-    public static DryingRackRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input) {
+    public static DryingRackRecipeBuilder recipe(ItemLike resultIn, ItemLike input) {
         return recipe(resultIn, input, 1);
     }
 
-    public static DryingRackRecipeBuilder recipe(IItemProvider resultIn, IItemProvider input, int countIn) {
+    public static DryingRackRecipeBuilder recipe(ItemLike resultIn, ItemLike input, int countIn) {
         return new DryingRackRecipeBuilder(resultIn, input, countIn);
     }
 
@@ -48,7 +40,7 @@ public class DryingRackRecipeBuilder {
         return this;
     }
 
-    public DryingRackRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
+    public DryingRackRecipeBuilder addCriterion(String name, CriterionTriggerInstance criterionIn) {
         this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
@@ -58,11 +50,11 @@ public class DryingRackRecipeBuilder {
         return this;
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn) {
+    public void build(Consumer<FinishedRecipe> consumerIn) {
         this.build(consumerIn, Objects.requireNonNull(ForgeRegistries.ITEMS.getKey(this.result)));
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, String save) {
+    public void build(Consumer<FinishedRecipe> consumerIn, String save) {
         ResourceLocation resourcelocation = ForgeRegistries.ITEMS.getKey(this.result);
 
         if ((new ResourceLocation(save)).equals(resourcelocation)) {
@@ -72,16 +64,16 @@ public class DryingRackRecipeBuilder {
         }
     }
 
-    public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
+    public void build(Consumer<FinishedRecipe> consumerIn, ResourceLocation id) {
         if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         }
 
-        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(RequirementsStrategy.OR);
         consumerIn.accept(new Result(id, this.result, this.input, this.count, this.dryingTime, this.group == null ? "" : this.group, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
-    public static class Result implements IFinishedRecipe {
+    public static class Result implements FinishedRecipe {
         private final ResourceLocation id;
         private final Item result;
         private final int count;
@@ -121,7 +113,7 @@ public class DryingRackRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getType() {
+        public RecipeSerializer<?> getType() {
             return RecipeSubscriber.drying_rack;
         }
 

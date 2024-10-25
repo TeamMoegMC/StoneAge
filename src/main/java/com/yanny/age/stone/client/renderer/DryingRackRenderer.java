@@ -1,33 +1,33 @@
 package com.yanny.age.stone.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.DryingRackTileEntity;
-import net.minecraft.block.HorizontalBlock;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.core.Direction;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
-import static net.minecraft.client.renderer.model.ItemCameraTransforms.*;
+import static net.minecraft.client.renderer.block.model.ItemTransforms.*;
 
-import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 
 @OnlyIn(Dist.CLIENT)
-public class DryingRackRenderer extends TileEntityRenderer<DryingRackTileEntity> {
-    public DryingRackRenderer(@Nonnull TileEntityRendererDispatcher rendererDispatcher) {
+public class DryingRackRenderer extends BlockEntityRenderer<DryingRackTileEntity> {
+    public DryingRackRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }
 
     @Override
-    public void render(@Nonnull DryingRackTileEntity tileEntityIn, float partialTicks, @Nonnull MatrixStack matrixStack,
-                       @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
-        Direction direction = tileEntityIn.getBlockState().getValue(HorizontalBlock.FACING);
+    public void render(@Nonnull DryingRackTileEntity tileEntityIn, float partialTicks, @Nonnull PoseStack matrixStack,
+                       @Nonnull MultiBufferSource renderTypeBuffer, int overlayUV, int lightmapUV) {
+        Direction direction = tileEntityIn.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
 
         for (int i = 0; i < DryingRackTileEntity.ITEMS; i++) {
             float xOffset = (direction == Direction.EAST || direction == Direction.WEST) ? ((i / 2 == 0) ? 0.46f : 0.54f) : ((i % 2 == 0) ? 0.35f : 0.65f);

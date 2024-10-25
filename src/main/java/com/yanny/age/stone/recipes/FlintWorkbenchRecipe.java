@@ -4,15 +4,15 @@ import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
 import com.yanny.ages.api.items.AgesPartItem;
 import com.yanny.ages.api.items.AgesToolItem;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeType;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.Container;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,9 +21,9 @@ import java.util.Arrays;
 
 import static com.yanny.ages.api.items.AgesToolItem.*;
 
-public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
+public class FlintWorkbenchRecipe implements Recipe<Container> {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final IRecipeType<FlintWorkbenchRecipe> flint_workbench = IRecipeType.register(Reference.MODID + ":flint_workbench");
+    public static final RecipeType<FlintWorkbenchRecipe> flint_workbench = RecipeType.register(Reference.MODID + ":flint_workbench");
     public static final int MAX_WIDTH = 3;
     public static final int MAX_HEIGHT = 3;
 
@@ -55,14 +55,14 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
 
     @Nonnull
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         //noinspection ConstantConditions
         return RecipeSubscriber.flint_workbench;
     }
 
     @Nonnull
     @Override
-    public IRecipeType<?> getType() {
+    public RecipeType<?> getType() {
         return flint_workbench;
     }
 
@@ -90,7 +90,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean matches(@Nonnull IInventory inv, @Nonnull World worldIn) {
+    public boolean matches(@Nonnull Container inv, @Nonnull Level worldIn) {
         for(int x = 0; x <= MAX_WIDTH - recipeWidth; ++x) {
             for(int y = 0; y <= MAX_HEIGHT - recipeHeight; ++y) {
                 if (this.checkMatch(inv, x, y, true)) {
@@ -108,7 +108,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull IInventory inv) {
+    public ItemStack assemble(@Nonnull Container inv) {
         ItemStack result = getResultItem().copy();
 
         if (result.getItem() instanceof AgesPartItem) {
@@ -146,7 +146,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
     /**
      * Checks if the region of a crafting inventory is match for the recipe.
      */
-    private boolean checkMatch(@Nonnull IInventory inventory, int dx, int dy, boolean reversed) {
+    private boolean checkMatch(@Nonnull Container inventory, int dx, int dy, boolean reversed) {
         for(int x = 0; x < MAX_WIDTH; ++x) {
             for(int y = 0; y < MAX_HEIGHT; ++y) {
                 int x1 = x - dx;

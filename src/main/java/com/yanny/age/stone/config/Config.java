@@ -1,10 +1,10 @@
 package com.yanny.age.stone.config;
 
 import com.google.common.collect.Sets;
-import net.minecraft.block.Block;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.EnumSet;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static net.minecraft.world.biome.Biome.Category.*;
+import static net.minecraft.world.level.biome.Biome.BiomeCategory.*;
 
 public class Config {
     static final Set<Biome> DEFAULT_DEER_BIOMES;

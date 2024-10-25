@@ -1,37 +1,37 @@
 package com.yanny.age.stone.client.renderer;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.blocks.StoneChestBlock;
 import com.yanny.age.stone.blocks.StoneChestTileEntity;
 import com.yanny.age.stone.client.models.StoneChestModel;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.tileentity.IChestLid;
-import net.minecraft.util.Direction;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.world.level.block.entity.LidBlockEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceLocation;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class StoneChestRenderer extends TileEntityRenderer<StoneChestTileEntity> {
+public class StoneChestRenderer extends BlockEntityRenderer<StoneChestTileEntity> {
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/stone_chest.png");
     private final StoneChestModel model = new StoneChestModel();
 
-    public StoneChestRenderer(@Nonnull TileEntityRendererDispatcher rendererDispatcher) {
+    public StoneChestRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }
 
     @Override
-    public void render(@Nonnull StoneChestTileEntity tileEntity, float partialTicks, @Nonnull MatrixStack matrixStack,
-                       @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
+    public void render(@Nonnull StoneChestTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,
+                       @Nonnull MultiBufferSource renderTypeBuffer, int overlayUV, int lightmapUV) {
         //noinspection ConstantConditions
         BlockState blockstate = tileEntity.hasLevel() ? tileEntity.getBlockState() :
                 BlockSubscriber.stone_chest.defaultBlockState().setValue(StoneChestBlock.FACING, Direction.SOUTH);
@@ -57,7 +57,7 @@ public class StoneChestRenderer extends TileEntityRenderer<StoneChestTileEntity>
     }
 
     private void applyLidRotation(@Nonnull StoneChestTileEntity tileEntity, float angle, @Nonnull StoneChestModel model) {
-        float f = ((IChestLid)tileEntity).getOpenNess(angle);
+        float f = ((LidBlockEntity)tileEntity).getOpenNess(angle);
         f = 1.0F - f;
         f = 1.0F - f * f * f;
         model.getLid().yRot = -(f * ((float)Math.PI / 2F));
