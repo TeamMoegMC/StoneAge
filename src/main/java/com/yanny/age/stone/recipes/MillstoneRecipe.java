@@ -42,12 +42,12 @@ public class MillstoneRecipe implements IRecipe<IInventory> {
 
     @Override
     public boolean matches(IInventory inv, @Nonnull World worldIn) {
-        return this.ingredient.test(inv.getStackInSlot(0));
+        return this.ingredient.test(inv.getItem(0));
     }
 
     @Override
     @Nonnull
-    public ItemStack getCraftingResult(@Nullable IInventory inv) {
+    public ItemStack assemble(@Nullable IInventory inv) {
         return result.copy();
     }
 
@@ -57,13 +57,13 @@ public class MillstoneRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
     @Override
     @Nonnull
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return result;
     }
 
@@ -101,7 +101,7 @@ public class MillstoneRecipe implements IRecipe<IInventory> {
 
     @Override
     @Nonnull
-    public ItemStack getIcon() {
+    public ItemStack getToastSymbol() {
         return new ItemStack(BlockSubscriber.millstone);
     }
 

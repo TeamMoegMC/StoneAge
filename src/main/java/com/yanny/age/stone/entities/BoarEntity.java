@@ -40,15 +40,15 @@ public class BoarEntity extends WildAnimalEntity implements TopEntityInfoProvide
 
     @Nullable
     @Override
-    public AgeableEntity createChild(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
-        if (Math.min(dataManager.get(GENERATION), ageable.getDataManager().get(GENERATION)) >= Config.domesticateAfterGenerations) {
+    public AgeableEntity getBreedOffspring(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
+        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
             EntityType<?> child = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(Config.boarBreedingResult));
 
             if (child != null) {
-                Entity result = child.create(world);
+                Entity result = child.create(level);
 
                 if (result instanceof AgeableEntity) {
-                    return (AgeableEntity) child.create(world);
+                    return (AgeableEntity) child.create(level);
                 } else {
                     LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default PIG entity", Config.boarBreedingResult);
                 }
@@ -56,12 +56,12 @@ public class BoarEntity extends WildAnimalEntity implements TopEntityInfoProvide
                 LOGGER.warn("'{}' does not exists! Spawning default PIG entity", Config.boarBreedingResult);
             }
 
-            return EntityType.PIG.create(world);
+            return EntityType.PIG.create(level);
         } else {
-            BoarEntity entity = EntitySubscriber.boar.create(world);
+            BoarEntity entity = EntitySubscriber.boar.create(level);
 
             if (entity != null) {
-                entity.setGeneration(dataManager.get(GENERATION) + 1);
+                entity.setGeneration(entityData.get(GENERATION) + 1);
             }
 
             return entity;
@@ -73,7 +73,7 @@ public class BoarEntity extends WildAnimalEntity implements TopEntityInfoProvide
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(2, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.fromItems(Items.CARROT), false));
+        this.goalSelector.addGoal(3, new TemptGoal(this, 1.0D, Ingredient.of(Items.CARROT), false));
         this.goalSelector.addGoal(5, new RaidFarmGoal<>(this, CropsBlock.class, CropsBlock.AGE));
         this.goalSelector.addGoal(4, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
@@ -84,42 +84,42 @@ public class BoarEntity extends WildAnimalEntity implements TopEntityInfoProvide
     }
 
     public static AttributeModifierMap getAttributes() {
-        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 15.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3F).create();
+        return MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 15.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
     @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        this.playSound(SoundEvents.ENTITY_PIG_HURT, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 4.0F);
+    public boolean doHurtTarget(Entity entityIn) {
+        this.playSound(SoundEvents.PIG_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+        return entityIn.hurt(DamageSource.mobAttack(this), 4.0F);
     }
 
     @Override
     public SoundEvent getAmbientSound() {
-        return SoundEvents.ENTITY_PIG_AMBIENT;
+        return SoundEvents.PIG_AMBIENT;
     }
 
     @Override
     public SoundEvent getHurtSound(@Nonnull DamageSource damageSourceIn) {
-        return SoundEvents.ENTITY_PIG_HURT;
+        return SoundEvents.PIG_HURT;
     }
 
     @Override
     public SoundEvent getDeathSound() {
-        return SoundEvents.ENTITY_PIG_DEATH;
+        return SoundEvents.PIG_DEATH;
     }
 
     @Override
     public void playStepSound(@Nonnull BlockPos pos, @Nonnull BlockState blockIn) {
-        this.playSound(SoundEvents.ENTITY_PIG_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.PIG_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) {
+    public boolean isFood(ItemStack stack) {
         return stack.getItem() == Items.CARROT;
     }
 
     @Override
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull PlayerEntity player, @Nonnull World world, @Nonnull Entity entity, @Nonnull IProbeHitEntityData data) {
-        probeInfo.horizontal().text(new StringTextComponent("Generation: " + dataManager.get(GENERATION)));
+        probeInfo.horizontal().text(new StringTextComponent("Generation: " + entityData.get(GENERATION)));
     }
 }

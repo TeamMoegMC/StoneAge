@@ -21,10 +21,10 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void init() {
-        ScreenManager.registerFactory(ContainerSubscriber.stone_chest, StoneChestGui::new);
-        ScreenManager.registerFactory(ContainerSubscriber.feeder, FeederGui::new);
-        ScreenManager.registerFactory(ContainerSubscriber.millstone, MillstoneGui::new);
-        ScreenManager.registerFactory(ContainerSubscriber.fishing_net, FishingNetGui::new);
+        ScreenManager.register(ContainerSubscriber.stone_chest, StoneChestGui::new);
+        ScreenManager.register(ContainerSubscriber.feeder, FeederGui::new);
+        ScreenManager.register(ContainerSubscriber.millstone, MillstoneGui::new);
+        ScreenManager.register(ContainerSubscriber.fishing_net, FishingNetGui::new);
 
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.deer, new DeerRenderer.RenderFactory());
         RenderingRegistry.registerEntityRenderingHandler(EntitySubscriber.boar, new BoarRenderer.RenderFactory());
@@ -49,7 +49,7 @@ public class ClientProxy implements IProxy {
     @Override
     @Nullable
     public World getClientWorld() {
-        return Minecraft.getInstance().world;
+        return Minecraft.getInstance().level;
     }
 
     @Override

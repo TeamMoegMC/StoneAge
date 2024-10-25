@@ -30,11 +30,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DryingRackBlock extends HorizontalBlock implements TopBlockInfoProvider {
-    private static final VoxelShape SHAPE_NS = Block.makeCuboidShape(0.0D, 0.0D, 7.5D, 16.0D, 16.0D, 8.5D);
-    private static final VoxelShape SHAPE_EW = Block.makeCuboidShape(7.5D, 0.0D, 0.0D, 8.5D, 16.0D, 16.0D);
+    private static final VoxelShape SHAPE_NS = Block.box(0.0D, 0.0D, 7.5D, 16.0D, 16.0D, 8.5D);
+    private static final VoxelShape SHAPE_EW = Block.box(7.5D, 0.0D, 0.0D, 8.5D, 16.0D, 16.0D);
 
     public DryingRackBlock() {
-        super(Block.Properties.create(Material.WOOD).harvestLevel(ItemTier.WOOD.getHarvestLevel()).harvestTool(ToolType.AXE).hardnessAndResistance(2.0f));
+        super(Block.Properties.of(Material.WOOD).harvestLevel(ItemTier.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
     }
 
     @Override
@@ -51,45 +51,45 @@ public class DryingRackBlock extends HorizontalBlock implements TopBlockInfoProv
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
-    public BlockRenderType getRenderType(@Nonnull BlockState state) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
         return BlockRenderType.MODEL;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
-    public boolean isVariableOpacity() {
+    public boolean hasDynamicShape() {
         return true;
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
 
         if (tileentity instanceof DryingRackTileEntity) {
             ((DryingRackTileEntity) tileentity).blockActivated(player);
             return ActionResultType.SUCCESS;
         }
 
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        return super.use(state, worldIn, pos, player, handIn, hit);
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        if (state.get(HORIZONTAL_FACING).getAxis() == Direction.Axis.Z) {
+        if (state.getValue(FACING).getAxis() == Direction.Axis.Z) {
             return SHAPE_NS;
         } else {
             return SHAPE_EW;
@@ -98,22 +98,22 @@ public class DryingRackBlock extends HorizontalBlock implements TopBlockInfoProv
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
 
             if (tileentity instanceof DryingRackTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, ((DryingRackTileEntity)tileentity).getInventory());
+                InventoryHelper.dropContents(worldIn, pos, ((DryingRackTileEntity)tileentity).getInventory());
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
-        TileEntity te = world.getTileEntity(iProbeHitData.getPos());
+        TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
 
         if (te instanceof DryingRackTileEntity) {
             DryingRackTileEntity dataTileEntity = (DryingRackTileEntity) te;

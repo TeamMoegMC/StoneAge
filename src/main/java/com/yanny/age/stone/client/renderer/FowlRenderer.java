@@ -24,19 +24,19 @@ public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull FowlEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull FowlEntity entity) {
         return FOWL_TEXTURE;
     }
 
     @Override
-    protected float handleRotationFloat(FowlEntity livingBase, float partialTicks) {
+    protected float getBob(FowlEntity livingBase, float partialTicks) {
         float f = MathHelper.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
         float f1 = MathHelper.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
         return (MathHelper.sin(f) + 1.0F) * f1;
     }
 
     @Override
-    protected boolean canRenderName(FowlEntity entity) {
+    protected boolean shouldShowName(FowlEntity entity) {
         return entity.hasCustomName();
     }
 

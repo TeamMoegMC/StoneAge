@@ -23,12 +23,12 @@ public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull BoarEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull BoarEntity entity) {
         return BOAR_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(BoarEntity entity) {
+    protected boolean shouldShowName(BoarEntity entity) {
         return entity.hasCustomName();
     }
 

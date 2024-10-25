@@ -24,18 +24,18 @@ public class BurialPlaceFeature extends Feature<ProbabilityConfig> {
     }
 
     @Override
-    public boolean generate(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
+    public boolean place(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
         if (random.nextFloat() < featureConfig.probability) {
-            generateStoneChest(seedReader, pos.add(0, -2, 0), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), Direction.Plane.HORIZONTAL.random(random));
+            generateStoneChest(seedReader, pos.offset(0, -2, 0), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), Direction.Plane.HORIZONTAL.getRandomDirection(random));
 
-            replaceAirAndLiquidDownwards(seedReader, pos.add(-4, 2, 0), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(-3, 2, -3), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(-3, 2, 3), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(0, 2, -4), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(0, 2, 4), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(3, 2, -3), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(3, 2, 3), Blocks.STONE.getDefaultState());
-            replaceAirAndLiquidDownwards(seedReader, pos.add(4, 2, 0), Blocks.STONE.getDefaultState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(-4, 2, 0), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(-3, 2, -3), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(-3, 2, 3), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(0, 2, -4), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(0, 2, 4), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(3, 2, -3), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(3, 2, 3), Blocks.STONE.defaultBlockState());
+            replaceAirAndLiquidDownwards(seedReader, pos.offset(4, 2, 0), Blocks.STONE.defaultBlockState());
 
             return true;
         }

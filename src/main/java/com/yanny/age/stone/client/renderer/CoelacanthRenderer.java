@@ -23,17 +23,17 @@ public class CoelacanthRenderer extends MobRenderer<CoelacanthEntity, Coelacanth
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull CoelacanthEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull CoelacanthEntity entity) {
         return COELACANT_TEXTURE;
     }
 
     @Override
-    protected float handleRotationFloat(@Nonnull CoelacanthEntity livingBase, float partialTicks) {
+    protected float getBob(@Nonnull CoelacanthEntity livingBase, float partialTicks) {
         return 1.0f;
     }
 
     @Override
-    protected boolean canRenderName(CoelacanthEntity entity) {
+    protected boolean shouldShowName(CoelacanthEntity entity) {
         return entity.hasCustomName();
     }
 

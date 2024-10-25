@@ -23,6 +23,6 @@ public abstract class BaseComponent implements ICustomComponent  {
     }
 
     public void drawCenteredStringNoShadow(MatrixStack ms, IReorderingProcessor s, int x, int y, int color, FontRenderer fontRenderer) {
-        fontRenderer.func_238422_b_(ms, s, x - fontRenderer.func_243245_a(s) / 2.0F, y, color);
+        fontRenderer.draw(ms, s, x - fontRenderer.width(s) / 2.0F, y, color);
     }
 }

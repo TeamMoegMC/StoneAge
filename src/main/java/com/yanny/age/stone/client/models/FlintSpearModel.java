@@ -15,12 +15,12 @@ public class FlintSpearModel extends Model {
 	private final ModelRenderer bone;
 
 	public FlintSpearModel() {
-		super(RenderType::getEntityCutout);
-		textureWidth = 32;
-		textureHeight = 32;
+		super(RenderType::entityCutout);
+		texWidth = 32;
+		texHeight = 32;
 
 		bone = new ModelRenderer(this, 0, 0);
-		bone.setRotationPoint(0.0F, 24.0F, 0.0F);
+		bone.setPos(0.0F, 24.0F, 0.0F);
 		bone.addBox(-0.5F, -16F, -0.5F, 1, 29, 1, 0.0F, false);
 
 		ModelRenderer bone1 = new ModelRenderer(this, 4, 0);
@@ -45,7 +45,7 @@ public class FlintSpearModel extends Model {
 	}
 
 	@Override
-	public void render(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
+	public void renderToBuffer(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
 		bone.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 }

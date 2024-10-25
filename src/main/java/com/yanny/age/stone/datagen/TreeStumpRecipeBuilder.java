@@ -26,14 +26,14 @@ public class TreeStumpRecipeBuilder {
     private final Item result;
     private final int count;
     private final Ingredient input;
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     @Nullable private String group = null;
     @Nullable private Ingredient tool = null;
     private int chopTimes = 1;
 
     public TreeStumpRecipeBuilder(IItemProvider resultIn, IItemProvider input, int countIn) {
         this.result = resultIn.asItem();
-        this.input = Ingredient.fromItems(input);
+        this.input = Ingredient.of(input);
         this.count = countIn;
     }
 
@@ -46,11 +46,11 @@ public class TreeStumpRecipeBuilder {
     }
 
     public TreeStumpRecipeBuilder tool(ITag<Item> tool) {
-        return this.tool(Ingredient.fromTag(tool));
+        return this.tool(Ingredient.of(tool));
     }
 
     public TreeStumpRecipeBuilder tool(IItemProvider tool) {
-        return this.tool(Ingredient.fromItems(tool));
+        return this.tool(Ingredient.of(tool));
     }
 
     public TreeStumpRecipeBuilder tool(Ingredient tool) {
@@ -68,7 +68,7 @@ public class TreeStumpRecipeBuilder {
     }
 
     public TreeStumpRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -92,14 +92,14 @@ public class TreeStumpRecipeBuilder {
     }
 
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
-        if (this.result.getGroup() == null) {
+        if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         } else if (this.tool == null) {
             throw new IllegalStateException("Tool is not set!");
         }
 
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new Result(id, this.result, this.input, this.count, this.chopTimes, this.group == null ? "" : this.group, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getGroup().getPath() + "/" + id.getPath())));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumerIn.accept(new Result(id, this.result, this.input, this.count, this.chopTimes, this.group == null ? "" : this.group, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     public static class Result implements IFinishedRecipe {
@@ -125,13 +125,13 @@ public class TreeStumpRecipeBuilder {
             this.advancementId = advancementIdIn;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
 
-            json.add("tool", tool.serialize());
-            json.add("ingredient", input.serialize());
+            json.add("tool", tool.toJson());
+            json.add("ingredient", input.toJson());
             json.addProperty("chopTimes", chopTimes);
 
             JsonObject jsonObject = new JsonObject();
@@ -145,14 +145,14 @@ public class TreeStumpRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return RecipeSubscriber.tree_stump;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -160,8 +160,8 @@ public class TreeStumpRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advancementBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advancementBuilder.serializeToJson();
         }
 
         /**
@@ -169,7 +169,7 @@ public class TreeStumpRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
     }

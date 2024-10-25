@@ -37,8 +37,8 @@ import java.util.*;
 public class FeederTileEntity extends TileEntity implements IInventoryInterface, ITickableTileEntity, INamedContainerProvider {
     private static final Set<Item> VALID_ITEMS = new HashSet<>();
     static {
-        VALID_ITEMS.addAll(Tags.Items.SEEDS.getAllElements());
-        VALID_ITEMS.addAll(Tags.Items.CROPS.getAllElements());
+        VALID_ITEMS.addAll(Tags.Items.SEEDS.getValues());
+        VALID_ITEMS.addAll(Tags.Items.CROPS.getValues());
     }
 
     public static final int ITEMS = 4;
@@ -49,7 +49,7 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     private final LazyOptional<IItemHandlerModifiable> nonSidedInventoryHandler = LazyOptional.of(() -> nonSidedItemHandler);
     private final RecipeWrapper inventoryWrapper = new RecipeWrapper(nonSidedItemHandler);
 
-    private AxisAlignedBB boundingBox = new AxisAlignedBB(getPos());
+    private AxisAlignedBB boundingBox = new AxisAlignedBB(getBlockPos());
 
     public FeederTileEntity() {
         //noinspection ConstantConditions
@@ -58,10 +58,10 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
 
     @Override
     public void tick() {
-        if (world != null && !world.isRemote) {
-            if (world.rand.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && getItem().isPresent()) {
+        if (level != null && !level.isClientSide) {
+            if (level.random.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && getItem().isPresent()) {
                 useOnEntity();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     }
@@ -69,8 +69,8 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     @Nullable
     @Override
     public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
-        assert world != null;
-        return new FeederContainer(id, pos, world, inventory, entity);
+        assert level != null;
+        return new FeederContainer(id, worldPosition, level, inventory, entity);
     }
 
     @Nonnull
@@ -86,35 +86,35 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
+    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -133,17 +133,17 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     }
 
     @Override
-    public void validate() {
-        super.validate();
-        boundingBox = new AxisAlignedBB(pos.getX() - Config.feederEffectRange, pos.getY() - 1, pos.getZ() - Config.feederEffectRange,
-                pos.getX() + Config.feederEffectRange + 1, pos.getY() + 2, pos.getZ() + Config.feederEffectRange + 1);
+    public void clearRemoved() {
+        super.clearRemoved();
+        boundingBox = new AxisAlignedBB(worldPosition.getX() - Config.feederEffectRange, worldPosition.getY() - 1, worldPosition.getZ() - Config.feederEffectRange,
+                worldPosition.getX() + Config.feederEffectRange + 1, worldPosition.getY() + 2, worldPosition.getZ() + Config.feederEffectRange + 1);
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     boolean isItemValid(@Nonnull ItemStack itemStack) {
@@ -166,9 +166,9 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -194,9 +194,9 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -207,22 +207,22 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
     }
 
     private void useOnEntity() {
-        assert world != null;
-        List<AnimalEntity> entities = world.getEntitiesWithinAABB(AnimalEntity.class, boundingBox, AnimalEntity::canBreed);
+        assert level != null;
+        List<AnimalEntity> entities = level.getEntitiesOfClass(AnimalEntity.class, boundingBox, AnimalEntity::canBreed);
         Collections.shuffle(entities);
 
         if (!entities.isEmpty()) {
             getItem().ifPresent(itemStack -> {
                 AnimalEntity winner = entities.get(0);
 
-                if (winner.isChild()) {
-                    winner.ageUp((int)((float)(-winner.getGrowingAge() / 20) * 0.1F), true);
+                if (winner.isBaby()) {
+                    winner.ageUp((int)((float)(-winner.getAge() / 20) * 0.1F), true);
                     itemStack.shrink(1);
                 } else {
-                    List<AnimalEntity> entities1 = world.getEntitiesWithinAABB(winner.getClass(), boundingBox,
-                            livingEntity -> !livingEntity.isEntityEqual(winner) && !livingEntity.isChild() && livingEntity.canBreed());
+                    List<AnimalEntity> entities1 = level.getEntitiesOfClass(winner.getClass(), boundingBox,
+                            livingEntity -> !livingEntity.is(winner) && !livingEntity.isBaby() && livingEntity.canBreed());
 
-                    if (winner.getGrowingAge() == 0 && entities1.size() < 30) {
+                    if (winner.getAge() == 0 && entities1.size() < 30) {
                         winner.setInLove(null);
                         itemStack.shrink(1);
 
@@ -231,7 +231,7 @@ public class FeederTileEntity extends TileEntity implements IInventoryInterface,
                                 Collections.shuffle(entities1);
                                 AnimalEntity winner1 = entities1.get(0);
 
-                                if (winner1.getGrowingAge() == 0 && winner1.canBreed()) {
+                                if (winner1.getAge() == 0 && winner1.canBreed()) {
                                     winner1.setInLove(null);
                                     itemStack1.shrink(1);
                                 }

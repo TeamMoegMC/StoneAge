@@ -74,7 +74,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
 
     @Nonnull
     @Override
-    public ItemStack getRecipeOutput() {
+    public ItemStack getResultItem() {
         return this.recipeOutput;
     }
 
@@ -85,7 +85,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width >= this.recipeWidth && height >= this.recipeHeight;
     }
 
@@ -108,8 +108,8 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
 
     @Nonnull
     @Override
-    public ItemStack getCraftingResult(@Nonnull IInventory inv) {
-        ItemStack result = getRecipeOutput().copy();
+    public ItemStack assemble(@Nonnull IInventory inv) {
+        ItemStack result = getResultItem().copy();
 
         if (result.getItem() instanceof AgesPartItem) {
             AgesPartItem item = (AgesPartItem) result.getItem();
@@ -117,8 +117,8 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
         } else if (result.getItem() instanceof AgesToolItem) {
             ItemStack part = null;
 
-            for (int i = 0; i < inv.getSizeInventory(); i++) {
-                ItemStack itemStack = inv.getStackInSlot(i);
+            for (int i = 0; i < inv.getContainerSize(); i++) {
+                ItemStack itemStack = inv.getItem(i);
 
                 if (itemStack.getItem() instanceof AgesPartItem) {
                     part = itemStack;
@@ -128,7 +128,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
             if (part != null) {
                 setAdditionalModifiers(result, getAdditionalAttackDamage(part), getAdditionalAttackSpeed(part), getAdditionalEfficiency(part));
             } else {
-                LOGGER.warn("Expected item with AgesToolItem parent '{}' recipe", recipeOutput.getDisplayName());
+                LOGGER.warn("Expected item with AgesToolItem parent '{}' recipe", recipeOutput.getHoverName());
             }
         }
 
@@ -161,7 +161,7 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
                     }
                 }
 
-                if (!ingredient.test(inventory.getStackInSlot(x + y * MAX_WIDTH))) {
+                if (!ingredient.test(inventory.getItem(x + y * MAX_WIDTH))) {
                     return false;
                 }
             }
@@ -176,6 +176,6 @@ public class FlintWorkbenchRecipe implements IRecipe<IInventory> {
     }
 
     public boolean testTool(ItemStack itemStack) {
-        return Arrays.stream(tool.getMatchingStacks()).anyMatch(item -> item.getItem() == itemStack.getItem());
+        return Arrays.stream(tool.getItems()).anyMatch(item -> item.getItem() == itemStack.getItem());
     }
 }

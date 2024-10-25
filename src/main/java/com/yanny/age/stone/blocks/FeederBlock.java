@@ -26,12 +26,14 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class FeederBlock extends HorizontalBlock {
-    private static final VoxelShape SHAPE_NS = Block.makeCuboidShape(0, 0, 4, 16, 6, 12);
-    private static final VoxelShape SHAPE_EW = Block.makeCuboidShape(4, 0, 0, 12, 6, 16);
+    private static final VoxelShape SHAPE_NS = Block.box(0, 0, 4, 16, 6, 12);
+    private static final VoxelShape SHAPE_EW = Block.box(4, 0, 0, 12, 6, 16);
 
     public FeederBlock() {
-        super(Properties.create(Material.WOOD).harvestLevel(ItemTier.WOOD.getHarvestLevel()).harvestTool(ToolType.AXE).hardnessAndResistance(2.0f));
+        super(Properties.of(Material.WOOD).harvestLevel(ItemTier.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
     }
 
     @Override
@@ -49,7 +51,7 @@ public class FeederBlock extends HorizontalBlock {
     @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        if (state.get(HORIZONTAL_FACING).getAxis() == Direction.Axis.Z) {
+        if (state.getValue(FACING).getAxis() == Direction.Axis.Z) {
             return SHAPE_NS;
         } else {
             return SHAPE_EW;
@@ -58,48 +60,48 @@ public class FeederBlock extends HorizontalBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
 
             if (tileentity instanceof FeederTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, ((FeederTileEntity)tileentity).getInventory());
+                InventoryHelper.dropContents(worldIn, pos, ((FeederTileEntity)tileentity).getInventory());
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        FeederTileEntity tile = (FeederTileEntity) worldIn.getTileEntity(pos);
+        FeederTileEntity tile = (FeederTileEntity) worldIn.getBlockEntity(pos);
 
         if (tile != null) {
-            if (!player.isSneaking()) {
-                if (!worldIn.isRemote) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+            if (!player.isShiftKeyDown()) {
+                if (!worldIn.isClientSide) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getBlockPos());
                 }
                 return ActionResultType.SUCCESS;
             }
 
-            ActionResultType resultType = super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+            ActionResultType resultType = super.use(state, worldIn, pos, player, handIn, hit);
 
-            if (player.isSneaking() && resultType == ActionResultType.PASS) {
-                if (!worldIn.isRemote) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+            if (player.isShiftKeyDown() && resultType == ActionResultType.PASS) {
+                if (!worldIn.isClientSide) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getBlockPos());
                 }
                 return ActionResultType.SUCCESS;
             }
@@ -107,6 +109,6 @@ public class FeederBlock extends HorizontalBlock {
             throw new IllegalStateException("Named container provider is missing");
         }
 
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        return super.use(state, worldIn, pos, player, handIn, hit);
     }
 }

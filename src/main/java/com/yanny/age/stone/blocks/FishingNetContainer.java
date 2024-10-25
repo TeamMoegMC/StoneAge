@@ -32,7 +32,7 @@ public class FishingNetContainer extends Container {
 
     FishingNetContainer(int id, @Nonnull BlockPos pos, @Nonnull World world, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player) {
         super(ContainerSubscriber.fishing_net, id);
-        tile = (FishingNetTileEntity) world.getTileEntity(pos);
+        tile = (FishingNetTileEntity) world.getBlockEntity(pos);
         this.player = player;
 
         if (tile == null) {
@@ -54,30 +54,30 @@ public class FishingNetContainer extends Container {
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-        if (tile == null || tile.getWorld() == null) {
+    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+        if (tile == null || tile.getLevel() == null) {
             throw new IllegalStateException("Null pointer");
         }
 
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, BlockSubscriber.fishing_net);
+        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, BlockSubscriber.fishing_net);
     }
 
     @Nonnull
     @Override
-    public ItemStack transferStackInSlot(@Nonnull PlayerEntity playerIn, int index) {
-        Slot slot = inventorySlots.get(index);
+    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
+        Slot slot = slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
             ItemStack itemstack = stack.copy();
             if (index < ITEMS) {
-                if (!mergeItemStack(stack, ITEMS + 1, ITEMS + 36, true)) {
+                if (!moveItemStackTo(stack, ITEMS + 1, ITEMS + 36, true)) {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(stack, itemstack);
+                slot.onQuickCraft(stack, itemstack);
             } else {
-                if (!mergeItemStack(stack, 0, 1, false)) {
+                if (!moveItemStackTo(stack, 0, 1, false)) {
                     return ItemStack.EMPTY;
                 }
 
@@ -85,9 +85,9 @@ public class FishingNetContainer extends Container {
 
             tile.updateState();
             if (stack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (stack.getCount() == itemstack.getCount()) {

@@ -24,12 +24,12 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
 
     @Override
     @Nonnull
-    public DryingRackRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        String s = JSONUtils.getString(json, "group", "");
-        JsonElement jsonelement = JSONUtils.isJsonArray(json, "ingredient")
-                ? JSONUtils.getJsonArray(json, "ingredient")
-                : JSONUtils.getJsonObject(json, "ingredient");
-        Ingredient ingredient = Ingredient.deserialize(jsonelement);
+    public DryingRackRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        String s = JSONUtils.getAsString(json, "group", "");
+        JsonElement jsonelement = JSONUtils.isArrayNode(json, "ingredient")
+                ? JSONUtils.getAsJsonArray(json, "ingredient")
+                : JSONUtils.getAsJsonObject(json, "ingredient");
+        Ingredient ingredient = Ingredient.fromJson(jsonelement);
         ItemStack itemstack;
 
         if (!json.has("result")) {
@@ -37,24 +37,24 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
         }
 
         if (json.get("result").isJsonObject()) {
-            itemstack = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "result"), true);
+            itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
         } else {
-            String s1 = JSONUtils.getString(json, "result");
+            String s1 = JSONUtils.getAsString(json, "result");
             ResourceLocation resourcelocation = new ResourceLocation(s1);
             itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation));
         }
 
-        int i = JSONUtils.getInt(json, "dryingTime", 200);
+        int i = JSONUtils.getAsInt(json, "dryingTime", 200);
 
         return this.factory.create(recipeId, s, ingredient, itemstack, i);
     }
 
     @Nullable
     @Override
-    public DryingRackRecipe read(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
-        String s = buffer.readString(32767);
-        Ingredient ingredient = Ingredient.read(buffer);
-        ItemStack itemstack = buffer.readItemStack();
+    public DryingRackRecipe fromNetwork(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
+        String s = buffer.readUtf(32767);
+        Ingredient ingredient = Ingredient.fromNetwork(buffer);
+        ItemStack itemstack = buffer.readItem();
 
         int i = buffer.readVarInt();
 
@@ -62,10 +62,10 @@ public class DryingRackRecipeSerializer extends ForgeRegistryEntry<IRecipeSerial
     }
 
     @Override
-    public void write(PacketBuffer buffer, DryingRackRecipe recipe) {
-        buffer.writeString(recipe.group);
-        recipe.ingredient.write(buffer);
-        buffer.writeItemStack(recipe.result);
+    public void toNetwork(PacketBuffer buffer, DryingRackRecipe recipe) {
+        buffer.writeUtf(recipe.group);
+        recipe.ingredient.toNetwork(buffer);
+        buffer.writeItem(recipe.result);
         buffer.writeVarInt(recipe.dryingTime);
     }
 

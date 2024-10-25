@@ -38,13 +38,13 @@ public class LootTableGenerator extends LootTableProvider {
 
     @Override
     protected void validate(Map<ResourceLocation, LootTable> map, ValidationTracker validationtracker) {
-        map.forEach((name, table) -> LootTableManager.validateLootTable(validationtracker, name, table));
+        map.forEach((name, table) -> LootTableManager.validate(validationtracker, name, table));
     }
 
     private static class Blocks extends BlockLootTables {
         @Override
         protected void addTables() {
-            BLOCKS.forEach(this::registerDropSelfLootTable);
+            BLOCKS.forEach(this::dropSelf);
         }
 
         @Override

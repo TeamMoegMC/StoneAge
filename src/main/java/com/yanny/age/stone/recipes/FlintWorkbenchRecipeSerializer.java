@@ -23,46 +23,46 @@ import java.util.Set;
 public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<FlintWorkbenchRecipe> {
     @Nonnull
     @Override
-    public FlintWorkbenchRecipe read(@Nonnull final ResourceLocation recipeID, @Nonnull final JsonObject json) {
-        String s = JSONUtils.getString(json, "group", "");
-        Map<String, Ingredient> map = deserializeKey(JSONUtils.getJsonObject(json, "key"));
-        String[] astring = shrink(patternFromJson(JSONUtils.getJsonArray(json, "pattern")));
+    public FlintWorkbenchRecipe fromJson(@Nonnull final ResourceLocation recipeID, @Nonnull final JsonObject json) {
+        String s = JSONUtils.getAsString(json, "group", "");
+        Map<String, Ingredient> map = deserializeKey(JSONUtils.getAsJsonObject(json, "key"));
+        String[] astring = shrink(patternFromJson(JSONUtils.getAsJsonArray(json, "pattern")));
         int i = astring[0].length();
         int j = astring.length;
         NonNullList<Ingredient> nonnulllist = deserializeIngredients(astring, map, i, j);
-        ItemStack itemstack = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "result"), true);
-        Ingredient tool = Ingredient.deserialize(JSONUtils.getJsonObject(json, "tool"));
+        ItemStack itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
+        Ingredient tool = Ingredient.fromJson(JSONUtils.getAsJsonObject(json, "tool"));
         return new FlintWorkbenchRecipe(recipeID, s, i, j, tool, nonnulllist, itemstack);
     }
 
     @Override
-    public FlintWorkbenchRecipe read(@Nonnull final ResourceLocation recipeID, final PacketBuffer buffer) {
+    public FlintWorkbenchRecipe fromNetwork(@Nonnull final ResourceLocation recipeID, final PacketBuffer buffer) {
         final int width = buffer.readVarInt();
         final int height = buffer.readVarInt();
-        final String group = buffer.readString(Short.MAX_VALUE);
+        final String group = buffer.readUtf(Short.MAX_VALUE);
         final NonNullList<Ingredient> ingredients = NonNullList.withSize(width * height, Ingredient.EMPTY);
 
         for (int i = 0; i < ingredients.size(); ++i) {
-            ingredients.set(i, Ingredient.read(buffer));
+            ingredients.set(i, Ingredient.fromNetwork(buffer));
         }
 
-        final ItemStack result = buffer.readItemStack();
-        final Ingredient tool = Ingredient.read(buffer);
+        final ItemStack result = buffer.readItem();
+        final Ingredient tool = Ingredient.fromNetwork(buffer);
         return new FlintWorkbenchRecipe(recipeID, group, width, height, tool, ingredients, result);
     }
 
     @Override
-    public void write(final PacketBuffer buffer, final FlintWorkbenchRecipe recipe) {
+    public void toNetwork(final PacketBuffer buffer, final FlintWorkbenchRecipe recipe) {
         buffer.writeVarInt(recipe.getWidth());
         buffer.writeVarInt(recipe.getHeight());
-        buffer.writeString(recipe.getGroup());
+        buffer.writeUtf(recipe.getGroup());
 
         for (final Ingredient ingredient : recipe.getIngredients()) {
-            ingredient.write(buffer);
+            ingredient.toNetwork(buffer);
         }
 
-        buffer.writeItemStack(recipe.getRecipeOutput());
-        recipe.getTool().write(buffer);
+        buffer.writeItem(recipe.getResultItem());
+        recipe.getTool().toNetwork(buffer);
     }
 
     @Nonnull
@@ -78,7 +78,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
                 throw new JsonSyntaxException("Invalid key entry: ' ' is a reserved symbol.");
             }
 
-            map.put(entry.getKey(), Ingredient.deserialize(entry.getValue()));
+            map.put(entry.getKey(), Ingredient.fromJson(entry.getValue()));
         }
 
         map.put(" ", Ingredient.EMPTY);
@@ -172,7 +172,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<IRecipeSe
             throw new JsonSyntaxException("Invalid pattern: empty pattern not allowed");
         } else {
             for(int i = 0; i < astring.length; ++i) {
-                String s = JSONUtils.getString(jsonArr.get(i), "pattern[" + i + "]");
+                String s = JSONUtils.convertToString(jsonArr.get(i), "pattern[" + i + "]");
                 if (s.length() > 3) {
                     throw new JsonSyntaxException("Invalid pattern: too many columns, " + 3 + " is maximum");
                 }

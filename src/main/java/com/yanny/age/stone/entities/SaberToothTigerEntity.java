@@ -33,15 +33,15 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
 
     @Nullable
     @Override
-    public AgeableEntity createChild(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
-        return EntitySubscriber.saber_tooth_tiger.create(world);
+    public AgeableEntity getBreedOffspring(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
+        return EntitySubscriber.saber_tooth_tiger.create(level);
     }
 
     @Override
     public void registerGoals() {
         this.goalSelector.addGoal(0, new SwimGoal(this));
         this.goalSelector.addGoal(1, new BreedGoal(this, 1.0D));
-        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0D, Ingredient.fromItems(Items.BEEF), false));
+        this.goalSelector.addGoal(2, new TemptGoal(this, 1.0D, Ingredient.of(Items.BEEF), false));
         this.goalSelector.addGoal(3, new FollowParentGoal(this, 1.25D));
         this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0D, false));
         this.goalSelector.addGoal(5, new WaterAvoidingRandomWalkingGoal(this, 1.0D));
@@ -56,30 +56,30 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
     }
 
     public static AttributeModifierMap getAttributes() {
-        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 30.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3F).create();
+        return MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 30.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
     @Override
     public void tick() {
         super.tick();
 
-        if (!this.world.isRemote && this.world.getDifficulty() == Difficulty.PEACEFUL) {
+        if (!this.level.isClientSide && this.level.getDifficulty() == Difficulty.PEACEFUL) {
             this.remove();
         }
     }
 
     @Override
-    public boolean attackEntityAsMob(@Nonnull Entity entityIn) {
+    public boolean doHurtTarget(@Nonnull Entity entityIn) {
         //noinspection ConstantConditions
-        this.playSound(SoundSubscriber.saber_tooth_tiger_hit, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
+        this.playSound(SoundSubscriber.saber_tooth_tiger_hit, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
 
         if (entityIn instanceof LivingEntity) {
-            ((LivingEntity) entityIn).applyKnockback(2.0F,
-                    MathHelper.sin(this.rotationYaw * ((float)Math.PI / 180F)),
-                    -MathHelper.cos(this.rotationYaw * ((float)Math.PI / 180F)));
+            ((LivingEntity) entityIn).knockback(2.0F,
+                    MathHelper.sin(this.yRot * ((float)Math.PI / 180F)),
+                    -MathHelper.cos(this.yRot * ((float)Math.PI / 180F)));
         }
 
-        return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 8.0F);
+        return entityIn.hurt(DamageSource.mobAttack(this), 8.0F);
     }
 
     @Override
@@ -99,11 +99,11 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
 
     @Override
     public void playStepSound(@Nonnull BlockPos pos, @Nonnull BlockState blockIn) {
-        this.playSound(SoundEvents.ENTITY_COW_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.COW_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public boolean isBreedingItem(ItemStack stack) {
+    public boolean isFood(ItemStack stack) {
         return stack.getItem() == Items.BEEF;
     }
 }

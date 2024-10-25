@@ -30,18 +30,20 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.state.properties.BlockStateProperties.*;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class FishingNetBlock extends Block implements IWaterLoggable {
     private static final VoxelShape SHAPE = VoxelShapes.or(
-            Block.makeCuboidShape(0, 0, 0, 16, 1, 16),
-            Block.makeCuboidShape(0, 1, 0, 2, 16, 2),
-            Block.makeCuboidShape(14, 1, 0, 16, 16, 2),
-            Block.makeCuboidShape(0, 1, 14, 2, 16, 16),
-            Block.makeCuboidShape(14, 1, 14, 16, 16, 16)
+            Block.box(0, 0, 0, 16, 1, 16),
+            Block.box(0, 1, 0, 2, 16, 2),
+            Block.box(14, 1, 0, 16, 16, 2),
+            Block.box(0, 1, 14, 2, 16, 16),
+            Block.box(14, 1, 14, 16, 16, 16)
     );
 
     public FishingNetBlock() {
-        super(Properties.create(Material.WOOD).harvestLevel(ItemTier.WOOD.getHarvestLevel()).harvestTool(ToolType.AXE).hardnessAndResistance(2.0f));
-        setDefaultState(getDefaultState().with(WATERLOGGED, false).with(ATTACHED, false));
+        super(Properties.of(Material.WOOD).harvestLevel(ItemTier.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false).setValue(ATTACHED, false));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class FishingNetBlock extends Block implements IWaterLoggable {
     }
 
     @Override
-    public boolean isVariableOpacity() {
+    public boolean hasDynamicShape() {
         return true;
     }
 
@@ -69,47 +71,47 @@ public class FishingNetBlock extends Block implements IWaterLoggable {
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(WATERLOGGED, context.getWorld().getFluidState(context.getPos()).getFluid() == Fluids.WATER);
+        return this.defaultBlockState().setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public FluidState getFluidState(BlockState state) {
-        return state.get(WATERLOGGED) ? Fluids.WATER.getStillFluidState(false) : super.getFluidState(state);
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
-    protected void fillStateContainer(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
-        super.fillStateContainer(builder);
+    protected void createBlockStateDefinition(@Nonnull StateContainer.Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
         builder.add(ATTACHED);
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
 
             if (tileentity instanceof FishingNetTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, ((FishingNetTileEntity)tileentity).getInventory());
+                InventoryHelper.dropContents(worldIn, pos, ((FishingNetTileEntity)tileentity).getInventory());
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        FishingNetTileEntity tile = (FishingNetTileEntity) worldIn.getTileEntity(pos);
+        FishingNetTileEntity tile = (FishingNetTileEntity) worldIn.getBlockEntity(pos);
 
         if (tile != null) {
-            if (!worldIn.isRemote) {
-                NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+            if (!worldIn.isClientSide) {
+                NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getBlockPos());
             }
             return ActionResultType.SUCCESS;
         } else {
@@ -120,16 +122,16 @@ public class FishingNetBlock extends Block implements IWaterLoggable {
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public BlockState updatePostPlacement(@Nonnull BlockState stateIn, @Nonnull Direction facing, @Nonnull BlockState facingState,
+    public BlockState updateShape(@Nonnull BlockState stateIn, @Nonnull Direction facing, @Nonnull BlockState facingState,
                                           IWorld worldIn, @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
-        worldIn.getPendingFluidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(worldIn));
-        return super.updatePostPlacement(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+        return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
-    public BlockRenderType getRenderType(@Nonnull BlockState state) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
         return BlockRenderType.MODEL;
     }
 }

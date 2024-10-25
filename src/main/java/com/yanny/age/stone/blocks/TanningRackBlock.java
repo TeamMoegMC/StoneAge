@@ -25,26 +25,28 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class TanningRackBlock extends HorizontalBlock {
     private static final VoxelShape SHAPE_N = VoxelShapes.or(
-            Block.makeCuboidShape(0.0D, 13.5D, 7.0D, 16.0D, 14.5D, 8.0D),
-            Block.makeCuboidShape(0.0D, 1.0D, 1.5D, 16.0D, 2.0D, 2.5D),
-            Block.makeCuboidShape(0.0D, 0.0, 7.5D, 16.0D, 15.0D, 8.5D));
+            Block.box(0.0D, 13.5D, 7.0D, 16.0D, 14.5D, 8.0D),
+            Block.box(0.0D, 1.0D, 1.5D, 16.0D, 2.0D, 2.5D),
+            Block.box(0.0D, 0.0, 7.5D, 16.0D, 15.0D, 8.5D));
     private static final VoxelShape SHAPE_S = VoxelShapes.or(
-            Block.makeCuboidShape(0.0D, 13.5D, 8.0D, 16.0D, 14.5D, 9.0D),
-            Block.makeCuboidShape(0.0D, 1.0D, 13.5D, 16.0D, 2.0D, 14.5D),
-            Block.makeCuboidShape(0.0D, 0.0, 7.5D, 16.0D, 15.0D, 8.5D));
+            Block.box(0.0D, 13.5D, 8.0D, 16.0D, 14.5D, 9.0D),
+            Block.box(0.0D, 1.0D, 13.5D, 16.0D, 2.0D, 14.5D),
+            Block.box(0.0D, 0.0, 7.5D, 16.0D, 15.0D, 8.5D));
     private static final VoxelShape SHAPE_W = VoxelShapes.or(
-            Block.makeCuboidShape(7.0D, 13.5D, 0.0D, 8.0D, 14.5D, 16.0D),
-            Block.makeCuboidShape(1.5D, 1.0D, 0.0D, 2.5D, 2.0D, 16.0D),
-            Block.makeCuboidShape(7.5D, 0.0, 0.0D, 8.5D, 15.0D, 16D));
+            Block.box(7.0D, 13.5D, 0.0D, 8.0D, 14.5D, 16.0D),
+            Block.box(1.5D, 1.0D, 0.0D, 2.5D, 2.0D, 16.0D),
+            Block.box(7.5D, 0.0, 0.0D, 8.5D, 15.0D, 16D));
     private static final VoxelShape SHAPE_E = VoxelShapes.or(
-            Block.makeCuboidShape(8.0D, 13.5D, 0.0D, 9.0D, 14.5D, 16.0D),
-            Block.makeCuboidShape(13.5D, 1.0D, 0.0D, 14.5D, 2.0D, 16.0D),
-            Block.makeCuboidShape(7.5D, 0.0, 0.0D, 8.5D, 15.0D, 16D));
+            Block.box(8.0D, 13.5D, 0.0D, 9.0D, 14.5D, 16.0D),
+            Block.box(13.5D, 1.0D, 0.0D, 14.5D, 2.0D, 16.0D),
+            Block.box(7.5D, 0.0, 0.0D, 8.5D, 15.0D, 16D));
 
     public TanningRackBlock() {
-        super(Properties.create(Material.WOOD).harvestLevel(ItemTier.WOOD.getHarvestLevel()).harvestTool(ToolType.AXE).hardnessAndResistance(2.0f));
+        super(Properties.of(Material.WOOD).harvestLevel(ItemTier.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
     }
 
     @Override
@@ -61,44 +63,44 @@ public class TanningRackBlock extends HorizontalBlock {
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
-    public BlockRenderType getRenderType(@Nonnull BlockState state) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
         return BlockRenderType.MODEL;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockItemUseContext context) {
-        return this.getDefaultState().with(HORIZONTAL_FACING, context.getPlacementHorizontalFacing().getOpposite());
+        return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
-    protected void fillStateContainer(StateContainer.Builder<Block, BlockState> builder) {
-        builder.add(HORIZONTAL_FACING);
+    protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
     }
 
     @Override
-    public boolean isVariableOpacity() {
+    public boolean hasDynamicShape() {
         return true;
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
 
-        if (tileentity instanceof TanningRackTileEntity && !worldIn.isRemote && (handIn == Hand.MAIN_HAND)) {
+        if (tileentity instanceof TanningRackTileEntity && !worldIn.isClientSide && (handIn == Hand.MAIN_HAND)) {
             return ((TanningRackTileEntity) tileentity).blockActivated(player);
         }
 
-        return super.onBlockActivated(state, worldIn, pos, player, handIn, hit);
+        return super.use(state, worldIn, pos, player, handIn, hit);
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        switch (state.get(HORIZONTAL_FACING)) {
+        switch (state.getValue(FACING)) {
             case NORTH:
                 return SHAPE_N;
             case SOUTH:
@@ -109,20 +111,20 @@ public class TanningRackBlock extends HorizontalBlock {
                 return SHAPE_E;
         }
 
-        return VoxelShapes.fullCube();
+        return VoxelShapes.block();
     }
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
 
             if (tileentity instanceof TanningRackTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, ((TanningRackTileEntity)tileentity).getInventory());
+                InventoryHelper.dropContents(worldIn, pos, ((TanningRackTileEntity)tileentity).getInventory());
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 }

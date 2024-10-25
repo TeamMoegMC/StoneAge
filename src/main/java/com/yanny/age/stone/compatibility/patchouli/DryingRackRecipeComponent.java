@@ -31,14 +31,14 @@ public class DryingRackRecipeComponent extends BaseComponent {
             return;
         }
 
-        mc.textureManager.bindTexture(TEXTURE);
+        mc.textureManager.bind(TEXTURE);
         RenderSystem.enableBlend();
         AbstractGui.blit(matrixStack, x, y, 11, 71, 96, 24, 128, 128);
-        drawCenteredStringNoShadow(matrixStack, title, PAGE_WIDTH / 2, y - 10, context.getHeaderColor(), mc.fontRenderer);
+        drawCenteredStringNoShadow(matrixStack, title, PAGE_WIDTH / 2, y - 10, context.getHeaderColor(), mc.font);
 
         context.renderIngredient(matrixStack, x + 4, y + 4, mouseX, mouseY, recipe.getIngredients().get(0));
         context.renderItemStack(matrixStack, x + 40, y + 4, mouseX, mouseY, BlockSubscriber.drying_rack.asItem().getDefaultInstance());
-        context.renderItemStack(matrixStack, x + 76, y + 4, mouseX, mouseY, recipe.getRecipeOutput());
+        context.renderItemStack(matrixStack, x + 76, y + 4, mouseX, mouseY, recipe.getResultItem());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -46,9 +46,9 @@ public class DryingRackRecipeComponent extends BaseComponent {
     public void onVariablesAvailable(@Nonnull UnaryOperator<IVariable> unaryOperator) {
         String recipeName = unaryOperator.apply(IVariable.wrap("#recipe#")).asString();
 
-        mc.world.getRecipeManager().getRecipe(new ResourceLocation(recipeName)).ifPresent((recipe) -> {
+        mc.level.getRecipeManager().byKey(new ResourceLocation(recipeName)).ifPresent((recipe) -> {
             this.recipe = (DryingRackRecipe) recipe;
-            this.title = recipe.getRecipeOutput().getDisplayName().func_241878_f();
+            this.title = recipe.getResultItem().getHoverName().getVisualOrderText();
         });
     }
 }

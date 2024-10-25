@@ -23,12 +23,12 @@ public class MouflonRenderer extends MobRenderer<MouflonEntity, MouflonModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull MouflonEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull MouflonEntity entity) {
         return MOUFLON_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(MouflonEntity entity) {
+    protected boolean shouldShowName(MouflonEntity entity) {
         return entity.hasCustomName();
     }
 

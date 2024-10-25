@@ -15,21 +15,21 @@ public class MillstoneModel extends Model {
 	private final ModelRenderer body;
 
 	public MillstoneModel() {
-		super(RenderType::getEntityCutout);
-		textureWidth = 64;
-		textureHeight = 64;
+		super(RenderType::entityCutout);
+		texWidth = 64;
+		texHeight = 64;
 
 		body = new ModelRenderer(this);
-		body.setRotationPoint(0.0F, 0.0F, 0.0F);
+		body.setPos(0.0F, 0.0F, 0.0F);
 		body.addBox(-5.0F, 7.0F, -5.0F, 10, 4, 10);
 	}
 
 	public void rotate(float angle) {
-		this.body.rotateAngleY = angle;
+		this.body.yRot = angle;
 	}
 
 	@Override
-	public void render(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
+	public void renderToBuffer(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
 		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 }

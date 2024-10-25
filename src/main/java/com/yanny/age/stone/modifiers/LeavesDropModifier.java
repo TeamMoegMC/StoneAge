@@ -28,16 +28,16 @@ public class LeavesDropModifier extends LootModifier {
     @Nonnull
     @Override
     protected List<ItemStack> doApply(List<ItemStack> generatedLoot, LootContext context) {
-        if(context.has(LootParameters.THIS_ENTITY)) {//only by hand
-        	ItemStack ctxTool = context.get(LootParameters.TOOL);
+        if(context.hasParam(LootParameters.THIS_ENTITY)) {//only by hand
+        	ItemStack ctxTool = context.getParamOrNull(LootParameters.TOOL);
             float chanceAfterLooting = chance;
 	        if (ctxTool != null) {
 	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.SILK_TOUCH)) {
 	                return generatedLoot;
 	            }
 	
-	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.LOOTING)) {
-	                int enchantmentLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.LOOTING, ctxTool);
+	            if (EnchantmentHelper.getEnchantments(ctxTool).containsKey(Enchantments.MOB_LOOTING)) {
+	                int enchantmentLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.MOB_LOOTING, ctxTool);
 	                chanceAfterLooting = chanceAfterLooting * enchantmentLevel;
 	            }
 	        }
@@ -53,7 +53,7 @@ public class LeavesDropModifier extends LootModifier {
 
         @Override
         public LeavesDropModifier read(ResourceLocation location, JsonObject object, ILootCondition[] conditions) {
-            float chance = JSONUtils.getFloat(object, "chance");
+            float chance = JSONUtils.getAsFloat(object, "chance");
             return new LeavesDropModifier(conditions, chance);
         }
 

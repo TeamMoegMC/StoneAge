@@ -31,12 +31,12 @@ public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, 
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull SaberToothTigerEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull SaberToothTigerEntity entity) {
         return SABER_TOOTH_TIGER_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(SaberToothTigerEntity entity) {
+    protected boolean shouldShowName(SaberToothTigerEntity entity) {
         return entity.hasCustomName();
     }
 

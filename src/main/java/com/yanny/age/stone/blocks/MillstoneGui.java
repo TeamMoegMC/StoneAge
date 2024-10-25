@@ -21,21 +21,21 @@ public class MillstoneGui extends ContainerScreen<MillstoneContainer> {
     public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         if (minecraft == null) {
             return;
         }
 
-        minecraft.getTextureManager().bindTexture(GUI);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+        minecraft.getTextureManager().bind(GUI);
+        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
-        if (container.getProgress() > 0) {
-            int l = (int) Math.ceil(container.getProgress() / 100.0 * 16);
-            blit(matrixStack, guiLeft + 80, guiTop + 35, 176, 0, l, 16);
+        if (menu.getProgress() > 0) {
+            int l = (int) Math.ceil(menu.getProgress() / 100.0 * 16);
+            blit(matrixStack, leftPos + 80, topPos + 35, 176, 0, l, 16);
         }
     }
 }

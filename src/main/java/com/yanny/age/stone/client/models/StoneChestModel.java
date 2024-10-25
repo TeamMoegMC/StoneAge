@@ -16,12 +16,12 @@ public class StoneChestModel extends Model {
 	private final ModelRenderer lid;
 
 	public StoneChestModel() {
-		super(RenderType::getEntityCutout);
-		textureWidth = 64;
-		textureHeight = 64;
+		super(RenderType::entityCutout);
+		texWidth = 64;
+		texHeight = 64;
 
 		body = new ModelRenderer(this, 0, 48);
-		body.setRotationPoint(0.0F, 24.0F, 0.0F);
+		body.setPos(0.0F, 24.0F, 0.0F);
 		body.addBox(-7.0F, -2.0F, -7.0F, 14, 2, 14, 0.0F, false);
 
 		ModelRenderer body1 = new ModelRenderer(this, 0, 24);
@@ -35,7 +35,7 @@ public class StoneChestModel extends Model {
 		body.addChild(body2);
 
 		lid = new ModelRenderer(this, 0, 0);
-		lid.setRotationPoint(3.0F, 10.0F, 5.0F);
+		lid.setPos(3.0F, 10.0F, 5.0F);
 		lid.addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14, 0.0F, false);
 	}
 
@@ -44,7 +44,7 @@ public class StoneChestModel extends Model {
 	}
 
 	@Override
-	public void render(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
+	public void renderToBuffer(@Nonnull MatrixStack matrixStack, @Nonnull IVertexBuilder iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
 		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 		lid.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}

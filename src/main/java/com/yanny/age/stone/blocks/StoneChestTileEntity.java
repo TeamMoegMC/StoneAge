@@ -58,13 +58,13 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
     }
 
     public void tick() {
-        assert this.world != null;
-        int i = this.pos.getX();
-        int j = this.pos.getY();
-        int k = this.pos.getZ();
+        assert this.level != null;
+        int i = this.worldPosition.getX();
+        int j = this.worldPosition.getY();
+        int k = this.worldPosition.getZ();
 
         ++this.ticksSinceSync;
-        this.numPlayersUsing = calculatePlayersUsingSync(this.world, this, this.ticksSinceSync, i, j, k, this.numPlayersUsing);
+        this.numPlayersUsing = calculatePlayersUsingSync(this.level, this, this.ticksSinceSync, i, j, k, this.numPlayersUsing);
         this.prevLidAngle = this.lidAngle;
 
         if (this.numPlayersUsing > 0 && this.lidAngle == 0.0F) {
@@ -100,42 +100,42 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
+    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
 
-        if (!this.checkLootAndRead(tag)) {
+        if (!this.tryLoadLootTable(tag)) {
             ItemStackUtils.deserializeStacks(invTag, stacks);
         }
 
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(@Nonnull CompoundNBT tag) {
-        if (!this.checkLootAndWrite(tag)) {
+    public CompoundNBT save(@Nonnull CompoundNBT tag) {
+        if (!this.trySaveLootTable(tag)) {
             tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         }
 
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -148,9 +148,9 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
@@ -167,8 +167,8 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
     @Nonnull
     @Override
     protected Container createMenu(int id, @Nonnull PlayerInventory player) {
-        assert world != null;
-        return new StoneChestContainer(id, pos, world, player, player.player);
+        assert level != null;
+        return new StoneChestContainer(id, worldPosition, level, player, player.player);
     }
 
     @Nonnull
@@ -185,22 +185,22 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public float getLidAngle(float partialTicks) {
+    public float getOpenNess(float partialTicks) {
         return MathHelper.lerp(partialTicks, this.prevLidAngle, this.lidAngle);
     }
 
     @Override
-    public boolean receiveClientEvent(int id, int type) {
+    public boolean triggerEvent(int id, int type) {
         if (id == 1) {
             this.numPlayersUsing = type;
             return true;
         } else {
-            return super.receiveClientEvent(id, type);
+            return super.triggerEvent(id, type);
         }
     }
 
     @Override
-    public int getSizeInventory() {
+    public int getContainerSize() {
         return stacks.size();
     }
 
@@ -209,9 +209,9 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         return false;
     }
 
-    public void openInventory(@Nonnull PlayerEntity player) {
+    public void startOpen(@Nonnull PlayerEntity player) {
         if (!player.isSpectator()) {
-            assert this.world != null;
+            assert this.level != null;
 
             if (this.numPlayersUsing < 0) {
                 this.numPlayersUsing = 0;
@@ -222,7 +222,7 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         }
     }
 
-    public void closeInventory(@Nonnull PlayerEntity player) {
+    public void stopOpen(@Nonnull PlayerEntity player) {
         if (!player.isSpectator()) {
             --this.numPlayersUsing;
             this.onOpenOrClose();
@@ -230,21 +230,21 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
     }
 
     private void onOpenOrClose() {
-        assert this.world != null;
+        assert this.level != null;
         Block block = this.getBlockState().getBlock();
 
         if (block instanceof StoneChestBlock) {
-            this.world.addBlockEvent(this.pos, block, 1, this.numPlayersUsing);
-            this.world.notifyNeighborsOfStateChange(this.pos, block);
+            this.level.blockEvent(this.worldPosition, block, 1, this.numPlayersUsing);
+            this.level.updateNeighborsAt(this.worldPosition, block);
         }
     }
 
     private void playSound() {
-        assert this.world != null;
-        double d0 = (double)this.pos.getX() + 0.5D;
-        double d1 = (double)this.pos.getY() + 0.5D;
-        double d2 = (double)this.pos.getZ() + 0.5D;
-        this.world.playSound(null, d0, d1, d2, SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5F, this.world.rand.nextFloat() * 0.1F + 0.9F);
+        assert this.level != null;
+        double d0 = (double)this.worldPosition.getX() + 0.5D;
+        double d1 = (double)this.worldPosition.getY() + 0.5D;
+        double d2 = (double)this.worldPosition.getZ() + 0.5D;
+        this.level.playSound(null, d0, d1, d2, SoundEvents.GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
     }
 
     @Nonnull
@@ -252,15 +252,15 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         return new ItemStackHandler(stacks) {
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
 
     private static int calculatePlayersUsingSync(@Nonnull World world, @Nonnull StoneChestTileEntity tileEntity, int tickSinceSync, int x, int y, int z, int numUsing) {
-        if (!world.isRemote && numUsing != 0 && (tickSinceSync + x + y + z) % 200 == 0) {
+        if (!world.isClientSide && numUsing != 0 && (tickSinceSync + x + y + z) % 200 == 0) {
             numUsing = calculatePlayersUsing(world, tileEntity, x, y, z);
         }
 
@@ -271,10 +271,10 @@ public class StoneChestTileEntity extends LockableLootTileEntity implements IInv
         int i = 0;
         float f = 5.0F;
 
-        for(PlayerEntity playerentity : world.getEntitiesWithinAABB(PlayerEntity.class,
+        for(PlayerEntity playerentity : world.getEntitiesOfClass(PlayerEntity.class,
                 new AxisAlignedBB(x - f, y - f, z - f, (x + 1) + f, (y + 1) + f, (z + 1) + f))) {
-            if (playerentity.openContainer instanceof StoneChestContainer) {
-                IInventory inventory = ((StoneChestContainer)playerentity.openContainer).getIInventory();
+            if (playerentity.containerMenu instanceof StoneChestContainer) {
+                IInventory inventory = ((StoneChestContainer)playerentity.containerMenu).getIInventory();
 
                 if (inventory == tileEntity.inventoryWrapper) {
                     ++i;

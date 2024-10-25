@@ -24,19 +24,19 @@ public class TerrorBirdRenderer extends MobRenderer<TerrorBirdEntity, TerrorBird
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull TerrorBirdEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull TerrorBirdEntity entity) {
         return TERROR_BIRD_TEXTURE;
     }
 
     @Override
-    protected float handleRotationFloat(TerrorBirdEntity livingBase, float partialTicks) {
+    protected float getBob(TerrorBirdEntity livingBase, float partialTicks) {
         float f = MathHelper.lerp(partialTicks, livingBase.oFlap, livingBase.wingRotation);
         float f1 = MathHelper.lerp(partialTicks, livingBase.oFlapSpeed, livingBase.destPos);
         return (MathHelper.sin(f) + 1.0F) * f1;
     }
 
     @Override
-    protected boolean canRenderName(TerrorBirdEntity entity) {
+    protected boolean shouldShowName(TerrorBirdEntity entity) {
         return entity.hasCustomName();
     }
 

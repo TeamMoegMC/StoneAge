@@ -26,7 +26,7 @@ public class ToolSubscriber {
     @SubscribeEvent
     public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
         IForgeRegistry<Item> registry = event.getRegistry();
-        Item.Properties combatProperties = new Item.Properties().maxStackSize(1).group(ModItemGroup.AGES);
+        Item.Properties combatProperties = new Item.Properties().stacksTo(1).tab(ModItemGroup.AGES);
         registry.register(new SwordItem(ItemTier.WOOD, 0, -1.0f, combatProperties).setRegistryName(Reference.MODID, "flint_knife"));
     }
 }

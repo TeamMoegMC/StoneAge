@@ -27,13 +27,13 @@ public class MatchTagCondition implements ILootCondition {
 
     @Nonnull
     @Override
-    public LootConditionType getConditionType() {
+    public LootConditionType getType() {
         return ModifierSubscriber.matchTag;
     }
 
     @Override
     public boolean test(LootContext lootContext) {
-        BlockState blockstate = lootContext.get(LootParameters.BLOCK_STATE);
+        BlockState blockstate = lootContext.getParamOrNull(LootParameters.BLOCK_STATE);
         return blockstate != null && tag.contains(blockstate.getBlock());
     }
 
@@ -47,7 +47,7 @@ public class MatchTagCondition implements ILootCondition {
         @Nonnull
         @Override
         public MatchTagCondition deserialize(@Nonnull JsonObject jsonObject, @Nonnull JsonDeserializationContext context) {
-            Tags.IOptionalNamedTag<Block> optional = BlockTags.createOptional(new ResourceLocation(JSONUtils.getString(jsonObject, "tag")));
+            Tags.IOptionalNamedTag<Block> optional = BlockTags.createOptional(new ResourceLocation(JSONUtils.getAsString(jsonObject, "tag")));
             return new MatchTagCondition(optional);
         }
     }

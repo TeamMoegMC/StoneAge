@@ -19,17 +19,17 @@ public class RendererUtils {
         float g = (float)(i >> 8 & 255) / 255.0F;
         float b = (float)(i & 255) / 255.0F;
         int j = getCombinedAverageLight(lightReader, posIn);
-        renderer.pos(stack.getLast().getMatrix(), x, y, z)
+        renderer.vertex(stack.last().pose(), x, y, z)
                 .color(r, g, b, alpha)
-                .tex(u, v)
-                .lightmap(j & 0xffff, j >> 16 & 0xffff)
+                .uv(u, v)
+                .uv2(j & 0xffff, j >> 16 & 0xffff)
                 .normal(1, 0, 0)
                 .endVertex();
     }
 
     public static int getCombinedAverageLight(@Nonnull IBlockDisplayReader lightReaderIn, @Nonnull BlockPos posIn) {
-        int i = WorldRenderer.getCombinedLight(lightReaderIn, posIn);
-        int j = WorldRenderer.getCombinedLight(lightReaderIn, posIn.up());
+        int i = WorldRenderer.getLightColor(lightReaderIn, posIn);
+        int j = WorldRenderer.getLightColor(lightReaderIn, posIn.above());
         int k = i & 255;
         int l = j & 255;
         int i1 = i >> 16 & 255;

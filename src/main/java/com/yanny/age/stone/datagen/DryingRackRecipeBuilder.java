@@ -25,13 +25,13 @@ public class DryingRackRecipeBuilder {
     private final Item result;
     private final int count;
     private final Ingredient input;
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     @Nullable private String group = null;
     private int dryingTime = 300;
 
     public DryingRackRecipeBuilder(IItemProvider resultIn, IItemProvider input, int countIn) {
         this.result = resultIn.asItem();
-        this.input = Ingredient.fromItems(input);
+        this.input = Ingredient.of(input);
         this.count = countIn;
     }
 
@@ -49,7 +49,7 @@ public class DryingRackRecipeBuilder {
     }
 
     public DryingRackRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -73,12 +73,12 @@ public class DryingRackRecipeBuilder {
     }
 
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
-        if (this.result.getGroup() == null) {
+        if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         }
 
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new Result(id, this.result, this.input, this.count, this.dryingTime, this.group == null ? "" : this.group, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getGroup().getPath() + "/" + id.getPath())));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumerIn.accept(new Result(id, this.result, this.input, this.count, this.dryingTime, this.group == null ? "" : this.group, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     public static class Result implements IFinishedRecipe {
@@ -102,12 +102,12 @@ public class DryingRackRecipeBuilder {
             this.advancementId = advancementIdIn;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
 
-            json.add("ingredient", input.serialize());
+            json.add("ingredient", input.toJson());
             json.addProperty("dryingTime", dryingTime);
 
             JsonObject jsonObject = new JsonObject();
@@ -121,14 +121,14 @@ public class DryingRackRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return RecipeSubscriber.drying_rack;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -136,8 +136,8 @@ public class DryingRackRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advancementBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advancementBuilder.serializeToJson();
         }
 
         /**
@@ -145,7 +145,7 @@ public class DryingRackRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
     }

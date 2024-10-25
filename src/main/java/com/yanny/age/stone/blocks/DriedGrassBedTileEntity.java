@@ -12,6 +12,6 @@ public class DriedGrassBedTileEntity extends TileEntity {
 
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.pos, 11, this.getUpdateTag());
+        return new SUpdateTileEntityPacket(this.worldPosition, 11, this.getUpdateTag());
     }
 }

@@ -32,7 +32,7 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
     FlintWorkbenchRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 0, 120, 60);
-        localizedName = I18n.format("block.stone_age.flint_workbench");
+        localizedName = I18n.get("block.stone_age.flint_workbench");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.flint_workbench));
         IDrawableStatic arrow = guiHelper.createDrawable(new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png"), 123, 24, 25, 14);
         ARROW = guiHelper.createAnimatedDrawable(arrow, 80, IDrawableAnimated.StartDirection.LEFT, false);
@@ -82,12 +82,12 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getIngredients().get(x + y * width).getMatchingStacks()));
+                inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getIngredients().get(x + y * width).getItems()));
             }
         }
 
-        inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getTool().getMatchingStacks()));
-        outputBuilder.add(flintWorkbenchRecipe.getRecipeOutput());
+        inputBuilder.add(Arrays.asList(flintWorkbenchRecipe.getTool().getItems()));
+        outputBuilder.add(flintWorkbenchRecipe.getResultItem());
         ingredients.setInputLists(VanillaTypes.ITEM, inputBuilder.build());
         ingredients.setOutputLists(VanillaTypes.ITEM, ImmutableList.of(outputBuilder.build()));
     }

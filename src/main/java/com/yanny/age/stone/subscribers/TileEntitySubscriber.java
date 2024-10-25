@@ -29,23 +29,23 @@ public class TileEntitySubscriber {
     @SubscribeEvent
     public static void registerTileEntity(@Nonnull RegistryEvent.Register<TileEntityType<?>> event) {
         IForgeRegistry<TileEntityType<?>> registry = event.getRegistry();
-        registry.register(TileEntityType.Builder.create(FlintWorkbenchTileEntity::new, BlockSubscriber.flint_workbench)
+        registry.register(TileEntityType.Builder.of(FlintWorkbenchTileEntity::new, BlockSubscriber.flint_workbench)
                 .build(null).setRegistryName("flint_workbench"));
-        registry.register(TileEntityType.Builder.create(DryingRackTileEntity::new, BlockSubscriber.drying_rack)
+        registry.register(TileEntityType.Builder.of(DryingRackTileEntity::new, BlockSubscriber.drying_rack)
                 .build(null).setRegistryName("drying_rack"));
-        registry.register(TileEntityType.Builder.create(TanningRackTileEntity::new, BlockSubscriber.tanning_rack)
+        registry.register(TileEntityType.Builder.of(TanningRackTileEntity::new, BlockSubscriber.tanning_rack)
                 .build(null).setRegistryName("tanning_rack"));
-        registry.register(TileEntityType.Builder.create(StoneChestTileEntity::new, BlockSubscriber.stone_chest)
+        registry.register(TileEntityType.Builder.of(StoneChestTileEntity::new, BlockSubscriber.stone_chest)
                 .build(null).setRegistryName("stone_chest"));
-        registry.register(TileEntityType.Builder.create(TreeStumpTileEntity::new, BlockSubscriber.tree_stump)
+        registry.register(TileEntityType.Builder.of(TreeStumpTileEntity::new, BlockSubscriber.tree_stump)
                 .build(null).setRegistryName("tree_stump"));
-        registry.register(TileEntityType.Builder.create(DriedGrassBedTileEntity::new, BlockSubscriber.dried_grass_bed)
+        registry.register(TileEntityType.Builder.of(DriedGrassBedTileEntity::new, BlockSubscriber.dried_grass_bed)
                 .build(null).setRegistryName("dried_grass_bed"));
-        registry.register(TileEntityType.Builder.create(FeederTileEntity::new, BlockSubscriber.feeder)
+        registry.register(TileEntityType.Builder.of(FeederTileEntity::new, BlockSubscriber.feeder)
                 .build(null).setRegistryName("feeder"));
-        registry.register(TileEntityType.Builder.create(MillstoneTileEntity::new, BlockSubscriber.millstone)
+        registry.register(TileEntityType.Builder.of(MillstoneTileEntity::new, BlockSubscriber.millstone)
                 .build(null).setRegistryName("millstone"));
-        registry.register(TileEntityType.Builder.create(FishingNetTileEntity::new, BlockSubscriber.fishing_net)
+        registry.register(TileEntityType.Builder.of(FishingNetTileEntity::new, BlockSubscriber.fishing_net)
                 .build(null).setRegistryName("fishing_net"));
     }
 }

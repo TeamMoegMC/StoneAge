@@ -24,12 +24,14 @@ import net.minecraftforge.common.ToolType;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
-    private static final VoxelShape SHAPE = VoxelShapes.or(Block.makeCuboidShape(0, 0, 0, 16, 1, 16),
-            Block.makeCuboidShape(2, 1, 2, 14, 12, 14));
+    private static final VoxelShape SHAPE = VoxelShapes.or(Block.box(0, 0, 0, 16, 1, 16),
+            Block.box(2, 1, 2, 14, 12, 14));
 
     public TreeStumpBlock() {
-        super(Properties.create(Material.WOOD).harvestLevel(ItemTier.WOOD.getHarvestLevel()).harvestTool(ToolType.AXE).hardnessAndResistance(2.0f));
+        super(Properties.of(Material.WOOD).harvestLevel(ItemTier.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
     }
 
     @Override
@@ -52,9 +54,9 @@ public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onBlockClicked(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player) {
-        if (!worldIn.isRemote) {
-            TreeStumpTileEntity tileEntity = (TreeStumpTileEntity) worldIn.getTileEntity(pos);
+    public void attack(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player) {
+        if (!worldIn.isClientSide) {
+            TreeStumpTileEntity tileEntity = (TreeStumpTileEntity) worldIn.getBlockEntity(pos);
 
             if (tileEntity != null) {
                 tileEntity.onBlockRightClicked(player);
@@ -62,17 +64,17 @@ public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
             }
         }
 
-        super.onBlockClicked(state, worldIn, pos, player);
+        super.attack(state, worldIn, pos, player);
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
 
-        if ((tileentity instanceof TreeStumpTileEntity) && !worldIn.isRemote && (handIn == Hand.MAIN_HAND)) {
+        if ((tileentity instanceof TreeStumpTileEntity) && !worldIn.isClientSide && (handIn == Hand.MAIN_HAND)) {
             ((TreeStumpTileEntity) tileentity).blockActivated(player);
         }
 
@@ -81,20 +83,20 @@ public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
 
     @SuppressWarnings("deprecation")
     @Override
-    public float getPlayerRelativeBlockHardness(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
-        TileEntity tileentity = worldIn.getTileEntity(pos);
+    public float getDestroyProgress(@Nonnull BlockState state, @Nonnull PlayerEntity player, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos) {
+        TileEntity tileentity = worldIn.getBlockEntity(pos);
 
-        if ((tileentity instanceof TreeStumpTileEntity) && ((TreeStumpTileEntity) tileentity).hasTool(player.getHeldItemMainhand())) {
+        if ((tileentity instanceof TreeStumpTileEntity) && ((TreeStumpTileEntity) tileentity).hasTool(player.getMainHandItem())) {
             return 0.0f;
         }
 
-        return super.getPlayerRelativeBlockHardness(state, player, worldIn, pos);
+        return super.getDestroyProgress(state, player, worldIn, pos);
     }
 
     @Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
-        TileEntity te = world.getTileEntity(iProbeHitData.getPos());
+        TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
 
         if (te instanceof TreeStumpTileEntity) {
             TreeStumpTileEntity treeStump = (TreeStumpTileEntity) te;

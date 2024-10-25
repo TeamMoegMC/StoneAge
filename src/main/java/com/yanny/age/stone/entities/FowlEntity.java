@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 
 public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvider {
 
-    private static final Ingredient TEMPTATION_ITEMS = Ingredient.fromItems(Items.WHEAT_SEEDS, Items.MELON_SEEDS, Items.PUMPKIN_SEEDS, Items.BEETROOT_SEEDS);
+    private static final Ingredient TEMPTATION_ITEMS = Ingredient.of(Items.WHEAT_SEEDS, Items.MELON_SEEDS, Items.PUMPKIN_SEEDS, Items.BEETROOT_SEEDS);
     public float wingRotation;
     public float destPos;
     public float oFlapSpeed;
@@ -45,19 +45,19 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
 
     public FowlEntity(@Nonnull EntityType<? extends FowlEntity> type, @Nonnull World worldIn) {
         super(type, worldIn);
-        this.setPathPriority(PathNodeType.WATER, 0.0F);
+        this.setPathfindingMalus(PathNodeType.WATER, 0.0F);
     }
 
     @Override
-    public AgeableEntity createChild(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
-        if (Math.min(dataManager.get(GENERATION), ageable.getDataManager().get(GENERATION)) >= Config.domesticateAfterGenerations) {
+    public AgeableEntity getBreedOffspring(@Nonnull ServerWorld serverWorld, @Nonnull AgeableEntity ageable) {
+        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
             EntityType<?> child = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(Config.fowlBreedingResult));
 
             if (child != null) {
-                Entity result = child.create(world);
+                Entity result = child.create(level);
 
                 if (result instanceof AgeableEntity) {
-                    return (AgeableEntity) child.create(world);
+                    return (AgeableEntity) child.create(level);
                 } else {
                     LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", Config.fowlBreedingResult);
                 }
@@ -65,12 +65,12 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
                 LOGGER.warn("'{}' does not exists! Spawning default CHICKEN entity", Config.fowlBreedingResult);
             }
 
-            return EntityType.CHICKEN.create(world);
+            return EntityType.CHICKEN.create(level);
         } else {
-            FowlEntity entity = EntitySubscriber.fowl.create(world);
+            FowlEntity entity = EntitySubscriber.fowl.create(level);
 
             if (entity != null) {
-                entity.setGeneration(dataManager.get(GENERATION) + 1);
+                entity.setGeneration(entityData.get(GENERATION) + 1);
             }
 
             return entity;
@@ -93,18 +93,18 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
     }
 
     public static AttributeModifierMap getAttributes() {
-        return MobEntity.func_233666_p_().createMutableAttribute(Attributes.MAX_HEALTH, 6.0D).createMutableAttribute(Attributes.MOVEMENT_SPEED, 0.3F).create();
+        return MobEntity.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
     @Override
-    public boolean attackEntityAsMob(Entity entityIn) {
-        this.playSound(SoundEvents.ENTITY_CHICKEN_HURT, 1.0F, (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), 1.0F);
+    public boolean doHurtTarget(Entity entityIn) {
+        this.playSound(SoundEvents.CHICKEN_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
+        return entityIn.hurt(DamageSource.mobAttack(this), 1.0F);
     }
 
     @Override
-    public void livingTick() {
-        super.livingTick();
+    public void aiStep() {
+        super.aiStep();
         this.oFlap = this.wingRotation;
         this.oFlapSpeed = this.destPos;
         this.destPos = (float)((double)this.destPos + (double)(this.onGround ? -1 : 4) * 0.3D);
@@ -114,45 +114,45 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
         }
 
         this.wingRotDelta = (float)((double)this.wingRotDelta * 0.9D);
-        Vector3d vec3d = this.getMotion();
+        Vector3d vec3d = this.getDeltaMovement();
         if (!this.onGround && vec3d.y < 0.0D) {
-            this.setMotion(vec3d.mul(1.0D, 0.6D, 1.0D));
+            this.setDeltaMovement(vec3d.multiply(1.0D, 0.6D, 1.0D));
         }
 
         this.wingRotation += this.wingRotDelta * 2.0F;
     }
 
-    public boolean onLivingFall(float distance, float damageMultiplier) {
+    public boolean causeFallDamage(float distance, float damageMultiplier) {
         return false;
     }
 
     @Override
     protected SoundEvent getAmbientSound() {
-        return SoundEvents.ENTITY_CHICKEN_AMBIENT;
+        return SoundEvents.CHICKEN_AMBIENT;
     }
 
     @Override
     protected SoundEvent getHurtSound(@Nonnull DamageSource damageSourceIn) {
-        return SoundEvents.ENTITY_CHICKEN_HURT;
+        return SoundEvents.CHICKEN_HURT;
     }
 
     @Override
     protected SoundEvent getDeathSound() {
-        return SoundEvents.ENTITY_CHICKEN_DEATH;
+        return SoundEvents.CHICKEN_DEATH;
     }
 
     @Override
     protected void playStepSound(@Nonnull BlockPos pos, @Nonnull BlockState blockIn) {
-        this.playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.15F, 1.0F);
+        this.playSound(SoundEvents.CHICKEN_STEP, 0.15F, 1.0F);
     }
 
     @Override
-    public boolean isBreedingItem(@Nonnull ItemStack stack) {
+    public boolean isFood(@Nonnull ItemStack stack) {
         return TEMPTATION_ITEMS.test(stack);
     }
 
     @Override
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull PlayerEntity player, @Nonnull World world, @Nonnull Entity entity, @Nonnull IProbeHitEntityData data) {
-        probeInfo.horizontal().text(new StringTextComponent("Generation: " + dataManager.get(GENERATION)));
+        probeInfo.horizontal().text(new StringTextComponent("Generation: " + entityData.get(GENERATION)));
     }
 }

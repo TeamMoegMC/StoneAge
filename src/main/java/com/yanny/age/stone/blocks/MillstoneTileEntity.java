@@ -58,14 +58,14 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
     @Override
     public void tick() {
-        assert world != null;
+        assert level != null;
 
         if (active) {
-            if (world.rand.nextInt(5) == 0) {
-                double d0 = pos.getX() + world.rand.nextFloat() / 2 + 0.25;
-                double d1 = pos.getY() + 7 / 16f + 0.025D;
-                double d2 = pos.getZ() + world.rand.nextFloat() / 2 + 0.25;
-                world.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0, world.rand.nextFloat(), 0);
+            if (level.random.nextInt(5) == 0) {
+                double d0 = worldPosition.getX() + level.random.nextFloat() / 2 + 0.25;
+                double d1 = worldPosition.getY() + 7 / 16f + 0.025D;
+                double d2 = worldPosition.getZ() + level.random.nextFloat() / 2 + 0.25;
+                level.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0, level.random.nextFloat(), 0);
             }
 
             rotation += PI2 / 80;
@@ -82,7 +82,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
                         stacks.get(1).grow(result.getCount());
                     }
 
-                    if (world.rand.nextDouble() < secondChance) {
+                    if (level.random.nextDouble() < secondChance) {
                         if (stacks.get(2).isEmpty()) {
                             stacks.set(2, secondResult);
                         } else {
@@ -94,8 +94,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
                     secondResult = ItemStack.EMPTY;
                     ticks = 0;
 
-                    if (!world.isRemote) {
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                    if (!level.isClientSide) {
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     }
                 }
             }
@@ -105,8 +105,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     @Nullable
     @Override
     public Container createMenu(int id, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity entity) {
-        assert world != null;
-        return new MillstoneContainer(id, pos, world, inventory, entity, data);
+        assert level != null;
+        return new MillstoneContainer(id, worldPosition, level, inventory, entity, data);
     }
 
     @Nonnull
@@ -122,49 +122,49 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
+    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         active = tag.getBoolean("active");
         rotation = tag.getFloat("rotation");
         ticks = tag.getInt("ticks");
-        result = ItemStack.read(tag.getCompound("result"));
-        secondResult = ItemStack.read(tag.getCompound("secondResult"));
+        result = ItemStack.of(tag.getCompound("result"));
+        secondResult = ItemStack.of(tag.getCompound("secondResult"));
         secondChance = tag.getDouble("secondChance");
         activateTicks = tag.getInt("activateTicks");
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         tag.putBoolean("active", active);
         tag.putFloat("rotation", rotation);
         tag.putInt("ticks", ticks);
-        tag.put("result", result.write(new CompoundNBT()));
-        tag.put("secondResult", secondResult.write(new CompoundNBT()));
+        tag.put("result", result.save(new CompoundNBT()));
+        tag.put("secondResult", secondResult.save(new CompoundNBT()));
         tag.putDouble("secondChance", secondChance);
         tag.putInt("activateTicks", activateTicks);
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -181,10 +181,10 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
@@ -215,9 +215,9 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -247,9 +247,9 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -259,7 +259,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
     }
 
     public void onActivated() {
-        assert world != null;
+        assert level != null;
 
         if (!active) {
             ItemStack inputStack = stacks.get(0);
@@ -267,32 +267,32 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
             if (result.isEmpty() && !inputStack.isEmpty()) {
                 getRecipe(inputStack).ifPresent(millstoneRecipe -> {
                     if (canCraft(millstoneRecipe)) {
-                        inputStack.shrink(millstoneRecipe.getIngredients().get(0).getMatchingStacks()[0].getCount());
-                        result = millstoneRecipe.getCraftingResult(null);
+                        inputStack.shrink(millstoneRecipe.getIngredients().get(0).getItems()[0].getCount());
+                        result = millstoneRecipe.assemble(null);
                         secondResult = millstoneRecipe.getCraftingSecondResult();
                         secondChance = millstoneRecipe.getSecondChance();
                         active = true;
                         activateTicks = millstoneRecipe.getActivateCount() * 20;
                         ticks = 0;
 
-                        world.playSound(null, getPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
-                        world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                        level.playSound(null, getBlockPos(), SoundEvents.GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
+                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     }
                 });
             } else if (!result.isEmpty() || !secondResult.isEmpty()) {
                 active = true;
 
-                world.playSound(null, getPos(), SoundEvents.BLOCK_GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                level.playSound(null, getBlockPos(), SoundEvents.GRINDSTONE_USE, SoundCategory.BLOCKS, 0.5f, 1.0f);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         }
     }
 
     @Nonnull
     private Optional<MillstoneRecipe> getRecipe(@Nonnull ItemStack item) {
-        assert world != null;
+        assert level != null;
         tmpItemHandler.setStackInSlot(0, item);
-        return world.getRecipeManager().getRecipe(MillstoneRecipe.millstone, tmpItemHandlerWrapper, world);
+        return level.getRecipeManager().getRecipeFor(MillstoneRecipe.millstone, tmpItemHandlerWrapper, level);
     }
 
     @Nonnull
@@ -309,7 +309,7 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
             }
 
             @Override
-            public int size() {
+            public int getCount() {
                 return 1;
             }
         };
@@ -319,8 +319,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
         ItemStack inputStack = stacks.get(0);
         ItemStack outputStack = stacks.get(1);
         ItemStack outputSecondStack = stacks.get(2);
-        ItemStack recipeInput = recipe.getIngredients().get(0).getMatchingStacks()[0];
-        ItemStack recipeOutput = recipe.getRecipeOutput();
+        ItemStack recipeInput = recipe.getIngredients().get(0).getItems()[0];
+        ItemStack recipeOutput = recipe.getResultItem();
         ItemStack recipeSecondOutput = recipe.getRecipeSecondOutput();
         boolean emptyOutput = outputStack.isEmpty();
         boolean emptyRecipe = recipeOutput.isEmpty();
@@ -336,8 +336,8 @@ public class MillstoneTileEntity extends TileEntity implements IInventoryInterfa
         int outputRecipeSecondCount = recipeSecondOutput.getCount();
 
         if (inputCount >= inputRecipeCount) {
-            return (emptyOutput || emptyRecipe || (outputStack.isItemEqual(recipeOutput) && outputCount <= outputMaxCount - outputRecipeCount)) &&
-                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.isItemEqual(recipeSecondOutput) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
+            return (emptyOutput || emptyRecipe || (outputStack.sameItem(recipeOutput) && outputCount <= outputMaxCount - outputRecipeCount)) &&
+                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.sameItem(recipeSecondOutput) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
         }
 
         return false;

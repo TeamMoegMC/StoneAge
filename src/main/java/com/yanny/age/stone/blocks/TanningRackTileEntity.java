@@ -55,35 +55,35 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
+    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        super.read(blockState, tag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -100,35 +100,35 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         sidedInventoryHandler.invalidate();
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
     ActionResultType blockActivated(@Nonnull PlayerEntity player) {
-        assert world != null;
-        ItemStack itemMainhand = player.getHeldItemMainhand();
+        assert level != null;
+        ItemStack itemMainhand = player.getMainHandItem();
         TanningRackRecipe recipe = getRecipe(itemMainhand);
         int pos = 0;
 
         if (stacks.get(pos).isEmpty() && stacks.get(pos + ITEMS).isEmpty() && recipe != null) {
             stacks.set(pos, itemMainhand.split(1));
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             return ActionResultType.SUCCESS;
         }
 
         recipe = getRecipe(stacks.get(pos));
 
         if (recipe != null && recipe.getTool().test(itemMainhand) && !stacks.get(pos).isEmpty()) {
-            itemMainhand.damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+            itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
 
             if (random.nextDouble() < Config.tanningRackFinishChance) {
-                stacks.set(pos + ITEMS, recipe.getCraftingResult(null));
+                stacks.set(pos + ITEMS, recipe.assemble(null));
                 stacks.set(pos, ItemStack.EMPTY);
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
 
             return ActionResultType.SUCCESS;
@@ -139,10 +139,10 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
             itemStacks.add(stacks.get(pos + ITEMS).copy());
             stacks.set(pos + ITEMS, ItemStack.EMPTY);
             stacks.set(pos, ItemStack.EMPTY);
-            InventoryHelper.dropItems(world, getPos(), itemStacks);
+            InventoryHelper.dropContents(level, getBlockPos(), itemStacks);
 
-            world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
-            world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
             return ActionResultType.SUCCESS;
         }
 
@@ -151,9 +151,9 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
 
     @Nullable
     private TanningRackRecipe getRecipe(@Nonnull ItemStack item) {
-        assert world != null;
+        assert level != null;
         tmpItemHandler.setStackInSlot(0, item);
-        return world.getRecipeManager().getRecipe(TanningRackRecipe.tanning_rack, tmpItemHandlerWrapper, world).orElse(null);
+        return level.getRecipeManager().getRecipeFor(TanningRackRecipe.tanning_rack, tmpItemHandlerWrapper, level).orElse(null);
     }
 
     @Nonnull
@@ -161,9 +161,9 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
         return new ItemStackHandler(stacks) {
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
@@ -184,7 +184,7 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
             @Nonnull
             @Override
             public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-                if (slot < ITEMS && getStackInSlot(slot).isEmpty() && world != null) {
+                if (slot < ITEMS && getStackInSlot(slot).isEmpty() && level != null) {
                     TanningRackRecipe recipe = getRecipe(stack);
 
                     if (recipe != null) {
@@ -196,9 +196,9 @@ public class TanningRackTileEntity extends TileEntity implements IInventoryInter
 
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }

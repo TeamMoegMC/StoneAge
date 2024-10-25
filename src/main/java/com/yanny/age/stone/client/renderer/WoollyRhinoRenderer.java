@@ -23,12 +23,12 @@ public class WoollyRhinoRenderer extends MobRenderer<WoollyRhinoEntity, WoollyRh
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull WoollyRhinoEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull WoollyRhinoEntity entity) {
         return WOOLLY_RHINO_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(WoollyRhinoEntity entity) {
+    protected boolean shouldShowName(WoollyRhinoEntity entity) {
         return entity.hasCustomName();
     }
 

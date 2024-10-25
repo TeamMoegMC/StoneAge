@@ -14,6 +14,8 @@ import javax.annotation.Nonnull;
 
 import static net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
 
+import net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType;
+
 @OnlyIn(Dist.CLIENT)
 public class TreeStumpRenderer extends TileEntityRenderer<TreeStumpTileEntity> {
     public TreeStumpRenderer(@Nonnull TileEntityRendererDispatcher rendererDispatcher) {
@@ -23,19 +25,19 @@ public class TreeStumpRenderer extends TileEntityRenderer<TreeStumpTileEntity> {
     @Override
     public void render(@Nonnull TreeStumpTileEntity tileEntity, float partialTicks, @Nonnull MatrixStack matrixStack,
                        @Nonnull IRenderTypeBuffer renderTypeBuffer, int overlayUV, int lightmapUV) {
-        matrixStack.push();
+        matrixStack.pushPose();
         matrixStack.translate(0.5, 0.77, 0.5);
-        matrixStack.rotate(Vector3f.XP.rotationDegrees(90));
+        matrixStack.mulPose(Vector3f.XP.rotationDegrees(90));
         matrixStack.scale(0.7f, 0.7f, 0.7f);
 
-        Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
+        Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.getInventory().getItem(0), TransformType.FIXED,
                 overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
-        if (tileEntity.getInventory().getStackInSlot(0).getCount() == 2) {
+        if (tileEntity.getInventory().getItem(0).getCount() == 2) {
             matrixStack.translate(0, 0, -0.05);
-            matrixStack.rotate(Vector3f.ZP.rotationDegrees(30));
-            Minecraft.getInstance().getItemRenderer().renderItem(tileEntity.getInventory().getStackInSlot(0), TransformType.FIXED,
+            matrixStack.mulPose(Vector3f.ZP.rotationDegrees(30));
+            Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.getInventory().getItem(0), TransformType.FIXED,
                     overlayUV, lightmapUV, matrixStack, renderTypeBuffer);
         }
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 }

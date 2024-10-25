@@ -33,14 +33,16 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class DriedGrassBedBlock extends BedBlock {
-    private static final VoxelShape NORTH = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 16.0D);
-    private static final VoxelShape SOUTH = Block.makeCuboidShape(2.0D, 0.0D, 0.0D, 14.0D, 3.0D, 14.0D);
-    private static final VoxelShape WEST = Block.makeCuboidShape(2.0D, 0.0D, 2.0D, 16.0D, 3.0D, 14.0D);
-    private static final VoxelShape EAST = Block.makeCuboidShape(0.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D);
+    private static final VoxelShape NORTH = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 16.0D);
+    private static final VoxelShape SOUTH = Block.box(2.0D, 0.0D, 0.0D, 14.0D, 3.0D, 14.0D);
+    private static final VoxelShape WEST = Block.box(2.0D, 0.0D, 2.0D, 16.0D, 3.0D, 14.0D);
+    private static final VoxelShape EAST = Block.box(0.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D);
 
     public DriedGrassBedBlock() {
-        super(DyeColor.BLACK, Properties.create(Material.WOOL).hardnessAndResistance(2.0f));
+        super(DyeColor.BLACK, Properties.of(Material.WOOL).strength(2.0f));
     }
 
     @Override
@@ -55,22 +57,22 @@ public class DriedGrassBedBlock extends BedBlock {
     }
 
     @Override
-    public TileEntity createNewTileEntity(@Nonnull IBlockReader worldIn) {
+    public TileEntity newBlockEntity(@Nonnull IBlockReader worldIn) {
         return new DriedGrassBedTileEntity();
     }
 
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
-    public BlockRenderType getRenderType(@Nonnull BlockState state) {
+    public BlockRenderType getRenderShape(@Nonnull BlockState state) {
         return BlockRenderType.MODEL;
     }
 
     @Nonnull
     @Override
     public VoxelShape getShape(BlockState state, @Nonnull IBlockReader worldIn, @Nonnull BlockPos pos, @Nonnull ISelectionContext context) {
-        Direction direction = state.get(HORIZONTAL_FACING);
-        Direction direction1 = state.get(PART) == BedPart.HEAD ? direction : direction.getOpposite();
+        Direction direction = state.getValue(FACING);
+        Direction direction1 = state.getValue(PART) == BedPart.HEAD ? direction : direction.getOpposite();
         switch(direction1) {
             case NORTH:
                 return NORTH;
@@ -86,44 +88,44 @@ public class DriedGrassBedBlock extends BedBlock {
     }
 
     @Override
-    public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
-        if (worldIn.isRemote) {
+    public ActionResultType use(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
+        if (worldIn.isClientSide) {
             return ActionResultType.CONSUME;
         } else {
-            if (state.get(PART) != BedPart.HEAD) {
-                pos = pos.offset(state.get(HORIZONTAL_FACING));
+            if (state.getValue(PART) != BedPart.HEAD) {
+                pos = pos.relative(state.getValue(FACING));
                 state = worldIn.getBlockState(pos);
-                if (!state.matchesBlock(this)) {
+                if (!state.is(this)) {
                     return ActionResultType.CONSUME;
                 }
             }
 
-            if (!doesBedWork(worldIn)) {
+            if (!canSetSpawn(worldIn)) {
                 worldIn.removeBlock(pos, false);
-                BlockPos blockpos = pos.offset(state.get(HORIZONTAL_FACING).getOpposite());
-                if (worldIn.getBlockState(blockpos).matchesBlock(this)) {
+                BlockPos blockpos = pos.relative(state.getValue(FACING).getOpposite());
+                if (worldIn.getBlockState(blockpos).is(this)) {
                     worldIn.removeBlock(blockpos, false);
                 }
 
-                worldIn.createExplosion((Entity) null, DamageSource.causeBedExplosionDamage(), (ExplosionContext) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Explosion.Mode.DESTROY);
+                worldIn.explode((Entity) null, DamageSource.badRespawnPointExplosion(), (ExplosionContext) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Explosion.Mode.DESTROY);
                 return ActionResultType.SUCCESS;
-            } else if (state.get(OCCUPIED)) {
+            } else if (state.getValue(OCCUPIED)) {
                 if (!this.tryWakeUpVillager(worldIn, pos)) {
-                    player.sendStatusMessage(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
+                    player.displayClientMessage(new TranslationTextComponent("block.minecraft.bed.occupied"), true);
                 }
 
                 return ActionResultType.SUCCESS;
             } else {
                 if (Config.GrassBedSleep) {
-                    player.trySleep(pos).ifLeft((result) -> {
+                    player.startSleepInBed(pos).ifLeft((result) -> {
                         if (result != null) {
-                            player.sendStatusMessage(result.getMessage(), true);
+                            player.displayClientMessage(result.getMessage(), true);
                         }
 
                     });
                 } else {
-                    ((ServerPlayerEntity) player).func_242111_a(worldIn.getDimensionKey(), pos, player.rotationYaw, false, true);
-                    player.sendStatusMessage(new TranslationTextComponent("block.stone_age.bed.cantsleep"), true);
+                    ((ServerPlayerEntity) player).setRespawnPosition(worldIn.dimension(), pos, player.yRot, false, true);
+                    player.displayClientMessage(new TranslationTextComponent("block.stone_age.bed.cantsleep"), true);
                 }
                 return ActionResultType.SUCCESS;
             }
@@ -131,11 +133,11 @@ public class DriedGrassBedBlock extends BedBlock {
     }
 
     private boolean tryWakeUpVillager(World world, BlockPos pos) {
-        List<VillagerEntity> list = world.getEntitiesWithinAABB(VillagerEntity.class, new AxisAlignedBB(pos), LivingEntity::isSleeping);
+        List<VillagerEntity> list = world.getEntitiesOfClass(VillagerEntity.class, new AxisAlignedBB(pos), LivingEntity::isSleeping);
         if (list.isEmpty()) {
             return false;
         } else {
-            list.get(0).wakeUp();
+            list.get(0).stopSleeping();
             return true;
         }
     }

@@ -24,16 +24,16 @@ public class TreeStumpRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
 
     @Override
     @Nonnull
-    public TreeStumpRecipe read(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        String s = JSONUtils.getString(json, "group", "");
-        JsonElement ingredientJsonElement = JSONUtils.isJsonArray(json, "ingredient")
-                ? JSONUtils.getJsonArray(json, "ingredient")
-                : JSONUtils.getJsonObject(json, "ingredient");
-        JsonElement toolJsonElement = JSONUtils.isJsonArray(json, "tool")
-                ? JSONUtils.getJsonArray(json, "tool")
-                : JSONUtils.getJsonObject(json, "tool");
-        Ingredient ingredient = Ingredient.deserialize(ingredientJsonElement);
-        Ingredient tool = Ingredient.deserialize(toolJsonElement);
+    public TreeStumpRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
+        String s = JSONUtils.getAsString(json, "group", "");
+        JsonElement ingredientJsonElement = JSONUtils.isArrayNode(json, "ingredient")
+                ? JSONUtils.getAsJsonArray(json, "ingredient")
+                : JSONUtils.getAsJsonObject(json, "ingredient");
+        JsonElement toolJsonElement = JSONUtils.isArrayNode(json, "tool")
+                ? JSONUtils.getAsJsonArray(json, "tool")
+                : JSONUtils.getAsJsonObject(json, "tool");
+        Ingredient ingredient = Ingredient.fromJson(ingredientJsonElement);
+        Ingredient tool = Ingredient.fromJson(toolJsonElement);
         ItemStack itemstack;
 
         if (!json.has("result")) {
@@ -41,28 +41,28 @@ public class TreeStumpRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
         }
 
         if (json.get("result").isJsonObject()) {
-            itemstack = CraftingHelper.getItemStack(JSONUtils.getJsonObject(json, "result"), true);
+            itemstack = CraftingHelper.getItemStack(JSONUtils.getAsJsonObject(json, "result"), true);
         } else {
-            String s1 = JSONUtils.getString(json, "result");
+            String s1 = JSONUtils.getAsString(json, "result");
             ResourceLocation resourcelocation = new ResourceLocation(s1);
             itemstack = new ItemStack(ForgeRegistries.ITEMS.getValue(resourcelocation));
         }
 
-        int i = JSONUtils.getInt(json, "chopTimes", 1);
-        int a = JSONUtils.getInt(json, "amount", 1);
+        int i = JSONUtils.getAsInt(json, "chopTimes", 1);
+        int a = JSONUtils.getAsInt(json, "amount", 1);
 
-        ingredient.getMatchingStacks()[0].setCount(a);
+        ingredient.getItems()[0].setCount(a);
 
         return this.factory.create(recipeId, s, ingredient, tool, itemstack, i);
     }
 
     @Nullable
     @Override
-    public TreeStumpRecipe read(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
-        String s = buffer.readString(32767);
-        Ingredient ingredient = Ingredient.read(buffer);
-        Ingredient tool = Ingredient.read(buffer);
-        ItemStack itemstack = buffer.readItemStack();
+    public TreeStumpRecipe fromNetwork(@Nonnull ResourceLocation recipeId, PacketBuffer buffer) {
+        String s = buffer.readUtf(32767);
+        Ingredient ingredient = Ingredient.fromNetwork(buffer);
+        Ingredient tool = Ingredient.fromNetwork(buffer);
+        ItemStack itemstack = buffer.readItem();
 
         int i = buffer.readVarInt();
 
@@ -70,11 +70,11 @@ public class TreeStumpRecipeSerializer extends ForgeRegistryEntry<IRecipeSeriali
     }
 
     @Override
-    public void write(PacketBuffer buffer, TreeStumpRecipe recipe) {
-        buffer.writeString(recipe.group);
-        recipe.ingredient.write(buffer);
-        recipe.tool.write(buffer);
-        buffer.writeItemStack(recipe.result);
+    public void toNetwork(PacketBuffer buffer, TreeStumpRecipe recipe) {
+        buffer.writeUtf(recipe.group);
+        recipe.ingredient.toNetwork(buffer);
+        recipe.tool.toNetwork(buffer);
+        buffer.writeItem(recipe.result);
         buffer.writeVarInt(recipe.chopTimes);
     }
 

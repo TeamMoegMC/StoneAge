@@ -40,8 +40,8 @@ public class JeiCompatPlugin implements IModPlugin {
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        assert Minecraft.getInstance().world != null;
-        RecipeManager recipeManager = Minecraft.getInstance().world.getRecipeManager();
+        assert Minecraft.getInstance().level != null;
+        RecipeManager recipeManager = Minecraft.getInstance().level.getRecipeManager();
         List<IRecipe<?>> dryingRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof DryingRackRecipe).collect(Collectors.toList());
         List<IRecipe<?>> tanningRackRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof TanningRackRecipe).collect(Collectors.toList());
         List<IRecipe<?>> flintWorkbenchRecipes = recipeManager.getRecipes().stream().filter(recipe -> recipe instanceof FlintWorkbenchRecipe).collect(Collectors.toList());

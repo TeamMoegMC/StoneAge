@@ -26,14 +26,16 @@ import net.minecraftforge.fml.network.NetworkHooks;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import net.minecraft.block.AbstractBlock.Properties;
+
 public class MillstoneBlock extends Block implements TopBlockInfoProvider {
-    private static final VoxelShape SHAPE = VoxelShapes.or(Block.makeCuboidShape(0, 0, 0, 16, 3, 16),
-            Block.makeCuboidShape(2.5, 3, 2.5, 13.5, 7, 13.5),
-            Block.makeCuboidShape(3, 7.05, 3, 13, 11, 13),
-            Block.makeCuboidShape(7, 7, 7, 9, 12, 9));
+    private static final VoxelShape SHAPE = VoxelShapes.or(Block.box(0, 0, 0, 16, 3, 16),
+            Block.box(2.5, 3, 2.5, 13.5, 7, 13.5),
+            Block.box(3, 7.05, 3, 13, 11, 13),
+            Block.box(7, 7, 7, 9, 12, 9));
 
     public MillstoneBlock() {
-        super(Properties.create(Material.ROCK).hardnessAndResistance(4.0f));
+        super(Properties.of(Material.STONE).strength(4.0f));
     }
 
     @Override
@@ -56,34 +58,34 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void onReplaced(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, @Nonnull World worldIn, @Nonnull BlockPos pos, BlockState newState, boolean isMoving) {
         if (state.getBlock() != newState.getBlock()) {
-            TileEntity tileentity = worldIn.getTileEntity(pos);
+            TileEntity tileentity = worldIn.getBlockEntity(pos);
 
             if (tileentity instanceof MillstoneTileEntity) {
-                InventoryHelper.dropInventoryItems(worldIn, pos, ((MillstoneTileEntity)tileentity).getInventory());
+                InventoryHelper.dropContents(worldIn, pos, ((MillstoneTileEntity)tileentity).getInventory());
             }
 
-            super.onReplaced(state, worldIn, pos, newState, isMoving);
+            super.onRemove(state, worldIn, pos, newState, isMoving);
         }
     }
 
     @Nonnull
     @SuppressWarnings("deprecation")
     @Override
-    public ActionResultType onBlockActivated(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
+    public ActionResultType use(@Nonnull BlockState state, World worldIn, @Nonnull BlockPos pos, @Nonnull PlayerEntity player,
                                              @Nonnull Hand handIn, @Nonnull BlockRayTraceResult hit) {
-        MillstoneTileEntity tile = (MillstoneTileEntity) worldIn.getTileEntity(pos);
+        MillstoneTileEntity tile = (MillstoneTileEntity) worldIn.getBlockEntity(pos);
 
         if (tile != null) {
-            if (player.isSneaking()) {
-                if (!worldIn.isRemote) {
+            if (player.isShiftKeyDown()) {
+                if (!worldIn.isClientSide) {
                     tile.onActivated();
                     return ActionResultType.SUCCESS;
                 }
             } else {
-                if (!worldIn.isRemote) {
-                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getPos());
+                if (!worldIn.isClientSide) {
+                    NetworkHooks.openGui((ServerPlayerEntity) player, tile, tile.getBlockPos());
                 }
 
                 return ActionResultType.SUCCESS;
@@ -98,7 +100,7 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider {
     @Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
-        TileEntity te = world.getTileEntity(iProbeHitData.getPos());
+        TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
 
         if (te instanceof MillstoneTileEntity) {
             MillstoneTileEntity millstone = (MillstoneTileEntity) te;

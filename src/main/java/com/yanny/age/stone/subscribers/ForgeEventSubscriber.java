@@ -102,7 +102,7 @@ public class ForgeEventSubscriber {
 			    RECIPES_TO_REMOVE.forEach(map1::remove);
 			});
 			event.getServer().getRecipeManager().recipes=ImmutableMap.copyOf(map);
-			ADVANCEMENTS_TO_REMOVE.forEach(event.getServer().getAdvancementManager().advancementList.advancements::remove);
+			ADVANCEMENTS_TO_REMOVE.forEach(event.getServer().getAdvancements().advancements.advancements::remove);
         }
         if (Config.forceToolForWood) {
             setUseToolForWood();
@@ -137,13 +137,13 @@ public class ForgeEventSubscriber {
         if (Config.LitTorche) {
             PlayerEntity player = event.getPlayer();
 
-            if (event.getHand() == Hand.MAIN_HAND && player.getHeldItemMainhand().getItem().equals(ItemSubscriber.unlit_torch)) {
+            if (event.getHand() == Hand.MAIN_HAND && player.getMainHandItem().getItem().equals(ItemSubscriber.unlit_torch)) {
                 World world = event.getWorld();
                 BlockPos pos = event.getPos();
                 BlockState blockState = world.getBlockState(pos);
 
                 if (blockState.getBlock().equals(CAMPFIRE) || blockState.getBlock().equals(FIRE) || blockState.getBlock().equals(TORCH)) {
-                    player.setHeldItem(Hand.MAIN_HAND, new ItemStack(Items.TORCH, player.getHeldItemMainhand().getCount()));
+                    player.setItemInHand(Hand.MAIN_HAND, new ItemStack(Items.TORCH, player.getMainHandItem().getCount()));
                     event.setUseItem(Event.Result.DENY);
                 }
             }
@@ -153,30 +153,30 @@ public class ForgeEventSubscriber {
     @SubscribeEvent
     public static void makeFireWithSticksAndDriedGrass(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         PlayerEntity player = event.getPlayer();
-        ItemStack mainItem = player.getHeldItemMainhand();
-        ItemStack offItem = player.getHeldItemOffhand();
+        ItemStack mainItem = player.getMainHandItem();
+        ItemStack offItem = player.getOffhandItem();
         if (Config.MakeFire) {
             if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
                 World world = event.getWorld();
-                BlockPos position = event.getPos().offset(event.getFace());
+                BlockPos position = event.getPos().relative(event.getFace());
                 BlockState blockState = world.getBlockState(position);
-                List<ItemEntity> driedGrassList = world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(position),
+                List<ItemEntity> driedGrassList = world.getEntitiesOfClass(ItemEntity.class, new AxisAlignedBB(position),
                         itemEntity -> itemEntity.getItem().getItem().equals(ItemSubscriber.dried_grass));
 
                 if (blockState.getBlock().isAir(blockState, world, position) && !driedGrassList.isEmpty()) {
-                    world.setBlockState(position, FIRE.getDefaultState(), 11);
-                    player.sendBreakAnimation(Hand.MAIN_HAND);
-                    player.sendBreakAnimation(Hand.OFF_HAND);
+                    world.setBlock(position, FIRE.defaultBlockState(), 11);
+                    player.broadcastBreakEvent(Hand.MAIN_HAND);
+                    player.broadcastBreakEvent(Hand.OFF_HAND);
 
                     if (mainItem.getCount() > 1) {
                         mainItem.setCount(mainItem.getCount() - 1);
                     } else {
-                        player.setHeldItem(Hand.MAIN_HAND, ItemStack.EMPTY);
+                        player.setItemInHand(Hand.MAIN_HAND, ItemStack.EMPTY);
                     }
                     if (offItem.getCount() > 1) {
                         offItem.setCount(offItem.getCount() - 1);
                     } else {
-                        player.setHeldItem(Hand.OFF_HAND, ItemStack.EMPTY);
+                        player.setItemInHand(Hand.OFF_HAND, ItemStack.EMPTY);
                     }
 
                     driedGrassList.forEach(Entity::remove);
@@ -201,43 +201,43 @@ public class ForgeEventSubscriber {
         MobSpawnInfoBuilder spawns = event.getSpawns();
 
         if (Config.spawnDeerEnable && (!Config.spawnDeerAllowedBiomesBlacklist == Config.spawnDeerAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(deer.getClassification()).add(new MobSpawnInfo.Spawners(deer, Config.spawnDeerWeight, Config.spawnDeerMinCount, Config.spawnDeerMaxCount));
+            spawns.getSpawner(deer.getCategory()).add(new MobSpawnInfo.Spawners(deer, Config.spawnDeerWeight, Config.spawnDeerMinCount, Config.spawnDeerMaxCount));
         }
         if (Config.spawnBoarEnable && (!Config.spawnBoarAllowedBiomesBlacklist == Config.spawnBoarAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(boar.getClassification()).add(new MobSpawnInfo.Spawners(boar, Config.spawnBoarWeight, Config.spawnBoarMinCount, Config.spawnBoarMaxCount));
+            spawns.getSpawner(boar.getCategory()).add(new MobSpawnInfo.Spawners(boar, Config.spawnBoarWeight, Config.spawnBoarMinCount, Config.spawnBoarMaxCount));
         }
         if (Config.spawnAurochEnable && (!Config.spawnAurochAllowedBiomesBlacklist == Config.spawnAurochAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(auroch.getClassification()).add(new MobSpawnInfo.Spawners(auroch, Config.spawnAurochWeight, Config.spawnAurochMinCount, Config.spawnAurochMaxCount));
+            spawns.getSpawner(auroch.getCategory()).add(new MobSpawnInfo.Spawners(auroch, Config.spawnAurochWeight, Config.spawnAurochMinCount, Config.spawnAurochMaxCount));
         }
         if (Config.spawnFowlEnable && (!Config.spawnFowlAllowedBiomesBlacklist == Config.spawnFowlAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(fowl.getClassification()).add(new MobSpawnInfo.Spawners(fowl, Config.spawnFowlWeight, Config.spawnFowlMinCount, Config.spawnFowlMaxCount));
+            spawns.getSpawner(fowl.getCategory()).add(new MobSpawnInfo.Spawners(fowl, Config.spawnFowlWeight, Config.spawnFowlMinCount, Config.spawnFowlMaxCount));
         }
         if (Config.spawnMouflonEnable && (!Config.spawnMouflonAllowedBiomesBlacklist == Config.spawnMouflonAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(mouflon.getClassification()).add(new MobSpawnInfo.Spawners(mouflon, Config.spawnMouflonWeight, Config.spawnMouflonMinCount, Config.spawnMouflonMaxCount));
+            spawns.getSpawner(mouflon.getCategory()).add(new MobSpawnInfo.Spawners(mouflon, Config.spawnMouflonWeight, Config.spawnMouflonMinCount, Config.spawnMouflonMaxCount));
         }
         if (Config.spawnMammothEnable && (!Config.spawnMammothAllowedBiomesBlacklist == Config.spawnMammothAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(mammoth.getClassification()).add(new MobSpawnInfo.Spawners(mammoth, Config.spawnMammothWeight, Config.spawnMammothMinCount, Config.spawnMammothMaxCount));
+            spawns.getSpawner(mammoth.getCategory()).add(new MobSpawnInfo.Spawners(mammoth, Config.spawnMammothWeight, Config.spawnMammothMinCount, Config.spawnMammothMaxCount));
         }
         if (Config.spawnSaberToothTigerEnable && (!Config.spawnSaberToothTigerAllowedBiomesBlacklist == Config.spawnSaberToothTigerAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(saber_tooth_tiger.getClassification()).add(new MobSpawnInfo.Spawners(saber_tooth_tiger, Config.spawnSaberToothTigerWeight, Config.spawnSaberToothTigerMinCount, Config.spawnSaberToothTigerMaxCount));
+            spawns.getSpawner(saber_tooth_tiger.getCategory()).add(new MobSpawnInfo.Spawners(saber_tooth_tiger, Config.spawnSaberToothTigerWeight, Config.spawnSaberToothTigerMinCount, Config.spawnSaberToothTigerMaxCount));
         }
         if (Config.spawnWoollyRhinoEnable && (!Config.spawnWoollyRhinoAllowedBiomesBlacklist == Config.spawnWoollyRhinoAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(woolly_rhino.getClassification()).add(new MobSpawnInfo.Spawners(woolly_rhino, Config.spawnWoollyRhinoWeight, Config.spawnWoollyRhinoMinCount, Config.spawnWoollyRhinoMaxCount));
+            spawns.getSpawner(woolly_rhino.getCategory()).add(new MobSpawnInfo.Spawners(woolly_rhino, Config.spawnWoollyRhinoWeight, Config.spawnWoollyRhinoMinCount, Config.spawnWoollyRhinoMaxCount));
         }
         if (Config.spawnTerrorBirdEnable && (!Config.spawnTerrorBirdAllowedBiomesBlacklist == Config.spawnTerrorBirdAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(terror_bird.getClassification()).add(new MobSpawnInfo.Spawners(terror_bird, Config.spawnTerrorBirdWeight, Config.spawnTerrorBirdMinCount, Config.spawnTerrorBirdMaxCount));
+            spawns.getSpawner(terror_bird.getCategory()).add(new MobSpawnInfo.Spawners(terror_bird, Config.spawnTerrorBirdWeight, Config.spawnTerrorBirdMinCount, Config.spawnTerrorBirdMaxCount));
         }
         if (Config.spawnCoelacanthEnable && (!Config.spawnCoelacanthAllowedBiomesBlacklist == Config.spawnCoelacanthAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event)))) {
-            spawns.getSpawner(coelacanth.getClassification()).add(new MobSpawnInfo.Spawners(coelacanth, Config.spawnCoelacanthWeight, Config.spawnCoelacanthMinCount, Config.spawnCoelacanthMaxCount));
+            spawns.getSpawner(coelacanth.getCategory()).add(new MobSpawnInfo.Spawners(coelacanth, Config.spawnCoelacanthWeight, Config.spawnCoelacanthMinCount, Config.spawnCoelacanthMaxCount));
         }
 
         if (Config.abandonedCampAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
-                    FeatureSubscriber.abandoned_camp_feature.withConfiguration(new ProbabilityConfig((float) Config.abandonedCampSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+                    FeatureSubscriber.abandoned_camp_feature.configured(new ProbabilityConfig((float) Config.abandonedCampSpawnChance)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
         }
         if (Config.burialPlaceAllowedBiomes.stream().anyMatch(biome -> biomeComparator(biome, event))) {
             event.getGeneration().getFeatures(GenerationStage.Decoration.SURFACE_STRUCTURES).add(() ->
-                    FeatureSubscriber.burial_place_feature.withConfiguration(new ProbabilityConfig((float) Config.burialPlaceSpawnChance)).withPlacement(Features.Placements.HEIGHTMAP_PLACEMENT));
+                    FeatureSubscriber.burial_place_feature.configured(new ProbabilityConfig((float) Config.burialPlaceSpawnChance)).decorated(Features.Placements.HEIGHTMAP_SQUARE));
         }
     }
 
@@ -255,10 +255,10 @@ public class ForgeEventSubscriber {
     public static void axeHarvestCheck(@Nonnull PlayerEvent.HarvestCheck event) {
         BlockState state = event.getTargetBlock();
         PlayerEntity entity = event.getPlayer();
-        ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
+        ItemStack stack = entity.getItemInHand(Hand.MAIN_HAND);
         Item item = stack.getItem();
 
-        if ((entity.getHeldItem(Hand.MAIN_HAND).getItem() instanceof AxeItem||stack.canHarvestBlock(state)) && (state.getMaterial() == Material.WOOD) &&
+        if ((entity.getItemInHand(Hand.MAIN_HAND).getItem() instanceof AxeItem||stack.isCorrectToolForDrops(state)) && (state.getMaterial() == Material.WOOD) &&
                 (state.getBlock().getHarvestLevel(state) <= item.getHarvestLevel(stack, ToolType.AXE, entity, state))) {
             event.setCanHarvest(true);
         }
@@ -268,9 +268,9 @@ public class ForgeEventSubscriber {
     public static void axeBreakCheck(@Nonnull PlayerEvent.BreakSpeed event) {
         BlockState state = event.getState();
         PlayerEntity entity = event.getPlayer();
-        ItemStack stack = entity.getHeldItem(Hand.MAIN_HAND);
+        ItemStack stack = entity.getItemInHand(Hand.MAIN_HAND);
         
-        if (state.getBlock().getTags().contains(logs)&&!(stack.getItem() instanceof AxeItem||stack.canHarvestBlock(state))) {
+        if (state.getBlock().getTags().contains(logs)&&!(stack.getItem() instanceof AxeItem||stack.isCorrectToolForDrops(state))) {
             event.setNewSpeed(0);
         }
     }
@@ -296,7 +296,7 @@ public class ForgeEventSubscriber {
 
             if (!book.isEmpty()) {
                 book.getOrCreateTag().putString("patchouli:book", "stone_age:stone_tablet");
-                event.getPlayer().inventory.addItemStackToInventory(book);
+                event.getPlayer().inventory.add(book);
             }
         }
     }
@@ -312,7 +312,7 @@ public class ForgeEventSubscriber {
 
         ForgeRegistries.BLOCKS.forEach(block -> {
             if (block.material.equals(Material.WOOD)&&block.getTags().contains(logs)) {
-            	block.getDefaultState().requiresTool=true;
+            	block.defaultBlockState().requiresCorrectToolForDrops=true;
             }
         });
 

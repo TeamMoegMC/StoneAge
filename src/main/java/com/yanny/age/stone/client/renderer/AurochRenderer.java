@@ -23,12 +23,12 @@ public class AurochRenderer extends MobRenderer<AurochEntity, AurochModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull AurochEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull AurochEntity entity) {
         return AUROCH_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(AurochEntity entity) {
+    protected boolean shouldShowName(AurochEntity entity) {
         return entity.hasCustomName();
     }
 

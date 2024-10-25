@@ -45,40 +45,40 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
     }
 
     @Override
-    public void read(@Nonnull BlockState blockState, CompoundNBT tag) {
+    public void load(@Nonnull BlockState blockState, CompoundNBT tag) {
         CompoundNBT invTag = tag.getCompound("inv");
         CompoundNBT outTag = tag.getCompound("output");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        recipeOutput = ItemStack.read(outTag);
-        super.read(blockState, tag);
+        recipeOutput = ItemStack.of(outTag);
+        super.load(blockState, tag);
     }
 
     @Override
     @Nonnull
-    public CompoundNBT write(CompoundNBT tag) {
+    public CompoundNBT save(CompoundNBT tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         CompoundNBT outTag = new CompoundNBT();
-        recipeOutput.write(outTag);
+        recipeOutput.save(outTag);
         tag.put("output", outTag);
-        return super.write(tag);
+        return super.save(tag);
     }
 
     @Nullable
     @Override
     public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(getPos(), getType().hashCode(), getUpdateTag());
+        return new SUpdateTileEntityPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
     }
 
     @Nonnull
     @Override
     public CompoundNBT getUpdateTag() {
-        return write(new CompoundNBT());
+        return save(new CompoundNBT());
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
         super.onDataPacket(net, pkt);
-        read(getBlockState(), pkt.getNbtCompound());
+        load(getBlockState(), pkt.getTag());
     }
 
     @Nonnull
@@ -93,9 +93,9 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
     }
 
     @Override
-    public void remove() {
+    public void setRemoved() {
         nonSidedInventoryHandler.invalidate();
-        super.remove();
+        super.setRemoved();
     }
 
     @Nonnull
@@ -115,8 +115,8 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
 
     @Nonnull
     ActionResultType blockActivated(@Nonnull PlayerEntity player, @Nonnull BlockRayTraceResult hit) {
-        assert world != null;
-        ItemStack heldItemMainhand = player.getHeldItemMainhand();
+        assert level != null;
+        ItemStack heldItemMainhand = player.getMainHandItem();
         List<FlintWorkbenchRecipe> recipes = findMatchingRecipes(heldItemMainhand);
 
         if (!recipes.isEmpty()) {
@@ -125,44 +125,44 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
             }
 
             FlintWorkbenchRecipe flintWorkbenchRecipe = recipes.get(0);
-            ItemStack result = flintWorkbenchRecipe.getCraftingResult(getInventory());
+            ItemStack result = flintWorkbenchRecipe.assemble(getInventory());
             NonNullList<ItemStack> itemStacks = NonNullList.create();
             itemStacks.add(result);
-            InventoryHelper.dropItems(world, getPos(), itemStacks);
+            InventoryHelper.dropContents(level, getBlockPos(), itemStacks);
 
             for (int i = 0; i < stacks.size(); i++) {
                 stacks.set(i, ItemStack.EMPTY);
             }
 
             recipeOutput = ItemStack.EMPTY;
-            heldItemMainhand.damageItem(1, player, playerEntity -> playerEntity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
-            world.playSound(null, getPos(), SoundEvents.BLOCK_DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0f, 1.0f);
-            this.markDirty();
-            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+            heldItemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlotType.MAINHAND));
+            level.playSound(null, getBlockPos(), SoundEvents.DISPENSER_DISPENSE, SoundCategory.BLOCKS, 1.0f, 1.0f);
+            this.setChanged();
+            this.level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
             return ActionResultType.SUCCESS;
         }
-		if (hit.getFace() == Direction.UP) {
-		    Direction dir = getBlockState().get(HorizontalBlock.HORIZONTAL_FACING);
+		if (hit.getDirection() == Direction.UP) {
+		    Direction dir = getBlockState().getValue(HorizontalBlock.FACING);
 		    int x = 0;
 		    int y = 0;
 
 		    // handle rotation
 		    switch (dir) {
 		        case NORTH:
-		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getLocation().x - hit.getBlockPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getLocation().z - hit.getBlockPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
 		            break;
 		        case SOUTH:
-		            x = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
-		            y = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            x = (int) Math.floor((hit.getLocation().x - hit.getBlockPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            y = (int) Math.floor((hit.getLocation().z - hit.getBlockPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
 		            break;
 		        case EAST:
-		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-		            y = (int) Math.floor((hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            x = (int) Math.floor(FlintWorkbenchRecipe.MAX_HEIGHT - (hit.getLocation().z - hit.getBlockPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            y = (int) Math.floor((hit.getLocation().x - hit.getBlockPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
 		            break;
 		        case WEST:
-		            x = (int) Math.floor((hit.getHitVec().z - hit.getPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
-		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getHitVec().x - hit.getPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
+		            x = (int) Math.floor((hit.getLocation().z - hit.getBlockPos().getZ()) * FlintWorkbenchRecipe.MAX_HEIGHT);
+		            y = (int) Math.floor(FlintWorkbenchRecipe.MAX_WIDTH - (hit.getLocation().x - hit.getBlockPos().getX()) * FlintWorkbenchRecipe.MAX_WIDTH);
 		            break;
 		    }
 
@@ -177,21 +177,21 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
 		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
 		            }
 
-		            recipeOutput = recipe.get(0).getRecipeOutput().copy();
+		            recipeOutput = recipe.get(0).getResultItem().copy();
 		        } else {
 		            recipeOutput = ItemStack.EMPTY;
 		        }
-		        this.markDirty();
-	            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+		        this.setChanged();
+	            this.level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		        return ActionResultType.SUCCESS;
 		    }
 
 		    if (heldItemMainhand.isEmpty() && !stacks.get(y * FlintWorkbenchRecipe.MAX_WIDTH + x).isEmpty()) {
 		        NonNullList<ItemStack> itemStacks = NonNullList.create();
 		        itemStacks.add(stack);
-		        InventoryHelper.dropItems(world, getPos(), itemStacks);
+		        InventoryHelper.dropContents(level, getBlockPos(), itemStacks);
 		        stacks.set(y * FlintWorkbenchRecipe.MAX_WIDTH + x, ItemStack.EMPTY);
-		        world.playSound(null, getPos(), SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
+		        level.playSound(null, getBlockPos(), SoundEvents.ITEM_PICKUP, SoundCategory.BLOCKS, 1.0f, 1.0f);
 		        List<FlintWorkbenchRecipe> recipe = findMatchingRecipes();
 
 		        if (!recipe.isEmpty()) {
@@ -199,12 +199,12 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
 		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
 		            }
 
-		            recipeOutput = recipe.get(0).getRecipeOutput().copy();
+		            recipeOutput = recipe.get(0).getResultItem().copy();
 		        } else {
 		            recipeOutput = ItemStack.EMPTY;
 		        }
-		        this.markDirty();
-	            this.world.notifyBlockUpdate(pos, getBlockState(), getBlockState(), 3);
+		        this.setChanged();
+	            this.level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
 		        return ActionResultType.SUCCESS;
 		    }
 		}
@@ -217,26 +217,26 @@ public class FlintWorkbenchTileEntity extends TileEntity implements IInventoryIn
         return new ItemStackHandler(stacks) {
             @Override
             protected void onContentsChanged(int slot) {
-                assert world != null;
-                markDirty();
-                world.notifyBlockUpdate(getPos(), getBlockState(), getBlockState(), 3);
+                assert level != null;
+                setChanged();
+                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
         };
     }
 
     @Nonnull
     private List<FlintWorkbenchRecipe> findMatchingRecipes(@Nonnull ItemStack heldItemMainhand) {
-        assert this.world != null;
+        assert this.level != null;
         List<FlintWorkbenchRecipe> recipes = stacks.stream().allMatch(ItemStack::isEmpty) ? Lists.newArrayList()
-                : this.world.getRecipeManager().getRecipes(FlintWorkbenchRecipe.flint_workbench, inventoryWrapper, this.world);
+                : this.level.getRecipeManager().getRecipesFor(FlintWorkbenchRecipe.flint_workbench, inventoryWrapper, this.level);
 
         return recipes.stream().filter(flintWorkbenchRecipe -> flintWorkbenchRecipe.testTool(heldItemMainhand)).collect(Collectors.toList());
     }
 
     @Nonnull
     private List<FlintWorkbenchRecipe> findMatchingRecipes() {
-        assert this.world != null;
+        assert this.level != null;
         return stacks.stream().allMatch(ItemStack::isEmpty) ? Lists.newArrayList()
-                : this.world.getRecipeManager().getRecipes(FlintWorkbenchRecipe.flint_workbench, inventoryWrapper, this.world);
+                : this.level.getRecipeManager().getRecipesFor(FlintWorkbenchRecipe.flint_workbench, inventoryWrapper, this.level);
     }
 }

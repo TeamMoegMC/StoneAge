@@ -31,12 +31,12 @@ public class MammothRenderer extends MobRenderer<MammothEntity, MammothModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull MammothEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull MammothEntity entity) {
         return MAMMOTH_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(MammothEntity entity) {
+    protected boolean shouldShowName(MammothEntity entity) {
         return entity.hasCustomName();
     }
 

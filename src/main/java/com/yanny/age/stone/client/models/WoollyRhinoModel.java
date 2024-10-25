@@ -19,11 +19,11 @@ public class WoollyRhinoModel extends AgeableModel<WoollyRhinoEntity> {
 	private final ModelRenderer foot4;
 
 	public WoollyRhinoModel() {
-		textureWidth = 64;
-		textureHeight = 64;
+		texWidth = 64;
+		texHeight = 64;
 
 		body = new ModelRenderer(this, 27, 21);
-		body.setRotationPoint(0.0F, 24.0F, 0.0F);
+		body.setPos(0.0F, 24.0F, 0.0F);
 		body.addBox(-5.0F, -17.0F, -9.0F, 10, 11, 6, 0.0F, false);
 
 		ModelRenderer body1 = new ModelRenderer(this, 38, 50);
@@ -40,7 +40,7 @@ public class WoollyRhinoModel extends AgeableModel<WoollyRhinoEntity> {
 
 
 		head = new ModelRenderer(this, 9, 31);
-		head.setRotationPoint(0.0F, 14.0F, -8.0F);
+		head.setPos(0.0F, 14.0F, -8.0F);
 		head.addBox(-3.0F, -3.0F, -7.0F, 6, 6, 3, 0.0F, false);
 
 		ModelRenderer head1 = new ModelRenderer(this, 37, 10);
@@ -69,54 +69,54 @@ public class WoollyRhinoModel extends AgeableModel<WoollyRhinoEntity> {
 		head.addChild(head6);
 
 		foot1 = new ModelRenderer(this, 0, 25);
-		foot1.setRotationPoint(1.0F, 18.0F, -6.5F);
+		foot1.setPos(1.0F, 18.0F, -6.5F);
 		foot1.addBox(0.0F, 0.0F, -1.5F, 3, 6, 3, 0.0F, false);
 
 		foot2 = new ModelRenderer(this, 0, 16);
-		foot2.setRotationPoint(-1.0F, 18.0F, -6.5F);
+		foot2.setPos(-1.0F, 18.0F, -6.5F);
 		foot2.addBox(-3.0F, 0.0F, -1.5F, 3, 6, 3, 0.0F, false);
 
 		foot3 = new ModelRenderer(this, 12, 22);
-		foot3.setRotationPoint(1.0F, 18.0F, 6.5F);
+		foot3.setPos(1.0F, 18.0F, 6.5F);
 		foot3.addBox(0.0F, 0.0F, -1.5F, 3, 6, 3, 0.0F, false);
 
 		foot4 = new ModelRenderer(this, 0, 0);
-		foot4.setRotationPoint(-1.0F, 18.0F, 6.5F);
+		foot4.setPos(-1.0F, 18.0F, 6.5F);
 		foot4.addBox(-3.0F, 0.0F, -1.5F, 3, 6, 3, 0.0F, false);
 	}
 
 	@Override
-	public void render(@Nonnull MatrixStack matrixStackIn, @Nonnull IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
-		matrixStackIn.push();
+	public void renderToBuffer(@Nonnull MatrixStack matrixStackIn, @Nonnull IVertexBuilder bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha) {
+		matrixStackIn.pushPose();
 		matrixStackIn.scale(1.2f, 1.2f, 1.2f);
 		matrixStackIn.translate(0, -0.25, 0);
-		super.render(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
-		matrixStackIn.pop();
+		super.renderToBuffer(matrixStackIn, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+		matrixStackIn.popPose();
 	}
 
 	@Nonnull
 	@Override
-	protected Iterable<ModelRenderer> getHeadParts() {
+	protected Iterable<ModelRenderer> headParts() {
 		return ImmutableList.of();
 	}
 
 	@Nonnull
 	@Override
-	protected Iterable<ModelRenderer> getBodyParts() {
+	protected Iterable<ModelRenderer> bodyParts() {
 		return ImmutableList.of(head, body, foot1, foot2, foot3, foot4);
 	}
 
 	@Override
-	public void setRotationAngles(@Nonnull WoollyRhinoEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+	public void setupAnim(@Nonnull WoollyRhinoEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 		this.setRotationAngles(limbSwing, limbSwingAmount, netHeadYaw, headPitch);
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-		this.head.rotateAngleX = headPitch * ((float)Math.PI / 180F);
-		this.head.rotateAngleY = netHeadYaw * ((float)Math.PI / 180F);
-		this.foot1.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot2.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-		this.foot3.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot4.rotateAngleX = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+		this.foot1.xRot = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.foot2.xRot = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.foot3.xRot = MathHelper.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.foot4.xRot = MathHelper.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 }

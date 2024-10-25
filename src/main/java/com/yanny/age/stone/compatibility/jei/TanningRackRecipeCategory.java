@@ -30,7 +30,7 @@ public class TanningRackRecipeCategory implements IRecipeCategory<TanningRackRec
     TanningRackRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 61, 120, 60);
-        localizedName = I18n.format("block.stone_age.tanning_rack");
+        localizedName = I18n.get("block.stone_age.tanning_rack");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.tanning_rack));
     }
 
@@ -69,9 +69,9 @@ public class TanningRackRecipeCategory implements IRecipeCategory<TanningRackRec
         ImmutableList.Builder<List<ItemStack>> inputBuilder = ImmutableList.builder();
         ImmutableList.Builder<ItemStack> outputBuilder = ImmutableList.builder();
 
-        inputBuilder.add(Arrays.asList(tanningRackRecipe.getIngredients().get(0).getMatchingStacks()));
-        inputBuilder.add(Arrays.asList(tanningRackRecipe.getTool().getMatchingStacks()));
-        outputBuilder.add(tanningRackRecipe.getRecipeOutput());
+        inputBuilder.add(Arrays.asList(tanningRackRecipe.getIngredients().get(0).getItems()));
+        inputBuilder.add(Arrays.asList(tanningRackRecipe.getTool().getItems()));
+        outputBuilder.add(tanningRackRecipe.getResultItem());
 
         ingredients.setInputLists(VanillaTypes.ITEM, inputBuilder.build());
         ingredients.setOutputLists(VanillaTypes.ITEM, ImmutableList.of(outputBuilder.build()));

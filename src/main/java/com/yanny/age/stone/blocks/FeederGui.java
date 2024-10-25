@@ -28,16 +28,16 @@ public class FeederGui extends ContainerScreen<Container> {
     public void render(@Nonnull MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+        this.renderTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(@Nonnull MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY) {
         if (minecraft == null) {
             return;
         }
 
-        minecraft.getTextureManager().bindTexture(GUI);
-        blit(matrixStack, guiLeft, guiTop, 0, 0, xSize, ySize);
+        minecraft.getTextureManager().bind(GUI);
+        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 }

@@ -16,7 +16,7 @@ class TargetAggressorGoal<T extends MobEntity> extends NearestAttackableTargetGo
     }
 
     @Override
-    public boolean shouldExecute() {
-        return entity.cast(goalOwner).isAngry() && super.shouldExecute() && goalOwner.world.getDifficulty() != Difficulty.PEACEFUL;
+    public boolean canUse() {
+        return entity.cast(mob).isAngry() && super.canUse() && mob.level.getDifficulty() != Difficulty.PEACEFUL;
     }
 }

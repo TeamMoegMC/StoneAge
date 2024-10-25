@@ -23,12 +23,12 @@ public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
 
     @Nonnull
     @Override
-    public ResourceLocation getEntityTexture(@Nonnull DeerEntity entity) {
+    public ResourceLocation getTextureLocation(@Nonnull DeerEntity entity) {
         return DEER_TEXTURE;
     }
 
     @Override
-    protected boolean canRenderName(DeerEntity entity) {
+    protected boolean shouldShowName(DeerEntity entity) {
         return entity.hasCustomName();
     }
 

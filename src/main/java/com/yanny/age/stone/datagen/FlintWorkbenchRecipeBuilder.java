@@ -34,7 +34,7 @@ public class FlintWorkbenchRecipeBuilder {
     private final int count;
     private final List<String> pattern = Lists.newArrayList();
     private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
-    private final Advancement.Builder advancementBuilder = Advancement.Builder.builder();
+    private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
     @Nullable private String group = null;
     @Nullable private Ingredient tool = null;
 
@@ -53,11 +53,11 @@ public class FlintWorkbenchRecipeBuilder {
     }
 
     public FlintWorkbenchRecipeBuilder key(Character symbol, ITag<Item> tagIn) {
-        return this.key(symbol, Ingredient.fromTag(tagIn));
+        return this.key(symbol, Ingredient.of(tagIn));
     }
 
     public FlintWorkbenchRecipeBuilder key(Character symbol, IItemProvider itemIn) {
-        return this.key(symbol, Ingredient.fromItems(itemIn));
+        return this.key(symbol, Ingredient.of(itemIn));
     }
 
     public FlintWorkbenchRecipeBuilder key(Character symbol, Ingredient ingredientIn) {
@@ -72,11 +72,11 @@ public class FlintWorkbenchRecipeBuilder {
     }
 
     public FlintWorkbenchRecipeBuilder tool(ITag<Item> tool) {
-        return this.tool(Ingredient.fromTag(tool));
+        return this.tool(Ingredient.of(tool));
     }
 
     public FlintWorkbenchRecipeBuilder tool(IItemProvider tool) {
-        return this.tool(Ingredient.fromItems(tool));
+        return this.tool(Ingredient.of(tool));
     }
 
     public FlintWorkbenchRecipeBuilder tool(Ingredient tool) {
@@ -98,7 +98,7 @@ public class FlintWorkbenchRecipeBuilder {
     }
 
     public FlintWorkbenchRecipeBuilder addCriterion(String name, ICriterionInstance criterionIn) {
-        this.advancementBuilder.withCriterion(name, criterionIn);
+        this.advancementBuilder.addCriterion(name, criterionIn);
         return this;
     }
 
@@ -122,15 +122,15 @@ public class FlintWorkbenchRecipeBuilder {
     }
 
     public void build(Consumer<IFinishedRecipe> consumerIn, ResourceLocation id) {
-        if (this.result.getGroup() == null) {
+        if (this.result.getItemCategory() == null) {
             throw new IllegalStateException("Recipe " + id + " has null group!");
         } else if (this.tool == null) {
             throw new IllegalStateException("Tool is not set!");
         }
 
         this.validate(id);
-        this.advancementBuilder.withParentId(new ResourceLocation("recipes/root")).withCriterion("has_the_recipe", RecipeUnlockedTrigger.create(id)).withRewards(AdvancementRewards.Builder.recipe(id)).withRequirementsStrategy(IRequirementsStrategy.OR);
-        consumerIn.accept(new Result(id, this.result, this.count, this.group == null ? "" : this.group, this.pattern, this.key, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getGroup().getPath() + "/" + id.getPath())));
+        this.advancementBuilder.parent(new ResourceLocation("recipes/root")).addCriterion("has_the_recipe", RecipeUnlockedTrigger.unlocked(id)).rewards(AdvancementRewards.Builder.recipe(id)).requirements(IRequirementsStrategy.OR);
+        consumerIn.accept(new Result(id, this.result, this.count, this.group == null ? "" : this.group, this.pattern, this.key, this.tool, this.advancementBuilder, new ResourceLocation(id.getNamespace(), "recipes/" + this.result.getItemCategory().getRecipeFolderName() + "/" + id.getPath())));
     }
 
     private void validate(ResourceLocation id) {
@@ -182,7 +182,7 @@ public class FlintWorkbenchRecipeBuilder {
             this.advancementId = advancementIdIn;
         }
 
-        public void serialize(JsonObject json) {
+        public void serializeRecipeData(JsonObject json) {
             if (!this.group.isEmpty()) {
                 json.addProperty("group", this.group);
             }
@@ -197,10 +197,10 @@ public class FlintWorkbenchRecipeBuilder {
             JsonObject jsonobject = new JsonObject();
 
             for(Map.Entry<Character, Ingredient> entry : this.key.entrySet()) {
-                jsonobject.add(String.valueOf(entry.getKey()), entry.getValue().serialize());
+                jsonobject.add(String.valueOf(entry.getKey()), entry.getValue().toJson());
             }
 
-            json.add("tool", tool.serialize());
+            json.add("tool", tool.toJson());
 
             json.add("key", jsonobject);
             JsonObject jsonobject1 = new JsonObject();
@@ -213,14 +213,14 @@ public class FlintWorkbenchRecipeBuilder {
         }
 
         @SuppressWarnings("ConstantConditions")
-        public IRecipeSerializer<?> getSerializer() {
+        public IRecipeSerializer<?> getType() {
             return RecipeSubscriber.flint_workbench;
         }
 
         /**
          * Gets the ID for the recipe.
          */
-        public ResourceLocation getID() {
+        public ResourceLocation getId() {
             return this.id;
         }
 
@@ -228,8 +228,8 @@ public class FlintWorkbenchRecipeBuilder {
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
          */
         @Nullable
-        public JsonObject getAdvancementJson() {
-            return this.advancementBuilder.serialize();
+        public JsonObject serializeAdvancement() {
+            return this.advancementBuilder.serializeToJson();
         }
 
         /**
@@ -237,7 +237,7 @@ public class FlintWorkbenchRecipeBuilder {
          * is non-null.
          */
         @Nullable
-        public ResourceLocation getAdvancementID() {
+        public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
     }

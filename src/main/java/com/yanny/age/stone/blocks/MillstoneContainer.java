@@ -36,7 +36,7 @@ public class MillstoneContainer extends Container {
 
     MillstoneContainer(int id, @Nonnull BlockPos pos, @Nonnull World world, @Nonnull PlayerInventory inventory, @Nonnull PlayerEntity player, @Nonnull IIntArray data) {
         super(ContainerSubscriber.millstone, id);
-        tile = (MillstoneTileEntity) world.getTileEntity(pos);
+        tile = (MillstoneTileEntity) world.getBlockEntity(pos);
         this.player = player;
         this.data = data;
 
@@ -52,44 +52,44 @@ public class MillstoneContainer extends Container {
 
         ContainerUtils.layoutPlayerInventorySlots(((slot, x, y) -> addSlot(new Slot(inventory, slot, x, y))), 8, 84);
 
-        trackIntArray(data);
+        addDataSlots(data);
     }
 
     @SuppressWarnings("ConstantConditions")
     @Override
-    public boolean canInteractWith(@Nonnull PlayerEntity playerIn) {
-        if (tile == null || tile.getWorld() == null) {
+    public boolean stillValid(@Nonnull PlayerEntity playerIn) {
+        if (tile == null || tile.getLevel() == null) {
             throw new IllegalStateException("Null pointer");
         }
 
-        return isWithinUsableDistance(IWorldPosCallable.of(tile.getWorld(), tile.getPos()), player, BlockSubscriber.millstone);
+        return stillValid(IWorldPosCallable.create(tile.getLevel(), tile.getBlockPos()), player, BlockSubscriber.millstone);
     }
 
     @Nonnull
     @Override
-    public ItemStack transferStackInSlot(@Nonnull PlayerEntity playerIn, int index) {
-        Slot slot = inventorySlots.get(index);
+    public ItemStack quickMoveStack(@Nonnull PlayerEntity playerIn, int index) {
+        Slot slot = slots.get(index);
 
-        if (slot != null && slot.getHasStack()) {
-            ItemStack stack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack stack = slot.getItem();
             ItemStack itemstack = stack.copy();
 
             if (index < ITEMS) {
-                if (!mergeItemStack(stack, ITEMS + 1, ITEMS + 36, true)) {
+                if (!moveItemStackTo(stack, ITEMS + 1, ITEMS + 36, true)) {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(stack, itemstack);
+                slot.onQuickCraft(stack, itemstack);
             } else {
-                if (tile.isItemValid(stack) && !mergeItemStack(stack, 0, ITEMS, false)) {
+                if (tile.isItemValid(stack) && !moveItemStackTo(stack, 0, ITEMS, false)) {
                     return ItemStack.EMPTY;
                 }
             }
 
             if (stack.isEmpty()) {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             } else {
-                slot.onSlotChanged();
+                slot.setChanged();
             }
 
             if (stack.getCount() == itemstack.getCount()) {

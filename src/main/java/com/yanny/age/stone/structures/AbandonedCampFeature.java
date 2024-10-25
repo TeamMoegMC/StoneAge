@@ -25,16 +25,16 @@ public class AbandonedCampFeature extends Feature<ProbabilityConfig> {
         super(configCodec);
     }
 
-    public boolean generate(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
+    public boolean place(@Nonnull ISeedReader seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityConfig featureConfig) {
         if (random.nextFloat() < featureConfig.probability) {
             fillWithAir(seedReader, pos, -2, 0, -2, 2, 3, 2);
-            fillWithBlocks(seedReader, pos, -2, -1, -2, 2, -1, 2, Blocks.GRASS_BLOCK.getDefaultState(), Blocks.GRASS_BLOCK.getDefaultState(), false);
+            fillWithBlocks(seedReader, pos, -2, -1, -2, 2, -1, 2, Blocks.GRASS_BLOCK.defaultBlockState(), Blocks.GRASS_BLOCK.defaultBlockState(), false);
 
-            Direction direction = Direction.Plane.HORIZONTAL.random(random);
+            Direction direction = Direction.Plane.HORIZONTAL.getRandomDirection(random);
 
             Matrix3f normal = new Matrix3f();
             normal.identity();
-            normal.rotate((float) Math.toRadians(direction.getHorizontalAngle()), new Vector3f(0, 1, 0));
+            normal.rotate((float) Math.toRadians(direction.toYRot()), new Vector3f(0, 1, 0));
 
             for (int i = -2; i <= 2; i++) {
                 if (random.nextDouble() < 0.5) {
@@ -42,10 +42,10 @@ public class AbandonedCampFeature extends Feature<ProbabilityConfig> {
                 }
             }
 
-            seedReader.setBlockState(pos, Blocks.CAMPFIRE.getDefaultState().with(LIT, false), 2);
+            seedReader.setBlock(pos, Blocks.CAMPFIRE.defaultBlockState().setValue(LIT, false), 2);
             generateBed(seedReader, getRotatedPos(pos, 2, 0, 0, normal), direction);
-            generateFlintWorkbench(seedReader, getRotatedPos(pos, -2, 0, 0, normal), random, direction.getOpposite().rotateY());
-            generateStoneChest(seedReader, getRotatedPos(pos, -2, 0, -1, normal), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), direction.getOpposite().rotateY());
+            generateFlintWorkbench(seedReader, getRotatedPos(pos, -2, 0, 0, normal), random, direction.getOpposite().getClockWise());
+            generateStoneChest(seedReader, getRotatedPos(pos, -2, 0, -1, normal), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), direction.getOpposite().getClockWise());
 
             return true;
         }

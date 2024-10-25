@@ -33,7 +33,7 @@ public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe>
     MillstoneRecipeCategory(@Nonnull IGuiHelper guiHelper) {
         ResourceLocation location = new ResourceLocation(Reference.MODID, "textures/gui/jei/gui_layouts.png");
         background = guiHelper.createDrawable(location, 0, 122, 120, 60);
-        localizedName = I18n.format("block.stone_age.millstone");
+        localizedName = I18n.get("block.stone_age.millstone");
         icon = guiHelper.createDrawableIngredient(new ItemStack(BlockSubscriber.millstone));
     }
 
@@ -72,8 +72,8 @@ public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe>
         ImmutableList.Builder<List<ItemStack>> inputBuilder = ImmutableList.builder();
         ImmutableList.Builder<List<ItemStack>> outputBuilder = ImmutableList.builder();
 
-        inputBuilder.add(Arrays.asList(millstoneRecipe.getIngredients().get(0).getMatchingStacks()));
-        outputBuilder.add(Collections.singletonList(millstoneRecipe.getRecipeOutput()));
+        inputBuilder.add(Arrays.asList(millstoneRecipe.getIngredients().get(0).getItems()));
+        outputBuilder.add(Collections.singletonList(millstoneRecipe.getResultItem()));
 
         if (!millstoneRecipe.getRecipeSecondOutput().isEmpty()) {
             outputBuilder.add(Collections.singletonList(millstoneRecipe.getRecipeSecondOutput()));
@@ -100,7 +100,7 @@ public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe>
     @Override
     public void draw(MillstoneRecipe recipe, @Nonnull MatrixStack matrixStack, double mouseX, double mouseY) {
         if (!recipe.getRecipeSecondOutput().isEmpty()) {
-            Minecraft.getInstance().fontRenderer.drawString(matrixStack, String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100), 96, 38, -1);
+            Minecraft.getInstance().font.draw(matrixStack, String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100), 96, 38, -1);
         }
     }
 }

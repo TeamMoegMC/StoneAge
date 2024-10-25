@@ -4,6 +4,8 @@ import net.minecraft.item.Item;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.item.Item.Properties;
+
 public class MeshItem extends Item {
 
     public MeshItem(@Nonnull Properties properties) {
@@ -11,7 +13,7 @@ public class MeshItem extends Item {
     }
 
     @Override
-    public int getItemEnchantability() {
+    public int getEnchantmentValue() {
         return 1;
     }
 }
