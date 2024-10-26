@@ -1,10 +1,8 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.compatibility.top.TopBlockInfoProvider;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
@@ -12,7 +10,6 @@ import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
@@ -24,30 +21,21 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBlockInfoProvider {
+public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBlockInfoProvider, EntityBlock {
     private static final VoxelShape SHAPE_NS = Block.box(0.0D, 0.0D, 7.5D, 16.0D, 16.0D, 8.5D);
     private static final VoxelShape SHAPE_EW = Block.box(7.5D, 0.0D, 0.0D, 8.5D, 16.0D, 16.0D);
 
     public DryingRackBlock() {
-        super(Block.Properties.of(Material.WOOD).harvestLevel(Tiers.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        super(Block.Properties.of(Material.WOOD).requiresCorrectToolForDrops().strength(2.0f));
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new DryingRackTileEntity(pos,state);
     }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new DryingRackTileEntity();
-    }
-
     @SuppressWarnings("deprecation")
     @Override
     @Nonnull
@@ -110,7 +98,7 @@ public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBl
         }
     }
 
-    @Override
+/*    @Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
         TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
@@ -127,5 +115,5 @@ public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBl
                 }
             }
         }
-    }
+    }*/
 }

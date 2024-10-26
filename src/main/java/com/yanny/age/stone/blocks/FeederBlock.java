@@ -1,6 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.material.Material;
@@ -8,7 +9,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
@@ -20,33 +20,23 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.fmllegacy.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public class FeederBlock extends HorizontalDirectionalBlock {
+public class FeederBlock extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SHAPE_NS = Block.box(0, 0, 4, 16, 6, 12);
     private static final VoxelShape SHAPE_EW = Block.box(4, 0, 0, 12, 6, 16);
 
     public FeederBlock() {
-        super(Properties.of(Material.WOOD).harvestLevel(Tiers.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        super(Properties.of(Material.WOOD).requiresCorrectToolForDrops().strength(2.0f));
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new DryingRackTileEntity(pos,state);
     }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new FeederTileEntity();
-    }
-
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override

@@ -114,7 +114,7 @@ public class DriedGrassBedBlock extends BedBlock {
 
                     });
                 } else {
-                    ((ServerPlayer) player).setRespawnPosition(worldIn.dimension(), pos, player.yRot, false, true);
+                    ((ServerPlayer) player).setRespawnPosition(worldIn.dimension(), pos, player.getYRot(), false, true);
                     player.displayClientMessage(new TranslatableComponent("block.stone_age.bed.cantsleep"), true);
                 }
                 return InteractionResult.SUCCESS;

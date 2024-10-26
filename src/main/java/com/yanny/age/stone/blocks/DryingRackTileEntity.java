@@ -4,6 +4,7 @@ import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
@@ -12,7 +13,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -41,15 +41,15 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
     private final RecipeWrapper tmpItemHandlerWrapper = new RecipeWrapper(tmpItemHandler);
     private final DryingItem[] items = new DryingItem[ITEMS];
 
-    public DryingRackTileEntity() {
+    public DryingRackTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.drying_rack);
+        super(TileEntitySubscriber.drying_rack,pos,state);
         for (int i = 0; i < ITEMS; i++) {
             items[i] = new DryingItem();
         }
     }
 
-    @Override
+
     public void tick() {
         assert level != null;
         if (!level.isClientSide) {
@@ -98,7 +98,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
 
