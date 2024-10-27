@@ -21,7 +21,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class StoneChestRenderer extends BlockEntityRenderer<StoneChestTileEntity> {
+public class StoneChestRenderer implements BlockEntityRenderer<StoneChestTileEntity> {
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/stone_chest.png");
     private final StoneChestModel model = new StoneChestModel();
 

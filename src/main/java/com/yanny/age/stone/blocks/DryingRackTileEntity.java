@@ -3,8 +3,8 @@ package com.yanny.age.stone.blocks;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
@@ -19,8 +19,8 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -29,7 +29,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-public class DryingRackTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity {
+public class DryingRackTileEntity extends BlockEntity implements IInventoryInterface {
     public static final int ITEMS = 4;
 
     private final NonNullList<ItemStack> stacks = NonNullList.withSize(ITEMS * 2, ItemStack.EMPTY);
@@ -111,38 +111,38 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
 
     @Override
     @Nonnull
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
 
         for (int i = 0; i < ITEMS; i++) {
             tag.put("items" + i, items[i].write());
         }
 
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return this.saveWithoutMetadata();
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        load(pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side != null) {
                 return sidedInventoryHandler.cast();
             } else {

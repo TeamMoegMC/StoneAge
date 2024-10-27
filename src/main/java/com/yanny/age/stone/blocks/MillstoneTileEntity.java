@@ -2,7 +2,7 @@ package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -14,14 +14,11 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -36,7 +33,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ContainerData;
 
-public class MillstoneTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity, MenuProvider {
+public class MillstoneTileEntity extends BlockEntity implements IInventoryInterface, MenuProvider {
     static final int ITEMS = 3;
     private static final double PI2 = Math.PI * 2;
 
@@ -57,12 +54,12 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
     private ItemStack result = ItemStack.EMPTY;
     private ItemStack secondResult = ItemStack.EMPTY;
 
-    public MillstoneTileEntity() {
+    public MillstoneTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.millstone);
+        super(TileEntitySubscriber.millstone,pos, state);
     }
 
-    @Override
+
     public void tick() {
         assert level != null;
 
@@ -118,7 +115,7 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
     @Nonnull
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.stone_age.millstone");
+        return Component.translatable("block.stone_age.millstone");
     }
 
     @Nonnull
@@ -128,7 +125,7 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         active = tag.getBoolean("active");
@@ -138,12 +135,12 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
         secondResult = ItemStack.of(tag.getCompound("secondResult"));
         secondChance = tag.getDouble("secondChance");
         activateTicks = tag.getInt("activateTicks");
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
     @Nonnull
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         tag.putBoolean("active", active);
         tag.putFloat("rotation", rotation);
@@ -152,31 +149,31 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
         tag.put("secondResult", secondResult.save(new CompoundTag()));
         tag.putDouble("secondChance", secondChance);
         tag.putInt("activateTicks", activateTicks);
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side != null) {
                 return sidedInventoryHandler.cast();
             } else {

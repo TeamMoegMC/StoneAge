@@ -1,11 +1,12 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.config.Config;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.npc.Villager;
@@ -23,17 +24,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
-
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class DriedGrassBedBlock extends BedBlock {
     private static final VoxelShape NORTH = Block.box(2.0D, 0.0D, 2.0D, 14.0D, 3.0D, 16.0D);
@@ -42,14 +39,14 @@ public class DriedGrassBedBlock extends BedBlock {
     private static final VoxelShape EAST = Block.box(0.0D, 0.0D, 2.0D, 14.0D, 3.0D, 14.0D);
 
     public DriedGrassBedBlock() {
-        super(DyeColor.BLACK, Properties.of(Material.WOOL).strength(2.0f));
+        super(DyeColor.BLACK, Properties.of().strength(2.0f));
     }
 
 
-    @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DriedGrassBedTileEntity(pos,state);
-    }
+//    @Override
+//    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+//        return new DriedGrassBedTileEntity(pos,state);
+//    }
 
     @SuppressWarnings("deprecation")
     @Nonnull
@@ -97,11 +94,11 @@ public class DriedGrassBedBlock extends BedBlock {
                     worldIn.removeBlock(blockpos, false);
                 }
 
-                worldIn.explode((Entity) null, DamageSource.badRespawnPointExplosion(), (ExplosionDamageCalculator) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Explosion.BlockInteraction.DESTROY);
+                worldIn.explode((Entity) null, player.damageSources().badRespawnPointExplosion(pos.getCenter()), (ExplosionDamageCalculator) null, (double) pos.getX() + 0.5D, (double) pos.getY() + 0.5D, (double) pos.getZ() + 0.5D, 5.0F, true, Level.ExplosionInteraction.BLOCK);
                 return InteractionResult.SUCCESS;
             } else if (state.getValue(OCCUPIED)) {
                 if (!this.tryWakeUpVillager(worldIn, pos)) {
-                    player.displayClientMessage(new TranslatableComponent("block.minecraft.bed.occupied"), true);
+                    player.displayClientMessage(Component.translatable("block.minecraft.bed.occupied"), true);
                 }
 
                 return InteractionResult.SUCCESS;
@@ -115,7 +112,7 @@ public class DriedGrassBedBlock extends BedBlock {
                     });
                 } else {
                     ((ServerPlayer) player).setRespawnPosition(worldIn.dimension(), pos, player.getYRot(), false, true);
-                    player.displayClientMessage(new TranslatableComponent("block.stone_age.bed.cantsleep"), true);
+                    player.displayClientMessage(Component.translatable("block.stone_age.bed.cantsleep"), true);
                 }
                 return InteractionResult.SUCCESS;
             }

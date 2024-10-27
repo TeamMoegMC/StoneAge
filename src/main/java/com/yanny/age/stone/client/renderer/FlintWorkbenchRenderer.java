@@ -2,14 +2,12 @@ package com.yanny.age.stone.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.FlintWorkbenchTileEntity;
-import com.yanny.ages.api.utils.ItemStackUtils;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -17,10 +15,8 @@ import javax.annotation.Nonnull;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.*;
 
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
-
 @OnlyIn(Dist.CLIENT)
-public class FlintWorkbenchRenderer extends BlockEntityRenderer<FlintWorkbenchTileEntity> {
+public class FlintWorkbenchRenderer implements BlockEntityRenderer<FlintWorkbenchTileEntity> {
     public FlintWorkbenchRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }

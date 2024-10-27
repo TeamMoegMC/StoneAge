@@ -9,6 +9,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,11 @@ public class BurialPlaceFeature extends Feature<ProbabilityFeatureConfiguration>
     }
 
     @Override
+    public boolean place(FeaturePlaceContext<ProbabilityFeatureConfiguration> featurePlaceContext) {
+        return false;
+    }
+
+   /* @Override
     public boolean place(@Nonnull WorldGenLevel seedReader, @Nonnull ChunkGenerator chunkGenerator, @Nonnull Random random, @Nonnull BlockPos pos, @Nonnull ProbabilityFeatureConfiguration featureConfig) {
         if (random.nextFloat() < featureConfig.probability) {
             generateStoneChest(seedReader, pos.offset(0, -2, 0), random, new ResourceLocation(Reference.MODID, "chests/stone_chest"), Direction.Plane.HORIZONTAL.getRandomDirection(random));
@@ -41,5 +47,5 @@ public class BurialPlaceFeature extends Feature<ProbabilityFeatureConfiguration>
         }
 
         return false;
-    }
+    }*/
 }

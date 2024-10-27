@@ -14,7 +14,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -42,7 +42,7 @@ public class StoneChestContainer extends AbstractContainerMenu {
         }
 
         tile.startOpen(player);
-        tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+        tile.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
             for (int y = 0; y < INVENTORY_HEIGHT; y++) {
                 for (int x = 0; x < INVENTORY_WIDTH; x++) {
                     addSlot(new SlotItemHandler(h, x + y * INVENTORY_WIDTH, 44 + x * 18, 17 + y * 18));
@@ -105,6 +105,6 @@ public class StoneChestContainer extends AbstractContainerMenu {
 
     @Nonnull
     public Container getIInventory() {
-        return player.inventory;
+        return player.getInventory();
     }
 }

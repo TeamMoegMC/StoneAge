@@ -2,7 +2,8 @@ package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -15,17 +16,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -34,7 +33,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-public class FeederTileEntity extends BlockEntity implements IInventoryInterface, TickableBlockEntity, MenuProvider {
+public class FeederTileEntity extends BlockEntity implements IInventoryInterface, MenuProvider {
     private static final Set<Item> VALID_ITEMS = new HashSet<>();
     static {
         VALID_ITEMS.addAll(Tags.Items.SEEDS.getValues());
@@ -51,12 +50,12 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
 
     private AABB boundingBox = new AABB(getBlockPos());
 
-    public FeederTileEntity() {
+    public FeederTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.feeder);
+        super(TileEntitySubscriber.feeder,pos,state);
     }
 
-    @Override
+
     public void tick() {
         if (level != null && !level.isClientSide) {
             if (level.random.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && getItem().isPresent()) {
@@ -86,29 +85,29 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(@Nonnull CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
     @Nonnull
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
@@ -120,7 +119,7 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side != null) {
                 if (side != Direction.UP) {
                     return sidedInventoryHandler.cast();

@@ -1,7 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -14,20 +14,16 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
-import net.minecraft.world.level.block.entity.TickableBlockEntity;
 import net.minecraft.world.level.block.entity.RandomizableContainerBlockEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -41,7 +37,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 
 @OnlyIn(value = Dist.CLIENT, _interface = LidBlockEntity.class)
-public class StoneChestTileEntity extends RandomizableContainerBlockEntity implements IInventoryInterface, MenuProvider, LidBlockEntity, TickableBlockEntity {
+public class StoneChestTileEntity extends RandomizableContainerBlockEntity implements IInventoryInterface, MenuProvider, LidBlockEntity {
     static final int INVENTORY_WIDTH = 5;
     static final int INVENTORY_HEIGHT = 3;
 
@@ -54,9 +50,9 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
     private int numPlayersUsing;
     private int ticksSinceSync;
 
-    public StoneChestTileEntity() {
+    public StoneChestTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.stone_chest);
+        super(TileEntitySubscriber.stone_chest,pos,state);
         for (int i = 0; i < INVENTORY_WIDTH * INVENTORY_HEIGHT; i++) {
             stacks.add(ItemStack.EMPTY);
         }
@@ -105,48 +101,48 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
 
         if (!this.tryLoadLootTable(tag)) {
             ItemStackUtils.deserializeStacks(invTag, stacks);
         }
 
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
     @Nonnull
-    public CompoundTag save(@Nonnull CompoundTag tag) {
+    public void saveAdditional(@Nonnull CompoundTag tag) {
         if (!this.trySaveLootTable(tag)) {
             tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         }
 
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             return nonSidedInventoryHandler.cast();
         }
         return super.getCapability(cap, side);

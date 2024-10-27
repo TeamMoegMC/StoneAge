@@ -6,7 +6,6 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -29,7 +28,7 @@ public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBl
     private static final VoxelShape SHAPE_EW = Block.box(7.5D, 0.0D, 0.0D, 8.5D, 16.0D, 16.0D);
 
     public DryingRackBlock() {
-        super(Block.Properties.of(Material.WOOD).requiresCorrectToolForDrops().strength(2.0f));
+        super(Block.Properties.of().requiresCorrectToolForDrops().strength(2.0f));
     }
 
     @Override

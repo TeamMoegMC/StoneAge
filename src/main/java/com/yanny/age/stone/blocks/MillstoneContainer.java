@@ -15,7 +15,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -44,7 +44,7 @@ public class MillstoneContainer extends AbstractContainerMenu {
             throw new IllegalStateException("TileEntity does not exists!");
         }
 
-        tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+        tile.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
             addSlot(new SlotItemHandler(h, 0, 62, 35));
             addSlot(new SlotItemHandler(h, 1, 98, 24));
             addSlot(new SlotItemHandler(h, 2, 98, 46));

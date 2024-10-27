@@ -24,11 +24,6 @@ import org.joml.Vector3f;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
-import static net.minecraft.state.properties.BlockStateProperties.BED_PART;
-import staticnet.minecraft.world.level.block.state.properties.BlockStatePropertiess.HORIZONTAL_FACING;
-
-import Vector3f;
-
 public class FeatureUtils {
 
     public static void fillWithAir(WorldGenLevel seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {

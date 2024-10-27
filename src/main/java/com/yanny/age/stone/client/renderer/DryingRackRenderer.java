@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.Direction;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -16,10 +15,8 @@ import javax.annotation.Nonnull;
 
 import static net.minecraft.client.renderer.block.model.ItemTransforms.*;
 
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
-
 @OnlyIn(Dist.CLIENT)
-public class DryingRackRenderer extends BlockEntityRenderer<DryingRackTileEntity> {
+public class DryingRackRenderer implements BlockEntityRenderer<DryingRackTileEntity> {
     public DryingRackRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
     }

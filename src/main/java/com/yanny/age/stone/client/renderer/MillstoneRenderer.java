@@ -15,7 +15,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class MillstoneRenderer extends BlockEntityRenderer<MillstoneTileEntity> {
+public class MillstoneRenderer implements BlockEntityRenderer<MillstoneTileEntity> {
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/millstone.png");
     private final MillstoneModel model = new MillstoneModel();
 

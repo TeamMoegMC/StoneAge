@@ -3,19 +3,9 @@ package com.yanny.age.stone.compatibility.jei;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.*;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
-import mezz.jei.api.IModPlugin;
-import mezz.jei.api.JeiPlugin;
-import mezz.jei.api.registration.IRecipeCatalystRegistration;
-import mezz.jei.api.registration.IRecipeCategoryRegistration;
-import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 import java.util.stream.Collectors;
 
 @JeiPlugin

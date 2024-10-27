@@ -3,7 +3,7 @@ package com.yanny.age.stone.blocks;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -14,10 +14,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -44,9 +43,9 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
     private final IItemHandlerModifiable tmpItemHandler = new ItemStackHandler(1);
     private final RecipeWrapper tmpItemHandlerWrapper = new RecipeWrapper(tmpItemHandler);
 
-    public TanningRackTileEntity() {
+    public TanningRackTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.tanning_rack);
+        super(TileEntitySubscriber.tanning_rack,pos,state);
     }
 
     @Nonnull
@@ -61,41 +60,41 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
         ItemStackUtils.deserializeStacks(invTag, stacks);
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
     @Nonnull
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side != null) {
                 return sidedInventoryHandler.cast();
             } else {

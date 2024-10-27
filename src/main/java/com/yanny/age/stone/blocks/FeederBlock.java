@@ -4,7 +4,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -20,22 +19,21 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class FeederBlock extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SHAPE_NS = Block.box(0, 0, 4, 16, 6, 12);
     private static final VoxelShape SHAPE_EW = Block.box(4, 0, 0, 12, 6, 16);
 
     public FeederBlock() {
-        super(Properties.of(Material.WOOD).requiresCorrectToolForDrops().strength(2.0f));
+        super(Properties.of().requiresCorrectToolForDrops().strength(2.0f));
     }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new DryingRackTileEntity(pos,state);
+        return new FeederTileEntity(pos,state);
     }
     @SuppressWarnings("deprecation")
     @Nonnull
@@ -82,7 +80,7 @@ public class FeederBlock extends HorizontalDirectionalBlock implements EntityBlo
         if (tile != null) {
             if (!player.isShiftKeyDown()) {
                 if (!worldIn.isClientSide) {
-                    NetworkHooks.openGui((ServerPlayer) player, tile, tile.getBlockPos());
+                    NetworkHooks.openScreen((ServerPlayer) player, tile, tile.getBlockPos());
                 }
                 return InteractionResult.SUCCESS;
             }
@@ -91,7 +89,7 @@ public class FeederBlock extends HorizontalDirectionalBlock implements EntityBlo
 
             if (player.isShiftKeyDown() && resultType == InteractionResult.PASS) {
                 if (!worldIn.isClientSide) {
-                    NetworkHooks.openGui((ServerPlayer) player, tile, tile.getBlockPos());
+                    NetworkHooks.openScreen((ServerPlayer) player, tile, tile.getBlockPos());
                 }
                 return InteractionResult.SUCCESS;
             }

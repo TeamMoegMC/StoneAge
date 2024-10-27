@@ -1,12 +1,9 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.compatibility.top.TopBlockInfoProvider;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,32 +16,22 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
+public class TreeStumpBlock extends Block implements TopBlockInfoProvider, EntityBlock {
     private static final VoxelShape SHAPE = Shapes.or(Block.box(0, 0, 0, 16, 1, 16),
             Block.box(2, 1, 2, 14, 12, 14));
 
     public TreeStumpBlock() {
-        super(Properties.of(Material.WOOD).harvestLevel(Tiers.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        super(Properties.of().strength(2.0f));
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new TreeStumpTileEntity(pos,state);
     }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new TreeStumpTileEntity();
-    }
-
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override
@@ -93,7 +80,7 @@ public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
         return super.getDestroyProgress(state, player, worldIn, pos);
     }
 
-    @Override
+   /* @Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
         TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
@@ -105,5 +92,5 @@ public class TreeStumpBlock extends Block implements TopBlockInfoProvider {
                 iProbeInfo.horizontal().item(treeStump.getResult()).progress(treeStump.getProgress(), 100, iProbeInfo.defaultProgressStyle().suffix("%"));
             }
         }
-    }
+    }*/
 }

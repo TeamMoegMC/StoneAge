@@ -1,9 +1,8 @@
 package com.yanny.age.stone.blocks;
 
-import net.minecraft.block.*;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.Containers;
@@ -22,22 +21,19 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.fml.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.*;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.network.NetworkHooks;
 
-public class FishingNetBlock extends Block implements SimpleWaterloggedBlock {
+public class FishingNetBlock extends Block implements SimpleWaterloggedBlock, EntityBlock {
     private static final VoxelShape SHAPE = Shapes.or(
             Block.box(0, 0, 0, 16, 1, 16),
             Block.box(0, 1, 0, 2, 16, 2),
@@ -47,13 +43,12 @@ public class FishingNetBlock extends Block implements SimpleWaterloggedBlock {
     );
 
     public FishingNetBlock() {
-        super(Properties.of(Material.WOOD).harvestLevel(Tiers.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        super(Properties.of().strength(2.0f));
         registerDefaultState(defaultBlockState().setValue(WATERLOGGED, false).setValue(ATTACHED, false));
     }
-
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new FishingNetTileEntity(pos,state);
     }
 
     @Override
@@ -62,10 +57,6 @@ public class FishingNetBlock extends Block implements SimpleWaterloggedBlock {
     }
 
     @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new FishingNetTileEntity();
-    }
 
     @SuppressWarnings("deprecation")
     @Nonnull
@@ -116,7 +107,7 @@ public class FishingNetBlock extends Block implements SimpleWaterloggedBlock {
 
         if (tile != null) {
             if (!worldIn.isClientSide) {
-                NetworkHooks.openGui((ServerPlayer) player, tile, tile.getBlockPos());
+                NetworkHooks.openScreen((ServerPlayer) player, tile, tile.getBlockPos());
             }
             return InteractionResult.SUCCESS;
         } else {
@@ -129,7 +120,7 @@ public class FishingNetBlock extends Block implements SimpleWaterloggedBlock {
     @Override
     public BlockState updateShape(@Nonnull BlockState stateIn, @Nonnull Direction facing, @Nonnull BlockState facingState,
                                           LevelAccessor worldIn, @Nonnull BlockPos currentPos, @Nonnull BlockPos facingPos) {
-        worldIn.getLiquidTicks().scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+        worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
         return super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
     }
 

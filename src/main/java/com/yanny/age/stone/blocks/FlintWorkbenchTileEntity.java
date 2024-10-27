@@ -3,7 +3,7 @@ package com.yanny.age.stone.blocks;
 import com.google.common.collect.Lists;
 import com.yanny.age.stone.recipes.FlintWorkbenchRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
-import com.yanny.ages.api.utils.ItemStackUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.entity.player.Player;
@@ -15,11 +15,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.util.*;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
@@ -45,52 +44,52 @@ public class FlintWorkbenchTileEntity extends BlockEntity implements IInventoryI
     private final RecipeWrapper inventoryWrapper = new RecipeWrapper(nonSidedItemHandler);
     private ItemStack recipeOutput = ItemStack.EMPTY;
 
-    public FlintWorkbenchTileEntity() {
+    public FlintWorkbenchTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
-        super(TileEntitySubscriber.flint_workbench);
+        super(TileEntitySubscriber.flint_workbench, pos, state);
     }
 
     @Override
-    public void load(@Nonnull BlockState blockState, CompoundTag tag) {
+    public void load(CompoundTag tag) {
         CompoundTag invTag = tag.getCompound("inv");
         CompoundTag outTag = tag.getCompound("output");
         ItemStackUtils.deserializeStacks(invTag, stacks);
         recipeOutput = ItemStack.of(outTag);
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
     @Nonnull
-    public CompoundTag save(CompoundTag tag) {
+    public void saveAdditional(CompoundTag tag) {
         tag.put("inv", ItemStackUtils.serializeStacks(stacks));
         CompoundTag outTag = new CompoundTag();
         recipeOutput.save(outTag);
         tag.put("output", outTag);
-        return super.save(tag);
+        super.saveAdditional(tag);
     }
 
     @Nullable
     @Override
     public ClientboundBlockEntityDataPacket getUpdatePacket() {
-        return new ClientboundBlockEntityDataPacket(getBlockPos(), getType().hashCode(), getUpdateTag());
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nonnull
     @Override
     public CompoundTag getUpdateTag() {
-        return save(new CompoundTag());
+        return saveWithoutMetadata();
     }
 
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, @Nullable Direction side) {
-        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == ForgeCapabilities.ITEM_HANDLER) {
             if (side == null) {
                 return nonSidedInventoryHandler.cast();
             }

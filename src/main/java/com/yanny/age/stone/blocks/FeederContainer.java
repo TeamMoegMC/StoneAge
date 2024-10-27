@@ -13,7 +13,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nonnull;
@@ -39,7 +39,7 @@ public class FeederContainer extends AbstractContainerMenu {
             throw new IllegalStateException("TileEntity does not exists!");
         }
 
-        tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY).ifPresent(h -> {
+        tile.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(h -> {
             for (int x = 0; x < ITEMS; x++) {
                 addSlot(new SlotItemHandler(h, x, 53 + x * 18, 35));
             }

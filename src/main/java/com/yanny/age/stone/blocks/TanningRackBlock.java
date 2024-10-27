@@ -1,10 +1,10 @@
 package com.yanny.age.stone.blocks;
 
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -20,14 +20,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.ToolType;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public class TanningRackBlock extends HorizontalDirectionalBlock {
+public class TanningRackBlock extends HorizontalDirectionalBlock implements EntityBlock {
     private static final VoxelShape SHAPE_N = Shapes.or(
             Block.box(0.0D, 13.5D, 7.0D, 16.0D, 14.5D, 8.0D),
             Block.box(0.0D, 1.0D, 1.5D, 16.0D, 2.0D, 2.5D),
@@ -46,18 +43,12 @@ public class TanningRackBlock extends HorizontalDirectionalBlock {
             Block.box(7.5D, 0.0, 0.0D, 8.5D, 15.0D, 16D));
 
     public TanningRackBlock() {
-        super(Properties.of(Material.WOOD).harvestLevel(Tiers.WOOD.getLevel()).harvestTool(ToolType.AXE).strength(2.0f));
+        super(Properties.of().strength(2.0f));
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new TanningRackTileEntity();
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new TanningRackTileEntity(pos,state);
     }
 
     @SuppressWarnings("deprecation")

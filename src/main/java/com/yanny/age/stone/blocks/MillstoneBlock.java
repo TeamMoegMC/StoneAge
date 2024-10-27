@@ -1,13 +1,9 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.compatibility.top.TopBlockInfoProvider;
-import mcjty.theoneprobe.api.IProbeHitData;
-import mcjty.theoneprobe.api.IProbeInfo;
-import mcjty.theoneprobe.api.ProbeMode;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.block.HorizontalBlock;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Containers;
@@ -21,32 +17,24 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.fml.network.NetworkHooks;
+import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
-public class MillstoneBlock extends Block implements TopBlockInfoProvider {
+public class MillstoneBlock extends Block implements TopBlockInfoProvider , EntityBlock {
     private static final VoxelShape SHAPE = Shapes.or(Block.box(0, 0, 0, 16, 3, 16),
             Block.box(2.5, 3, 2.5, 13.5, 7, 13.5),
             Block.box(3, 7.05, 3, 13, 11, 13),
             Block.box(7, 7, 7, 9, 12, 9));
 
     public MillstoneBlock() {
-        super(Properties.of(Material.STONE).strength(4.0f));
+        super(Properties.of().strength(4.0f));
     }
 
     @Override
-    public boolean hasTileEntity(BlockState state) {
-        return true;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntity createTileEntity(BlockState state, BlockGetter world) {
-        return new MillstoneTileEntity();
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return new MillstoneTileEntity(pos,state);
     }
 
     @SuppressWarnings("deprecation")
@@ -85,7 +73,7 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider {
                 }
             } else {
                 if (!worldIn.isClientSide) {
-                    NetworkHooks.openGui((ServerPlayer) player, tile, tile.getBlockPos());
+                    NetworkHooks.openScreen((ServerPlayer) player, tile, tile.getBlockPos());
                 }
 
                 return InteractionResult.SUCCESS;
@@ -97,7 +85,7 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider {
         }
     }
 
-    @Override
+    /*@Override
     public void addProbeInfo(@Nonnull ProbeMode probeMode, @Nonnull IProbeInfo iProbeInfo, @Nonnull PlayerEntity playerEntity,
                              @Nonnull World world, @Nonnull BlockState blockState, @Nonnull IProbeHitData iProbeHitData) {
         TileEntity te = world.getBlockEntity(iProbeHitData.getPos());
@@ -109,5 +97,5 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider {
                 iProbeInfo.horizontal().item(millstone.getResult()).progress(millstone.getCraftingProgress(), 100, iProbeInfo.defaultProgressStyle().suffix("%"));
             }
         }
-    }
+    }*/
 }

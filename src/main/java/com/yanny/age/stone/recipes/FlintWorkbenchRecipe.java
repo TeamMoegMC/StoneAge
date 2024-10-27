@@ -2,8 +2,6 @@ package com.yanny.age.stone.recipes;
 
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
-import com.yanny.ages.api.items.AgesPartItem;
-import com.yanny.ages.api.items.AgesToolItem;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;

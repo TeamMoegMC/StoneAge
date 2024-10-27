@@ -15,7 +15,6 @@ import javax.annotation.Nonnull;
 import static com.yanny.age.stone.Reference.MODID;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
-@ObjectHolder(Reference.MODID)
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ItemSubscriber {
     public static final Item raw_hide = null;

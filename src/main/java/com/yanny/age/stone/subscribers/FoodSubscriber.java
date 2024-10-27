@@ -1,21 +1,17 @@
 package com.yanny.age.stone.subscribers;
 
-import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.group.ModItemGroup;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 import javax.annotation.Nonnull;
 
 import static com.yanny.age.stone.Reference.MODID;
 
 @SuppressWarnings("unused")
-@ObjectHolder(Reference.MODID)
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class FoodSubscriber {
     public static final Item fat = null;
