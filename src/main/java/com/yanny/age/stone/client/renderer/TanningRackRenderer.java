@@ -22,9 +22,9 @@ import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 
 @OnlyIn(Dist.CLIENT)
 public class TanningRackRenderer extends BlockEntityRenderer<TanningRackTileEntity> {
-    public TanningRackRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
+    /*public TanningRackRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
-    }
+    }*/
 
     @Override
     public void render(@Nonnull TanningRackTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,

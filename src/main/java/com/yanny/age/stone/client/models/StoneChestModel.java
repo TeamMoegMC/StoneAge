@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class StoneChestModel extends Model {
-	private final ModelPart body;
-	private final ModelPart lid;
+//	private final ModelPart body;
+//	private final ModelPart lid;
 
 	public StoneChestModel() {
 		super(RenderType::entityCutout);
-		texWidth = 64;
+		/*texWidth = 64;
 		texHeight = 64;
 
 		body = new ModelPart(this, 0, 48);
@@ -36,16 +36,16 @@ public class StoneChestModel extends Model {
 
 		lid = new ModelPart(this, 0, 0);
 		lid.setPos(3.0F, 10.0F, 5.0F);
-		lid.addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14, 0.0F, false);
+		lid.addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14, 0.0F, false);*/
 	}
 
-	public ModelPart getLid() {
-		return lid;
-	}
+//	public ModelPart getLid() {
+//		return lid;
+//	}
 
 	@Override
 	public void renderToBuffer(@Nonnull PoseStack matrixStack, @Nonnull VertexConsumer iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
-		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
-		lid.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+//		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+//		lid.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 }

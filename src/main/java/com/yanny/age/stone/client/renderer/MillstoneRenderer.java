@@ -19,9 +19,9 @@ public class MillstoneRenderer implements BlockEntityRenderer<MillstoneTileEntit
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/millstone.png");
     private final MillstoneModel model = new MillstoneModel();
 
-    public MillstoneRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
+   /* public MillstoneRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
-    }
+    }*/
 
     @Override
     public void render(@Nonnull MillstoneTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,

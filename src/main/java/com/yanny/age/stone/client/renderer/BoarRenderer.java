@@ -5,6 +5,7 @@ import com.yanny.age.stone.client.models.BoarModel;
 import com.yanny.age.stone.entities.BoarEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,8 +17,8 @@ import javax.annotation.Nonnull;
 public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel> {
     private static final ResourceLocation BOAR_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/boar.png");
 
-    private BoarRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new BoarModel(), 0.5f);
+    private BoarRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new BoarModel(), 0.5f);
     }
 
     @Nonnull
@@ -31,11 +32,11 @@ public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel> {
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<BoarEntity> {
+    /*public static class RenderFactory implements IRenderFactory<BoarEntity> {
 
         @Override
         public EntityRenderer<? super BoarEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new BoarRenderer(manager);
         }
-    }
+    }*/
 }

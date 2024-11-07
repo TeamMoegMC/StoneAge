@@ -7,6 +7,7 @@ import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,8 +19,8 @@ import javax.annotation.Nonnull;
 public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, SaberToothTigerModel> {
     private static final ResourceLocation SABER_TOOTH_TIGER_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/saber_tooth_tiger.png");
 
-    private SaberToothTigerRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new SaberToothTigerModel(), 0.5f);
+    private SaberToothTigerRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new SaberToothTigerModel(), 0.5f);
     }
 
     @Override
@@ -39,11 +40,11 @@ public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, 
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<SaberToothTigerEntity> {
+   /* public static class RenderFactory implements IRenderFactory<SaberToothTigerEntity> {
 
         @Override
         public EntityRenderer<? super SaberToothTigerEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new SaberToothTigerRenderer(manager);
         }
-    }
+    }*/
 }

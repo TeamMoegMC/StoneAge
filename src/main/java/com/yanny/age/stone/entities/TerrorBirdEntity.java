@@ -1,6 +1,7 @@
 package com.yanny.age.stone.entities;
 
 import com.yanny.age.stone.subscribers.EntitySubscriber;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.AgableMob;
 import net.minecraft.world.entity.Entity;
@@ -49,8 +50,8 @@ public class TerrorBirdEntity extends WildAnimalEntity {
     }
 
     @Override
-    public AgableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgableMob ageable) {
-        return EntitySubscriber.terror_bird.create(level);
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
+        return EntitySubscriber.terror_bird.create(level());
     }
 
     @Override
@@ -75,7 +76,7 @@ public class TerrorBirdEntity extends WildAnimalEntity {
     @Override
     public boolean doHurtTarget(Entity entityIn) {
         this.playSound(SoundEvents.CHICKEN_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.hurt(DamageSource.mobAttack(this), 1.0F);
+        return entityIn.hurt(entityIn.damageSources().mobAttack(this), 1.0F);
     }
 
     @Override

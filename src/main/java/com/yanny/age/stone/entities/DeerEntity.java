@@ -1,6 +1,7 @@
 package com.yanny.age.stone.entities;
 
 import com.yanny.age.stone.subscribers.EntitySubscriber;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
@@ -37,7 +38,7 @@ public class DeerEntity extends Animal {
 
     @Nullable
     @Override
-    public AgableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgableMob ageable) {
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
         return EntitySubscriber.deer.create(serverWorld);
     }
 

@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 
 @NonnullDefault
 public class MillstoneRecipeBuilder {
-    private final Item result;
+    /*private final Item result;
     private final int count;
     private final Ingredient input;
     private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
@@ -144,28 +144,28 @@ public class MillstoneRecipeBuilder {
             return RecipeSubscriber.millstone;
         }
 
-        /**
+        *//**
          * Gets the ID for the recipe.
-         */
+         *//*
         public ResourceLocation getId() {
             return this.id;
         }
 
-        /**
+        *//**
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
-         */
+         *//*
         @Nullable
         public JsonObject serializeAdvancement() {
             return this.advancementBuilder.serializeToJson();
         }
 
-        /**
+        *//**
          * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementJson}
          * is non-null.
-         */
+         *//*
         @Nullable
         public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
-    }
+    }*/
 }

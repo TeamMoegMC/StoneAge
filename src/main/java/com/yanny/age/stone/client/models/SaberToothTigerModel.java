@@ -9,15 +9,15 @@ import net.minecraft.util.Mth;
 import javax.annotation.Nonnull;
 
 public class SaberToothTigerModel extends AgeableListModel<SaberToothTigerEntity> {
-	private final ModelPart body;
-	private final ModelPart foot1;
-	private final ModelPart foot2;
-	private final ModelPart foot3;
-	private final ModelPart foot4;
-	private final ModelPart head;
+//	private final ModelPart body;
+//	private final ModelPart foot1;
+//	private final ModelPart foot2;
+//	private final ModelPart foot3;
+//	private final ModelPart foot4;
+//	private final ModelPart head;
 
 	public SaberToothTigerModel() {
-		texWidth = 64;
+		/*texWidth = 64;
 		texHeight = 64;
 
 		body = new ModelPart(this, 0, 42);
@@ -123,7 +123,7 @@ public class SaberToothTigerModel extends AgeableListModel<SaberToothTigerEntity
 		setRotationAngle(bone10, 0.0873F, 0.0F, 0.0F);
 		head.addChild(bone10);
 		bone10.addBox(0.4F, 0.25F, -0.75F, 1, 3, 1, 0.0F, false);
-		bone10.addBox(-2.4F, 0.25F, -0.75F, 1, 3, 1, 0.0F, false);
+		bone10.addBox(-2.4F, 0.25F, -0.75F, 1, 3, 1, 0.0F, false);*/
 	}
 
 	@Nonnull
@@ -135,8 +135,9 @@ public class SaberToothTigerModel extends AgeableListModel<SaberToothTigerEntity
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body, foot1, foot2, foot3, foot4);
+		return ImmutableList.of(/*head, body, foot1, foot2, foot3, foot4*/);
 	}
+
 
 	@Override
 	public void setupAnim(@Nonnull SaberToothTigerEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
@@ -150,11 +151,11 @@ public class SaberToothTigerModel extends AgeableListModel<SaberToothTigerEntity
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-		this.head.xRot = headPitch * ((float)Math.PI / 180F);
-		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+//		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 }

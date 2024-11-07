@@ -175,13 +175,13 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
     @Nonnull
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.stone_age.stone_chest");
+        return Component.translatable("block.stone_age.stone_chest");
     }
 
     @Nonnull
     @Override
     protected Component getDefaultName() {
-        return new TextComponent("StoneChest");
+        return Component.translatable("StoneChest");
     }
 
     @OnlyIn(Dist.CLIENT)

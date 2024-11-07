@@ -5,6 +5,7 @@ import com.yanny.age.stone.client.models.CoelacanthModel;
 import com.yanny.age.stone.entities.CoelacanthEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,8 +17,8 @@ import javax.annotation.Nonnull;
 public class CoelacanthRenderer extends MobRenderer<CoelacanthEntity, CoelacanthModel> {
     private static final ResourceLocation COELACANT_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/coelacanth.png");
 
-    private CoelacanthRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new CoelacanthModel(), 0.3f);
+    private CoelacanthRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new CoelacanthModel(), 0.3f);
     }
 
     @Nonnull
@@ -36,11 +37,11 @@ public class CoelacanthRenderer extends MobRenderer<CoelacanthEntity, Coelacanth
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<CoelacanthEntity> {
+    /*public static class RenderFactory implements IRenderFactory<CoelacanthEntity> {
 
         @Override
         public EntityRenderer<? super CoelacanthEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new CoelacanthRenderer(manager);
         }
-    }
+    }*/
 }

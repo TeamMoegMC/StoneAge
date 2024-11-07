@@ -1,35 +1,20 @@
 package com.yanny.age.stone.datagen;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
-import com.mojang.datafixers.util.Pair;
-import com.yanny.age.stone.subscribers.BlockSubscriber;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.data.loot.BlockLoot;
-import net.minecraft.loot.*;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.system.NonnullDefault;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
-
-import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.level.storage.loot.LootTables;
-import net.minecraft.world.level.storage.loot.ValidationContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSet;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 
 @NonnullDefault
 public class LootTableGenerator extends LootTableProvider {
+    public LootTableGenerator(PackOutput p_254123_, Set<ResourceLocation> p_254481_, List<SubProviderEntry> p_253798_) {
+        super(p_254123_, p_254481_, p_253798_);
+    }
 
-    private static final Set<Block> BLOCKS = Sets.newHashSet(BlockSubscriber.drying_rack, BlockSubscriber.feeder, BlockSubscriber.fishing_net,
+    /*private static final Set<Block> BLOCKS = Sets.newHashSet(BlockSubscriber.drying_rack, BlockSubscriber.feeder, BlockSubscriber.fishing_net,
             BlockSubscriber.flint_workbench, BlockSubscriber.millstone, BlockSubscriber.stone_chest, BlockSubscriber.tanning_rack, BlockSubscriber.thatch_block,
             BlockSubscriber.thatch_stairs, BlockSubscriber.tree_stump);
 
@@ -57,5 +42,5 @@ public class LootTableGenerator extends LootTableProvider {
         protected Iterable<Block> getKnownBlocks() {
             return new ArrayList<>(BLOCKS);
         }
-    }
+    }*/
 }

@@ -7,12 +7,13 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static net.minecraft.world.level.biome.Biome.BiomeCategory.*;
+import static net.minecraft.world.level.biome.Biomes.*;
+import static net.minecraft.world.level.levelgen.structure.structures.MineshaftStructure.Type.MESA;
+import static net.minecraftforge.common.BiomeManager.BiomeType.ICY;
 
 public class Config {
     static final Set<Biome> DEFAULT_DEER_BIOMES;
@@ -28,32 +29,32 @@ public class Config {
     static final Set<Biome> DEFAULT_COELACANTH_BIOMES;
     static final Set<Biome> DEFAULT_INFINITY_WATER_SOURCE_BIOMES;
     static final Set<Block> DEFAULT_DISABLED_USE_BLOCKS;
-
+//
     static {
-        DEFAULT_DEER_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(FOREST, PLAINS, TAIGA, EXTREME_HILLS, SAVANNA, BEACH, SWAMP, JUNGLE, MESA, ICY)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_BOAR_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(FOREST, PLAINS, TAIGA, EXTREME_HILLS, SAVANNA, SWAMP, JUNGLE)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_AUROCH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(FOREST, PLAINS, TAIGA, EXTREME_HILLS, SAVANNA, BEACH)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_FOWL_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(FOREST, PLAINS, TAIGA, EXTREME_HILLS, SAVANNA, SWAMP, JUNGLE, BEACH, MESA)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_MOUFLON_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(FOREST, PLAINS, TAIGA, EXTREME_HILLS, SWAMP, MESA)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_MAMMOTH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(PLAINS, SAVANNA, ICY, TAIGA, EXTREME_HILLS, DESERT, SAVANNA)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_TIGER_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(PLAINS, SAVANNA, ICY, TAIGA, DESERT, FOREST, BEACH, JUNGLE, MUSHROOM)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_RHINO_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(PLAINS, SAVANNA, ICY, TAIGA, BEACH, SAVANNA, MUSHROOM, RIVER, SWAMP)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_TERROR_BIRD_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(PLAINS, SAVANNA, FOREST, JUNGLE, MUSHROOM)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_STRUCTURE_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !EnumSet.of(OCEAN, RIVER, THEEND, NETHER)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_COELACANTH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !EnumSet.of(OCEAN, RIVER, SWAMP)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
-        DEFAULT_INFINITY_WATER_SOURCE_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> EnumSet.of(OCEAN, RIVER, SWAMP)
-                .contains(biome.getBiomeCategory())).collect(Collectors.toSet());
+        DEFAULT_DEER_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, BEACH, SWAMP, JUNGLE, MESA, ICY)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_BOAR_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, SWAMP, JUNGLE)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_AUROCH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, BEACH)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_FOWL_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, SWAMP, JUNGLE, BEACH, MESA)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_MOUFLON_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SWAMP, MESA)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_MAMMOTH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, WINDSWEPT_HILLS, DESERT, SAVANNA)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_TIGER_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, DESERT, FOREST, BEACH, JUNGLE, MUSHROOM_FIELDS)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_RHINO_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, BEACH, SAVANNA, MUSHROOM_FIELDS, RIVER, SWAMP)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_TERROR_BIRD_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, FOREST, JUNGLE, MUSHROOM_FIELDS)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_STRUCTURE_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !Set.of(OCEAN, RIVER, THE_END, NETHER_WASTES)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_COELACANTH_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !Set.of(OCEAN, RIVER, SWAMP)
+                .contains(biome)).collect(Collectors.toSet());
+        DEFAULT_INFINITY_WATER_SOURCE_BIOMES = ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(OCEAN, RIVER, SWAMP)
+                .contains(biome)).collect(Collectors.toSet());
         DEFAULT_DISABLED_USE_BLOCKS = Sets.newHashSet(Blocks.CRAFTING_TABLE);
     }
 
@@ -87,7 +88,7 @@ public class Config {
     public static int spawnBoarMaxCount = 6;
     public static boolean spawnBoarAllowedBiomesBlacklist = false;
     public static final Set<Biome> spawnBoarAllowedBiomes = DEFAULT_BOAR_BIOMES;
-    public static String boarBreedingResult = Objects.requireNonNull(EntityType.PIG.getRegistryName()).toString();
+    public static String boarBreedingResult = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.PIG)).toString();
 
     public static boolean spawnAurochEnable = true;
     public static int spawnAurochWeight = 10;
@@ -95,7 +96,7 @@ public class Config {
     public static int spawnAurochMaxCount = 8;
     public static boolean spawnAurochAllowedBiomesBlacklist = false;
     public static final Set<Biome> spawnAurochAllowedBiomes = DEFAULT_AUROCH_BIOMES;
-    public static String aurochBreedingResult = Objects.requireNonNull(EntityType.COW.getRegistryName()).toString();
+    public static String aurochBreedingResult = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.COW)).toString();
 
     public static boolean spawnFowlEnable = true;
     public static int spawnFowlWeight = 10;
@@ -103,7 +104,7 @@ public class Config {
     public static int spawnFowlMaxCount = 8;
     public static boolean spawnFowlAllowedBiomesBlacklist = false;
     public static final Set<Biome> spawnFowlAllowedBiomes = DEFAULT_FOWL_BIOMES;
-    public static String fowlBreedingResult = Objects.requireNonNull(EntityType.CHICKEN.getRegistryName()).toString();
+    public static String fowlBreedingResult = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.CHICKEN)).toString();
 
     public static boolean spawnMouflonEnable = true;
     public static int spawnMouflonWeight = 10;
@@ -111,7 +112,7 @@ public class Config {
     public static int spawnMouflonMaxCount = 8;
     public static boolean spawnMouflonAllowedBiomesBlacklist = false;
     public static final Set<Biome> spawnMouflonAllowedBiomes = DEFAULT_MOUFLON_BIOMES;
-    public static String mouflonBreedingResult = Objects.requireNonNull(EntityType.SHEEP.getRegistryName()).toString();
+    public static String mouflonBreedingResult = Objects.requireNonNull(ForgeRegistries.ENTITY_TYPES.getKey(EntityType.SHEEP)).toString();
 
     public static boolean spawnMammothEnable = true;
     public static int spawnMammothWeight = 10;

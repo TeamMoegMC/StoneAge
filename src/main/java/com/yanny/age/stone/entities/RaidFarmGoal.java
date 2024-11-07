@@ -1,6 +1,5 @@
 package com.yanny.age.stone.entities;
 
-import net.minecraft.block.*;
 import net.minecraft.world.entity.ai.goal.MoveToBlockGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
@@ -34,7 +33,7 @@ class RaidFarmGoal<T extends Animal> extends MoveToBlockGoal {
     @Override
     public boolean canUse() {
         if (this.nextStartTick <= 0) {
-            if (!ForgeEventFactory.getMobGriefingEvent(this.entity.level, this.entity)) {
+            if (!ForgeEventFactory.getMobGriefingEvent(this.entity.level(), this.entity)) {
                 return false;
             }
 
@@ -60,7 +59,7 @@ class RaidFarmGoal<T extends Animal> extends MoveToBlockGoal {
                 10.0F, (float)this.entity.getMaxHeadXRot());
 
         if (this.isReachedTarget()) {
-            Level world = this.entity.level;
+            Level world = this.entity.level();
             BlockPos blockpos = this.blockPos.above();
             BlockState blockstate = world.getBlockState(blockpos);
             Block block = blockstate.getBlock();

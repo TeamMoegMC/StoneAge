@@ -9,11 +9,11 @@ import net.minecraft.util.Mth;
 import javax.annotation.Nonnull;
 
 public class CoelacanthModel extends ListModel<CoelacanthEntity> {
-	private final ModelPart body;
-	private final ModelPart head;
+//	private final ModelPart body;
+//	private final ModelPart head;
 
 	public CoelacanthModel() {
-		texWidth = 32;
+		/*texWidth = 32;
 		texHeight = 32;
 
 		body = new ModelPart(this);
@@ -40,13 +40,13 @@ public class CoelacanthModel extends ListModel<CoelacanthEntity> {
 		head = new ModelPart(this);
 		head.setPos(0.0F, 22.5F, -5.0F);
 		setRotationAngle(head, 0.7854F, 0.0F, 0.0F);
-		head.texOffs(22, 19).addBox(-0.5F, -1.8232F, -1.1768F, 2.0F, 3.0F, 3.0F, 0.0F, false);
+		head.texOffs(22, 19).addBox(-0.5F, -1.8232F, -1.1768F, 2.0F, 3.0F, 3.0F, 0.0F, false);*/
 	}
 
 	@Nonnull
 	@Override
 	public Iterable<ModelPart> parts() {
-		return ImmutableList.of(this.body, this.head);
+		return ImmutableList.of(/*this.body, this.head*/);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class CoelacanthModel extends ListModel<CoelacanthEntity> {
 			f1 = 1.7F;
 		}
 
-		this.head.yRot = -f * 0.25F * Mth.sin(f1 * 0.6F * ageInTicks);
+//		this.head.yRot = -f * 0.25F * Mth.sin(f1 * 0.6F * ageInTicks);
 	}
 
 	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

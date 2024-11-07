@@ -3,6 +3,7 @@ package com.yanny.age.stone.entities;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
+import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.entity.Entity;
@@ -52,15 +53,15 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
     }
 
     @Override
-    public AgableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgableMob ageable) {
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
         if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
-            EntityType<?> child = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(Config.fowlBreedingResult));
+            EntityType<?> child = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(Config.fowlBreedingResult));
 
             if (child != null) {
-                Entity result = child.create(level);
+                Entity result = child.create(level());
 
-                if (result instanceof AgableMob) {
-                    return (AgableMob) child.create(level);
+                if (result instanceof AgeableMob) {
+                    return (AgeableMob) child.create(level());
                 } else {
                     LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", Config.fowlBreedingResult);
                 }
@@ -68,9 +69,9 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
                 LOGGER.warn("'{}' does not exists! Spawning default CHICKEN entity", Config.fowlBreedingResult);
             }
 
-            return EntityType.CHICKEN.create(level);
+            return EntityType.CHICKEN.create(level());
         } else {
-            FowlEntity entity = EntitySubscriber.fowl.create(level);
+            FowlEntity entity = EntitySubscriber.fowl.create(level());
 
             if (entity != null) {
                 entity.setGeneration(entityData.get(GENERATION) + 1);
@@ -102,7 +103,7 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
     @Override
     public boolean doHurtTarget(Entity entityIn) {
         this.playSound(SoundEvents.CHICKEN_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.hurt(DamageSource.mobAttack(this), 1.0F);
+        return entityIn.hurt(entityIn.damageSources().mobAttack(this), 1.0F);
     }
 
     @Override
@@ -154,8 +155,8 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
         return TEMPTATION_ITEMS.test(stack);
     }
 
-    @Override
+    /*@Override
     public void addProbeInfo(@Nonnull ProbeMode mode, @Nonnull IProbeInfo probeInfo, @Nonnull PlayerEntity player, @Nonnull World world, @Nonnull Entity entity, @Nonnull IProbeHitEntityData data) {
         probeInfo.horizontal().text(new StringTextComponent("Generation: " + entityData.get(GENERATION)));
-    }
+    }*/
 }

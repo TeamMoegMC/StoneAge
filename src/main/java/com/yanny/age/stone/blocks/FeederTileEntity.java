@@ -75,7 +75,7 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     @Nonnull
     @Override
     public Component getDisplayName() {
-        return new TranslatableComponent("block.stone_age.feeder");
+        return Component.translatable("block.stone_age.feeder");
     }
 
     @Nonnull
@@ -113,7 +113,7 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(getBlockState(), pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull

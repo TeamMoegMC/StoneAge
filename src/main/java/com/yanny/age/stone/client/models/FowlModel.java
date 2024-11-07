@@ -12,15 +12,15 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class FowlModel extends AgeableListModel<FowlEntity> {
-	private final ModelPart body;
-	private final ModelPart head;
-	private final ModelPart foot1;
-	private final ModelPart foot2;
-	private final ModelPart wing1;
-	private final ModelPart wing2;
+//	private final ModelPart body;
+//	private final ModelPart head;
+//	private final ModelPart foot1;
+//	private final ModelPart foot2;
+//	private final ModelPart wing1;
+//	private final ModelPart wing2;
 
 	public FowlModel() {
-		texWidth = 64;
+/*		texWidth = 64;
 		texHeight = 64;
 
 		body = new ModelPart(this, 36, 0);
@@ -61,7 +61,7 @@ public class FowlModel extends AgeableListModel<FowlEntity> {
 
 		wing2 = new ModelPart(this);
 		wing2.setPos(-3.0F, 15.0F, 0.0F);
-		wing2.addBox(-1.0F, 0.0F, -3.0F, 1, 4, 5, 0.0F, false);
+		wing2.addBox(-1.0F, 0.0F, -3.0F, 1, 4, 5, 0.0F, false);*/
 	}
 
 	@Override
@@ -78,15 +78,15 @@ public class FowlModel extends AgeableListModel<FowlEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body, foot1, foot2, wing1, wing2);
+		return ImmutableList.of(/*head, body, foot1, foot2, wing1, wing2*/);
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
-		this.head.xRot = headPitch * ((float)Math.PI / 180F);
-		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-		this.wing1.zRot = -ageInTicks;
-		this.wing2.zRot = ageInTicks;
+//		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+//		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.wing1.zRot = -ageInTicks;
+//		this.wing2.zRot = ageInTicks;
 	}
 }

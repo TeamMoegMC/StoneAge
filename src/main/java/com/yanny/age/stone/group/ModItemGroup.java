@@ -7,8 +7,8 @@ import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class ModItemGroup extends CreativeModeTab {
-    public static final CreativeModeTab AGES = new ModItemGroup();
+//public class ModItemGroup extends CreativeModeTab {
+    /*public static final CreativeModeTab AGES = new ModItemGroup();
 
     ModItemGroup() {
         super(Reference.MODID);
@@ -18,5 +18,5 @@ public class ModItemGroup extends CreativeModeTab {
     @Nonnull
     public ItemStack makeIcon() {
         return new ItemStack(ToolSubscriber.flint_knife);
-    }
-}
+    }*/
+//}

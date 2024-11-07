@@ -1,37 +1,25 @@
 package com.yanny.age.stone.datagen;
 
-import com.yanny.age.stone.Reference;
-import com.yanny.age.stone.subscribers.BlockSubscriber;
-import com.yanny.age.stone.subscribers.FoodSubscriber;
-import com.yanny.age.stone.subscribers.ItemSubscriber;
-import com.yanny.age.stone.subscribers.ToolSubscriber;
-import net.minecraft.advancements.critereon.ItemPredicate;
 import net.minecraft.data.*;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.common.Tags;
 import org.lwjgl.system.NonnullDefault;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
-import net.minecraft.data.recipes.ShapelessRecipeBuilder;
-import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 
 @SuppressWarnings("ConstantConditions")
 @NonnullDefault
 public class RecipeGenerator extends RecipeProvider {
-    private static final Set<WoodItemHolder> WOOD_ITEMS = new HashSet<>();
+    public RecipeGenerator(PackOutput p_248933_) {
+        super(p_248933_);
+    }
+
+    @Override
+    protected void buildRecipes(Consumer<FinishedRecipe> consumer) {
+
+    }
+    /*private static final Set<WoodItemHolder> WOOD_ITEMS = new HashSet<>();
     private static final Set<SlabHolder> SLABS = new HashSet<>();
     private static final Set<TerracottaHolder> TERRACOTTA = new HashSet<>();
     private static final Set<FoodHolder> FOODS = new HashSet<>();
@@ -571,5 +559,5 @@ public class RecipeGenerator extends RecipeProvider {
             this.patternLines = patternLines;
             this.count = count;
         }
-    }
+    }*/
 }

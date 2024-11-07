@@ -25,9 +25,9 @@ public class StoneChestRenderer implements BlockEntityRenderer<StoneChestTileEnt
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/stone_chest.png");
     private final StoneChestModel model = new StoneChestModel();
 
-    public StoneChestRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
+    /*public StoneChestRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
-    }
+    }*/
 
     @Override
     public void render(@Nonnull StoneChestTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,

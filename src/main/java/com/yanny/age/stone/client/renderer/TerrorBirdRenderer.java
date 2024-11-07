@@ -5,6 +5,7 @@ import com.yanny.age.stone.client.models.TerrorBirdModel;
 import com.yanny.age.stone.entities.TerrorBirdEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -18,8 +19,8 @@ import javax.annotation.Nonnull;
 public class TerrorBirdRenderer extends MobRenderer<TerrorBirdEntity, TerrorBirdModel> {
     private static final ResourceLocation TERROR_BIRD_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/terror_bird.png");
 
-    private TerrorBirdRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new TerrorBirdModel(), 0.3f);
+    private TerrorBirdRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new TerrorBirdModel(), 0.3f);
     }
 
     @Nonnull
@@ -40,11 +41,11 @@ public class TerrorBirdRenderer extends MobRenderer<TerrorBirdEntity, TerrorBird
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<TerrorBirdEntity> {
+    /*public static class RenderFactory implements IRenderFactory<TerrorBirdEntity> {
 
         @Override
         public EntityRenderer<? super TerrorBirdEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new TerrorBirdRenderer(manager);
         }
-    }
+    }*/
 }

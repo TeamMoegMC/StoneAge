@@ -11,7 +11,6 @@ import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -23,7 +22,7 @@ import java.util.function.Consumer;
 
 @NonnullDefault
 public class TreeStumpRecipeBuilder {
-    private final Item result;
+    /*private final Item result;
     private final int count;
     private final Ingredient input;
     private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
@@ -149,28 +148,28 @@ public class TreeStumpRecipeBuilder {
             return RecipeSubscriber.tree_stump;
         }
 
-        /**
+        *//**
          * Gets the ID for the recipe.
-         */
+         *//*
         public ResourceLocation getId() {
             return this.id;
         }
 
-        /**
+        *//**
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
-         */
+         *//*
         @Nullable
         public JsonObject serializeAdvancement() {
             return this.advancementBuilder.serializeToJson();
         }
 
-        /**
+        *//**
          * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementJson}
          * is non-null.
-         */
+         *//*
         @Nullable
         public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
-    }
+    }*/
 }

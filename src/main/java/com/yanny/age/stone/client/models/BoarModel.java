@@ -12,15 +12,15 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class BoarModel extends AgeableListModel<BoarEntity> {
-	private final ModelPart body;
-	private final ModelPart head;
-	private final ModelPart foot1;
-	private final ModelPart foot2;
-	private final ModelPart foot3;
-	private final ModelPart foot4;
+//	private final ModelPart body;
+//	private final ModelPart head;
+//	private final ModelPart foot1;
+//	private final ModelPart foot2;
+//	private final ModelPart foot3;
+//	private final ModelPart foot4;
 
 	public BoarModel() {
-		texWidth = 64;
+		/*texWidth = 64;
 		texHeight = 64;
 
 		body = new ModelPart(this, 0, 16);
@@ -56,7 +56,7 @@ public class BoarModel extends AgeableListModel<BoarEntity> {
 		bone.xRot = -0.6109f;
 		bone.addBox( 2.0F, 0.0F, -2.0F, 1, 1, 4, 0.0F, false);
 		bone.addBox(-3.0F, 0.0F, -2.0F, 1, 1, 4, 0.0F, false);
-		head.addChild(bone);
+		head.addChild(bone);*/
 	}
 
 	@Nonnull
@@ -68,7 +68,7 @@ public class BoarModel extends AgeableListModel<BoarEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body, foot1, foot2, foot3, foot4);
+		return ImmutableList.of(/*head, body, foot1, foot2, foot3, foot4*/);
 	}
 
 	@Override
@@ -77,11 +77,11 @@ public class BoarModel extends AgeableListModel<BoarEntity> {
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-		this.head.xRot = headPitch * ((float)Math.PI / 180F);
-		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+//		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 }

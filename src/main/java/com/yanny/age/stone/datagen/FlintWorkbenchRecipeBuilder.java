@@ -1,36 +1,10 @@
 package com.yanny.age.stone.datagen;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.yanny.age.stone.subscribers.RecipeSubscriber;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.advancements.CriterionTriggerInstance;
-import net.minecraft.advancements.RequirementsStrategy;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
-import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.tags.Tag;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.Consumer;
 
 @NonnullDefault
 public class FlintWorkbenchRecipeBuilder {
-    private final Item result;
+    /*private final Item result;
     private final int count;
     private final List<String> pattern = Lists.newArrayList();
     private final Map<Character, Ingredient> key = Maps.newLinkedHashMap();
@@ -52,7 +26,7 @@ public class FlintWorkbenchRecipeBuilder {
         return new FlintWorkbenchRecipeBuilder(resultIn, countIn);
     }
 
-    public FlintWorkbenchRecipeBuilder key(Character symbol, Tag<Item> tagIn) {
+    public FlintWorkbenchRecipeBuilder key(Character symbol, TagKey<Item> tagIn) {
         return this.key(symbol, Ingredient.of(tagIn));
     }
 
@@ -71,7 +45,7 @@ public class FlintWorkbenchRecipeBuilder {
         }
     }
 
-    public FlintWorkbenchRecipeBuilder tool(Tag<Item> tool) {
+    public FlintWorkbenchRecipeBuilder tool(TagKey<Item> tool) {
         return this.tool(Ingredient.of(tool));
     }
 
@@ -217,28 +191,28 @@ public class FlintWorkbenchRecipeBuilder {
             return RecipeSubscriber.flint_workbench;
         }
 
-        /**
+        *//**
          * Gets the ID for the recipe.
-         */
+         *//*
         public ResourceLocation getId() {
             return this.id;
         }
 
-        /**
+        *//**
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
-         */
+         *//*
         @Nullable
         public JsonObject serializeAdvancement() {
             return this.advancementBuilder.serializeToJson();
         }
 
-        /**
+        *//**
          * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementJson}
          * is non-null.
-         */
+         *//*
         @Nullable
         public ResourceLocation getAdvancementId() {
             return this.advancementId;
         }
-    }
+    }*/
 }

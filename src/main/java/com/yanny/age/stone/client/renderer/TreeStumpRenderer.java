@@ -5,7 +5,6 @@ import com.yanny.age.stone.blocks.TreeStumpTileEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -15,9 +14,9 @@ import static net.minecraft.client.renderer.model.ItemCameraTransforms.Transform
 
 @OnlyIn(Dist.CLIENT)
 public class TreeStumpRenderer implements BlockEntityRenderer<TreeStumpTileEntity> {
-    public TreeStumpRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
+    /*public TreeStumpRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
         super(rendererDispatcher);
-    }
+    }*/
 
     @Override
     public void render(@Nonnull TreeStumpTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,

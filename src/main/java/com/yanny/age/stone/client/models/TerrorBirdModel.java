@@ -11,13 +11,13 @@ import net.minecraft.util.Mth;
 import javax.annotation.Nonnull;
 
 public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
-	private final ModelPart rfeet;
-	private final ModelPart body;
-	private final ModelPart head;
-	private final ModelPart lfeet;
+//	private final ModelPart rfeet;
+//	private final ModelPart body;
+//	private final ModelPart head;
+//	private final ModelPart lfeet;
 
 	public TerrorBirdModel() {
-		texWidth = 64;
+		/*texWidth = 64;
 		texHeight = 64;
 
 		rfeet = new ModelPart(this);
@@ -70,15 +70,15 @@ public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
 		knee2.setPos(-1.0F, 4.25F, -0.5F);
 		lfeet.addChild(knee2);
 		setRotationAngle(knee2, -0.1745F, 0.0F, 0.0F);
-		knee2.texOffs(0, 39).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 4.0F, 1.0F, 0.0F, false);
+		knee2.texOffs(0, 39).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 4.0F, 1.0F, 0.0F, false);*/
 	}
 
 	@Override
 	public void setupAnim(@Nonnull TerrorBirdEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-		this.head.xRot = headPitch * ((float)Math.PI / 180F);
-		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-		this.lfeet.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.rfeet.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+//		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+//		this.lfeet.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.rfeet.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(body, rfeet, lfeet, head);
+		return ImmutableList.of(/*body, rfeet, lfeet, head*/);
 	}
 
 	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

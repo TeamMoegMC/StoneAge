@@ -339,8 +339,8 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
         int outputRecipeSecondCount = recipeSecondOutput.getCount();
 
         if (inputCount >= inputRecipeCount) {
-            return (emptyOutput || emptyRecipe || (outputStack.sameItem(recipeOutput) && outputCount <= outputMaxCount - outputRecipeCount)) &&
-                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.sameItem(recipeSecondOutput) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
+            return (emptyOutput || emptyRecipe || (outputStack.is(recipeOutput.getItem()) && outputCount <= outputMaxCount - outputRecipeCount)) &&
+                    (emptySecondOutput || emptySecondRecipe || (outputSecondStack.is(recipeSecondOutput.getItem()) && outputSecondCount <= outputSecondMaxCount - outputRecipeSecondCount));
         }
 
         return false;

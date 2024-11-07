@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Objects;
 
 class AgroTargetGoal extends TargetGoal {
-    private static final TargetingConditions predicate = (new TargetingConditions()).allowUnseeable().ignoreInvisibilityTesting();
+    private static final TargetingConditions predicate = (TargetingConditions.forCombat()).ignoreInvisibilityTesting();
     private int revengeTimerOld;
     private final Class<? extends IBecomeAngry> reinforcement;
     private final Class<?>[] excludedReinforcementTypes;
@@ -40,7 +40,7 @@ class AgroTargetGoal extends TargetGoal {
                 }
             }
 
-            return this.canAttack(livingentity, predicate) && mob.level.getDifficulty() != Difficulty.PEACEFUL;
+            return this.canAttack(livingentity, predicate) && mob.level().getDifficulty() != Difficulty.PEACEFUL;
         } else {
             return false;
         }
@@ -58,7 +58,7 @@ class AgroTargetGoal extends TargetGoal {
 
     private void alertOthers() {
         double d0 = this.getFollowDistance();
-        List<Mob> list = this.mob.level.getEntitiesOfClass(this.mob.getClass(),
+        List<Mob> list = (List<Mob>) this.mob.level().getEntitiesOfClass(this.mob.getClass(),
                 (new AABB(this.mob.getX(), this.mob.getY(), this.mob.getZ(),
                         this.mob.getX() + 1.0D, this.mob.getY() + 1.0D, this.mob.getZ() + 1.0D)).inflate(d0, 10.0D, d0));
 
@@ -83,7 +83,7 @@ class AgroTargetGoal extends TargetGoal {
     }
 
     private void setAttackTarget(@Nonnull Mob mobIn, @Nonnull LivingEntity targetIn) {
-        if (reinforcement.isAssignableFrom(mobIn.getClass()) && this.mob.canSee(targetIn) && reinforcement.cast(mobIn).becomeAngryAt(targetIn)) {
+        if (reinforcement.isAssignableFrom(mobIn.getClass()) && this.mob.getSensing().hasLineOfSight(targetIn) && reinforcement.cast(mobIn).becomeAngryAt(targetIn)) {
             mobIn.setTarget(targetIn);
         }
     }

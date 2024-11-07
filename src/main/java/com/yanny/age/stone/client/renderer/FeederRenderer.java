@@ -2,6 +2,7 @@ package com.yanny.age.stone.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.FeederTileEntity;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,8 +18,8 @@ import static net.minecraft.client.renderer.model.ItemCameraTransforms.Transform
 
 @OnlyIn(Dist.CLIENT)
 public class FeederRenderer implements BlockEntityRenderer<FeederTileEntity> {
-    public FeederRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
-        super(rendererDispatcher);
+    public FeederRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super();
     }
 
     @Override

@@ -12,28 +12,28 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MouflonModel extends AgeableListModel<MouflonEntity> {
-    private final ModelPart body;
-    private final ModelPart body4_r1;
-    private final ModelPart tail_r1;
-    private final ModelPart head;
-    private final ModelPart neck_r1;
-    private final ModelPart ear2_r1;
-    private final ModelPart ear1_r1;
-    private final ModelPart head3_r1;
-    private final ModelPart horn;
-    private final ModelPart horn3_r1;
-    private final ModelPart horn4_r1;
-    private final ModelPart horn2_r1;
-    private final ModelPart horn1_r1;
-    private final ModelPart feet1;
-    private final ModelPart feet3;
-    private final ModelPart feet3_2_r1;
-    private final ModelPart feet4;
-    private final ModelPart feet2;
-    private final ModelPart feet3_2_r2;
+//    private final ModelPart body;
+//    private final ModelPart body4_r1;
+//    private final ModelPart tail_r1;
+//    private final ModelPart head;
+//    private final ModelPart neck_r1;
+//    private final ModelPart ear2_r1;
+//    private final ModelPart ear1_r1;
+//    private final ModelPart head3_r1;
+//    private final ModelPart horn;
+//    private final ModelPart horn3_r1;
+//    private final ModelPart horn4_r1;
+//    private final ModelPart horn2_r1;
+//    private final ModelPart horn1_r1;
+//    private final ModelPart feet1;
+//    private final ModelPart feet3;
+//    private final ModelPart feet3_2_r1;
+//    private final ModelPart feet4;
+//    private final ModelPart feet2;
+//    private final ModelPart feet3_2_r2;
 
     public MouflonModel() {
-        texWidth = 64;
+        /*texWidth = 64;
         texHeight = 64;
 
         body = new ModelPart(this);
@@ -138,7 +138,7 @@ public class MouflonModel extends AgeableListModel<MouflonEntity> {
         feet3_2_r2.setPos(0.0F, 3.0F, 3.0F);
         feet2.addChild(feet3_2_r2);
         setRotationAngle(feet3_2_r2, 0.2618F, 0.0F, 0.0F);
-        feet3_2_r2.texOffs(52, 29).addBox(-2.5F, -4.0F, -1.5F, 3.0F, 6.0F, 3.0F, 0.0F, false);
+        feet3_2_r2.texOffs(52, 29).addBox(-2.5F, -4.0F, -1.5F, 3.0F, 6.0F, 3.0F, 0.0F, false);*/
     }
 
 	@Nonnull
@@ -150,7 +150,7 @@ public class MouflonModel extends AgeableListModel<MouflonEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body, feet1, feet2, feet3, feet4);
+		return ImmutableList.of(/*head, body, feet1, feet2, feet3, feet4*/);
 	}
 
 	@Override
@@ -159,12 +159,12 @@ public class MouflonModel extends AgeableListModel<MouflonEntity> {
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-		this.head.xRot = headPitch * ((float) Math.PI / 180F);
-		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-		this.feet1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.feet2.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-		this.feet3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.feet4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+//		this.head.xRot = headPitch * ((float) Math.PI / 180F);
+//		this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
+//		this.feet1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.feet2.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+//		this.feet3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.feet4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
 	}
 
 	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

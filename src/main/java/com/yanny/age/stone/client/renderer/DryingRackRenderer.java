@@ -2,6 +2,7 @@ package com.yanny.age.stone.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.yanny.age.stone.blocks.DryingRackTileEntity;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -17,9 +18,9 @@ import static net.minecraft.client.renderer.block.model.ItemTransforms.*;
 
 @OnlyIn(Dist.CLIENT)
 public class DryingRackRenderer implements BlockEntityRenderer<DryingRackTileEntity> {
-    public DryingRackRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
-        super(rendererDispatcher);
-    }
+   /* public DryingRackRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super();
+    }*/
 
     @Override
     public void render(@Nonnull DryingRackTileEntity tileEntityIn, float partialTicks, @Nonnull PoseStack matrixStack,

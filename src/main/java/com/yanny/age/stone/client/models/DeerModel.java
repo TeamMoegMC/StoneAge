@@ -12,15 +12,15 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class DeerModel extends AgeableListModel<DeerEntity> {
-	private final ModelPart body;
-	private final ModelPart head;
-	private final ModelPart feet1;
-	private final ModelPart feet2;
-	private final ModelPart feet3;
-	private final ModelPart feet4;
+//	private final ModelPart body;
+//	private final ModelPart head;
+//	private final ModelPart feet1;
+//	private final ModelPart feet2;
+//	private final ModelPart feet3;
+//	private final ModelPart feet4;
 
 	public DeerModel() {
-        texWidth = 64;
+        /*texWidth = 64;
         texHeight = 64;
 
         body = new ModelPart(this);
@@ -137,7 +137,7 @@ public class DeerModel extends AgeableListModel<DeerEntity> {
         feetH4_r1.setPos(-0.5F, 3.0F, -1.0F);
         feet4.addChild(feetH4_r1);
         setRotationAngle(feetH4_r1, -0.2182F, 0.0F, 0.0F);
-        feetH4_r1.texOffs(23, 44).addBox(-1.0F, -4.0F, -0.5F, 3.0F, 7.0F, 3.0F, 0.0F, false);
+        feetH4_r1.texOffs(23, 44).addBox(-1.0F, -4.0F, -0.5F, 3.0F, 7.0F, 3.0F, 0.0F, false);*/
     }
 
 	@Nonnull
@@ -149,7 +149,7 @@ public class DeerModel extends AgeableListModel<DeerEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body, feet1, feet2, feet3, feet4);
+		return ImmutableList.of(/*head, body, feet1, feet2, feet3, feet4*/);
 	}
 
 	@Override
@@ -158,12 +158,12 @@ public class DeerModel extends AgeableListModel<DeerEntity> {
     }
 
     public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-        this.head.xRot = headPitch * ((float) Math.PI / 180F);
-        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
-        this.feet1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        this.feet2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-        this.feet3.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
-        this.feet4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+//        this.head.xRot = headPitch * ((float) Math.PI / 180F);
+//        this.head.yRot = netHeadYaw * ((float) Math.PI / 180F);
+//        this.feet1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//        this.feet2.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//        this.feet3.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
+//        this.feet4.xRot = Mth.cos(limbSwing * 0.6662F + (float) Math.PI) * 1.4F * limbSwingAmount;
     }
 
     public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {

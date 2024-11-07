@@ -3,8 +3,10 @@ package com.yanny.age.stone.client.renderer;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.client.models.AurochModel;
 import com.yanny.age.stone.entities.AurochEntity;
+import com.yanny.age.stone.subscribers.ModLayerSubscriber;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -16,8 +18,8 @@ import javax.annotation.Nonnull;
 public class AurochRenderer extends MobRenderer<AurochEntity, AurochModel> {
     private static final ResourceLocation AUROCH_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/auroch.png");
 
-    private AurochRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new AurochModel(), 0.5f);
+    private AurochRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new AurochModel(context.bakeLayer(AurochModel.AUROCH_LAYER)), 0.5f);
     }
 
     @Nonnull
@@ -31,11 +33,11 @@ public class AurochRenderer extends MobRenderer<AurochEntity, AurochModel> {
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<AurochEntity> {
+    /*public static class RenderFactory implements IRenderFactory<AurochEntity> {
 
         @Override
         public EntityRenderer<? super AurochEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new AurochRenderer(manager);
         }
-    }
+    }*/
 }

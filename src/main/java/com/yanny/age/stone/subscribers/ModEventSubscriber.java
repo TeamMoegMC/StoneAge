@@ -57,7 +57,7 @@ public class ModEventSubscriber {
         ItemBlockRenderTypes.setRenderLayer(BlockSubscriber.dried_grass_bed, RenderType.cutoutMipped());
     }
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void dataGen(@Nonnull GatherDataEvent event) {
         if (event.includeServer()) {
             // ages_api MODID
@@ -69,7 +69,7 @@ public class ModEventSubscriber {
         if (event.includeClient()) {
             event.getGenerator().addProvider(new LootTableGenerator(event.getGenerator()));
         }
-    }
+    }*/
 
     @SubscribeEvent
     public static void entityAttributeCreatingEvent(@Nonnull EntityAttributeCreationEvent event) {

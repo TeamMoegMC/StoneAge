@@ -12,11 +12,11 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class FlintSpearItemModel extends Model {
-	private final ModelPart bone;
+//	private final ModelPart bone;
 
 	public FlintSpearItemModel() {
 		super(RenderType::entityCutout);
-		texWidth = 32;
+		/*texWidth = 32;
 		texHeight = 32;
 
 		bone = new ModelPart(this, 0, 0);
@@ -41,11 +41,11 @@ public class FlintSpearItemModel extends Model {
 
 		ModelPart bone5 = new ModelPart(this, 4, 9);
 		bone5.addBox(-0.5F, 13F, -1.0F, 1, 2, 2, 0.0F, false);
-		bone.addChild(bone5);
+		bone.addChild(bone5);*/
 	}
 
 	@Override
 	public void renderToBuffer(@Nonnull PoseStack matrixStack, @Nonnull VertexConsumer iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
-		bone.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+//		bone.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 }

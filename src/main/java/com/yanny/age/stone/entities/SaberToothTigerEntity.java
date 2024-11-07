@@ -2,6 +2,7 @@ package com.yanny.age.stone.entities;
 
 import com.yanny.age.stone.subscribers.EntitySubscriber;
 import com.yanny.age.stone.subscribers.SoundSubscriber;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -26,10 +27,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import net.minecraft.world.entity.AgableMob;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
@@ -48,8 +45,8 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
 
     @Nullable
     @Override
-    public AgableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgableMob ageable) {
-        return EntitySubscriber.saber_tooth_tiger.create(level);
+    public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
+        return EntitySubscriber.saber_tooth_tiger.create(level());
     }
 
     @Override
@@ -78,7 +75,7 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
     public void tick() {
         super.tick();
 
-        if (!this.level.isClientSide && this.level.getDifficulty() == Difficulty.PEACEFUL) {
+        if (!this.level().isClientSide && this.level().getDifficulty() == Difficulty.PEACEFUL) {
             this.remove();
         }
     }
@@ -94,7 +91,7 @@ public class SaberToothTigerEntity extends WildAnimalEntity {
                     -Mth.cos(this.yRot * ((float)Math.PI / 180F)));
         }
 
-        return entityIn.hurt(DamageSource.mobAttack(this), 8.0F);
+        return entityIn.hurt(entityIn.damageSources().mobAttack(this), 8.0F);
     }
 
     @Override

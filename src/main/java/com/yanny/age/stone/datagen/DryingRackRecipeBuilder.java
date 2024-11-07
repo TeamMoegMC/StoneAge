@@ -1,20 +1,10 @@
 package com.yanny.age.stone.datagen;
 
-import com.google.gson.JsonObject;
-import com.yanny.age.stone.subscribers.RecipeSubscriber;
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRewards;
-import net.minecraft.item.Item;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.lwjgl.system.NonnullDefault;
-
-import javax.annotation.Nullable;
-import java.util.Objects;
 
 @NonnullDefault
 public class DryingRackRecipeBuilder {
-    private final Item result;
+    /*private final Item result;
     private final int count;
     private final Ingredient input;
     private final Advancement.Builder advancementBuilder = Advancement.Builder.advancement();
@@ -117,28 +107,28 @@ public class DryingRackRecipeBuilder {
             return RecipeSubscriber.drying_rack;
         }
 
-        /**
+        *//**
          * Gets the ID for the recipe.
-         */
+         *//*
         public ResourceLocation getId() {
             return this.id;
         }
 
-        /**
+        *//**
          * Gets the JSON for the advancement that unlocks this recipe. Null if there is no advancement.
-         */
+         *//*
         @Nullable
         public JsonObject serializeAdvancement() {
             return this.advancementBuilder.serializeToJson();
         }
 
-        /**
+        *//**
          * Gets the ID for the advancement associated with this recipe. Should not be null if {@link #getAdvancementJson}
          * is non-null.
-         */
+         *//*
         @Nullable
         public ResourceLocation getAdvancementId() {
             return this.advancementId;
-        }
-    }
+        }*/
+//    }
 }

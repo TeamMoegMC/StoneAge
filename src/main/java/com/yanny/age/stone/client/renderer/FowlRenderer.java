@@ -5,6 +5,7 @@ import com.yanny.age.stone.client.models.FowlModel;
 import com.yanny.age.stone.entities.FowlEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -17,8 +18,8 @@ import javax.annotation.Nonnull;
 public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
     private static final ResourceLocation FOWL_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/fowl.png");
 
-    private FowlRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new FowlModel(), 0.3f);
+    private FowlRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new FowlModel(), 0.3f);
     }
 
     @Nonnull
@@ -39,11 +40,11 @@ public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<FowlEntity> {
+    /*public static class RenderFactory implements IRenderFactory<FowlEntity> {
 
         @Override
         public EntityRenderer<? super FowlEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new FowlRenderer(manager);
         }
-    }
+    }*/
 }

@@ -7,6 +7,7 @@ import com.yanny.age.stone.entities.MammothEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -18,8 +19,8 @@ import javax.annotation.Nonnull;
 public class MammothRenderer extends MobRenderer<MammothEntity, MammothModel> {
     private static final ResourceLocation MAMMOTH_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/mammoth.png");
 
-    private MammothRenderer(@Nonnull EntityRenderDispatcher rendererManager) {
-        super(rendererManager, new MammothModel(), 1.0f);
+    private MammothRenderer(@Nonnull EntityRendererProvider.Context context) {
+        super(context, new MammothModel(), 1.0f);
     }
 
     @Override
@@ -39,11 +40,11 @@ public class MammothRenderer extends MobRenderer<MammothEntity, MammothModel> {
         return entity.hasCustomName();
     }
 
-    public static class RenderFactory implements IRenderFactory<MammothEntity> {
+    /*public static class RenderFactory implements IRenderFactory<MammothEntity> {
 
         @Override
         public EntityRenderer<? super MammothEntity> createRenderFor(EntityRenderDispatcher manager) {
             return new MammothRenderer(manager);
         }
-    }
+    }*/
 }

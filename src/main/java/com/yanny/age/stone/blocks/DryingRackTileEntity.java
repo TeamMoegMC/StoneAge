@@ -106,7 +106,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
             items[i].read(tag.getCompound("items" + i));
         }
 
-        super.load(blockState, tag);
+        super.load(tag);
     }
 
     @Override
@@ -136,7 +136,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
     @Override
     public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt) {
         super.onDataPacket(net, pkt);
-        load(pkt.getTag());
+        this.load(pkt.getTag());
     }
 
     @Nonnull

@@ -55,7 +55,7 @@ public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
         }
 
         if (this.isAngry() && this.angerTargetUUID != null && livingentity == null) {
-            Player playerentity = this.level.getPlayerByUUID(this.angerTargetUUID);
+            Player playerentity = this.level().getPlayerByUUID(this.angerTargetUUID);
             this.setLastHurtByMob(playerentity);
             this.lastHurtByPlayer = playerentity;
             this.lastHurtByPlayerTime = this.getLastHurtByMobTimestamp();
@@ -69,7 +69,7 @@ public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
         } else {
             Entity entity = source.getEntity();
 
-            if (entity instanceof Player && !((Player)entity).isCreative() && this.canSee(entity)) {
+            if (entity instanceof Player && !((Player)entity).isCreative() && this.getSensing().hasLineOfSight(entity)) {
                 this.becomeAngryAt(entity);
             }
 
@@ -97,7 +97,7 @@ public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
         String s = compound.getString("HurtBy");
         if (!s.isEmpty()) {
             this.angerTargetUUID = UUID.fromString(s);
-            Player playerentity = this.level.getPlayerByUUID(this.angerTargetUUID);
+            Player playerentity = this.level().getPlayerByUUID(this.angerTargetUUID);
             this.setLastHurtByMob(playerentity);
             if (playerentity != null) {
                 this.lastHurtByPlayer = playerentity;
