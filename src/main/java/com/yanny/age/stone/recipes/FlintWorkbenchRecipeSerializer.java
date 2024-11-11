@@ -14,13 +14,12 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
 import java.util.Set;
 
-public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<FlintWorkbenchRecipe> {
+public class FlintWorkbenchRecipeSerializer implements RecipeSerializer<FlintWorkbenchRecipe> {
     @Nonnull
     @Override
     public FlintWorkbenchRecipe fromJson(@Nonnull final ResourceLocation recipeID, @Nonnull final JsonObject json) {
@@ -61,7 +60,7 @@ public class FlintWorkbenchRecipeSerializer extends ForgeRegistryEntry<RecipeSer
             ingredient.toNetwork(buffer);
         }
 
-        buffer.writeItem(recipe.getResultItem());
+        buffer.writeItem(recipe.getResultItem(null));
         recipe.getTool().toNetwork(buffer);
     }
 

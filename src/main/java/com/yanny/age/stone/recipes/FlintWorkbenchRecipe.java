@@ -1,7 +1,10 @@
 package com.yanny.age.stone.recipes;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.api.items.AgesPartItem;
+import com.yanny.age.stone.api.items.AgesToolItem;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -17,11 +20,11 @@ import org.apache.logging.log4j.Logger;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 
-import static com.yanny.ages.api.items.AgesToolItem.*;
+import static com.yanny.age.stone.api.items.AgesToolItem.*;
 
 public class FlintWorkbenchRecipe implements Recipe<Container> {
     private static final Logger LOGGER = LogManager.getLogger();
-    public static final RecipeType<FlintWorkbenchRecipe> flint_workbench = RecipeType.register(Reference.MODID + ":flint_workbench");
+    public static final RecipeType<FlintWorkbenchRecipe> flint_workbench = RecipeType.simple(new ResourceLocation(Reference.MODID + ":flint_workbench"));
     public static final int MAX_WIDTH = 3;
     public static final int MAX_HEIGHT = 3;
 
@@ -55,7 +58,7 @@ public class FlintWorkbenchRecipe implements Recipe<Container> {
     @Override
     public RecipeSerializer<?> getSerializer() {
         //noinspection ConstantConditions
-        return RecipeSubscriber.flint_workbench;
+        return RecipeSubscriber.flint_workbench_serializer;
     }
 
     @Nonnull
@@ -72,7 +75,7 @@ public class FlintWorkbenchRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess access) {
         return this.recipeOutput;
     }
 
@@ -106,8 +109,8 @@ public class FlintWorkbenchRecipe implements Recipe<Container> {
 
     @Nonnull
     @Override
-    public ItemStack assemble(@Nonnull Container inv) {
-        ItemStack result = getResultItem().copy();
+    public ItemStack assemble(@Nonnull Container inv,RegistryAccess access) {
+        ItemStack result = getResultItem(access).copy();
 
         if (result.getItem() instanceof AgesPartItem) {
             AgesPartItem item = (AgesPartItem) result.getItem();

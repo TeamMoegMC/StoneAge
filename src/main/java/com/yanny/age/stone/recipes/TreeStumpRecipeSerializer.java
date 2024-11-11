@@ -10,12 +10,11 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TreeStumpRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<TreeStumpRecipe> {
+public class TreeStumpRecipeSerializer implements RecipeSerializer<TreeStumpRecipe> {
     private final TreeStumpRecipeSerializer.IFactory<TreeStumpRecipe> factory;
 
     public TreeStumpRecipeSerializer(@Nonnull TreeStumpRecipeSerializer.IFactory<TreeStumpRecipe> factory) {

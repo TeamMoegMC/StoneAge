@@ -13,10 +13,10 @@ import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 
-public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbenchRecipe> {
+public class FlintWorkbenchRecipeCategory /*implements IRecipeCategory<FlintWorkbenchRecipe>*/ {
     static final ResourceLocation UID = new ResourceLocation(Reference.MODID, "flint_workbench_recipe_category");
 
-    private final String localizedName;
+    /*private final String localizedName;
     private final IDrawableStatic background;
     private final IDrawable icon;
     private IDrawableAnimated ARROW;
@@ -101,5 +101,5 @@ public class FlintWorkbenchRecipeCategory implements IRecipeCategory<FlintWorkbe
 
         recipeLayout.getItemStacks().init(width * height + 1, false, 65, 38);
         recipeLayout.getItemStacks().set(width * height + 1, ingredients.getInputs(VanillaTypes.ITEM).get(width * height));
-    }
+    }*/
 }

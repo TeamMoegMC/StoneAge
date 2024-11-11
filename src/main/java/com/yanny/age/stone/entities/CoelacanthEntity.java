@@ -1,5 +1,6 @@
 package com.yanny.age.stone.entities;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
@@ -41,7 +42,7 @@ public class CoelacanthEntity extends WaterAnimal {
     }
 
     @SuppressWarnings("unused")
-    public static boolean canSpawn(EntityType<? extends CoelacanthEntity> type, LevelAccessor worldIn, MobSpawnType reason, BlockPos blockPos, Random randomIn) {
+    public static boolean canSpawn(EntityType<? extends CoelacanthEntity> type, LevelAccessor worldIn, MobSpawnType reason, BlockPos blockPos, RandomSource randomIn) {
         return worldIn.getBlockState(blockPos).getBlock() == Blocks.WATER && worldIn.getBlockState(blockPos.above()).getBlock() == Blocks.WATER;
     }
 
@@ -50,7 +51,7 @@ public class CoelacanthEntity extends WaterAnimal {
         return sizeIn.height * 0.65F;
     }
 
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 3.0D).build();
     }
 
@@ -95,9 +96,9 @@ public class CoelacanthEntity extends WaterAnimal {
 
     @Override
     public void aiStep() {
-        if (!this.isInWater() && this.onGround && this.verticalCollision) {
+        if (!this.isInWater() && this.onGround() && this.verticalCollision) {
             this.setDeltaMovement(this.getDeltaMovement().add((this.random.nextFloat() * 2.0F - 1.0F) * 0.05F, 0.4F, (this.random.nextFloat() * 2.0F - 1.0F) * 0.05F));
-            this.onGround = false;
+            this.setOnGround(false);
             this.hasImpulse = true;
             this.playSound(this.getFlopSound(), this.getSoundVolume(), this.getVoicePitch());
         }
@@ -155,14 +156,14 @@ public class CoelacanthEntity extends WaterAnimal {
                 double d1 = this.wantedY - this.fish.getY();
                 double d2 = this.wantedZ - this.fish.getZ();
                 if (d1 != 0.0D) {
-                    double d3 = Mth.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+                    double d3 = Mth.sqrt((float) (d0 * d0 + d1 * d1 + d2 * d2));
                     this.fish.setDeltaMovement(this.fish.getDeltaMovement().add(0.0D, (double)this.fish.getSpeed() * (d1 / d3) * 0.1D, 0.0D));
                 }
 
                 if (d0 != 0.0D || d2 != 0.0D) {
                     float f1 = (float)(Mth.atan2(d2, d0) * (double)(180F / (float)Math.PI)) - 90.0F;
-                    this.fish.yRot = this.rotlerp(this.fish.yRot, f1, 90.0F);
-                    this.fish.yBodyRot = this.fish.yRot;
+                    this.fish.setYRot(this.rotlerp(this.fish.getYRot(), f1, 90.0F));
+                    this.fish.yBodyRot = this.fish.getYRot();
                 }
 
             } else {

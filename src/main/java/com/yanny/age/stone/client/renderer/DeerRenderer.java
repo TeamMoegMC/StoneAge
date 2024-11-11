@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     private static final ResourceLocation DEER_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/deer.png");
 
-    private DeerRenderer(@Nonnull EntityRendererProvider.Context context {
+    private DeerRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new DeerModel(), 0.5f);
     }
 

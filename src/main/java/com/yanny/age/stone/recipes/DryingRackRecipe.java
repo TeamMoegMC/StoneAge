@@ -3,6 +3,7 @@ package com.yanny.age.stone.recipes;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class DryingRackRecipe implements Recipe<Container> {
-    public static final RecipeType<DryingRackRecipe> drying_rack = RecipeType.register(Reference.MODID + ":drying_rack");
+    public static final RecipeType<DryingRackRecipe> drying_rack = RecipeType.simple(new ResourceLocation(Reference.MODID + ":drying_rack"));
 
     private final RecipeType<?> type;
     private final ResourceLocation id;
@@ -43,7 +44,7 @@ public class DryingRackRecipe implements Recipe<Container> {
 
     @Override
     @Nonnull
-    public ItemStack assemble(@Nullable Container inv) {
+    public ItemStack assemble(@Nullable Container inv, RegistryAccess access) {
         return this.result.copy();
     }
 
@@ -54,7 +55,7 @@ public class DryingRackRecipe implements Recipe<Container> {
 
     @Override
     @Nonnull
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess access) {
         return result;
     }
 
@@ -68,7 +69,7 @@ public class DryingRackRecipe implements Recipe<Container> {
     @Nonnull
     public RecipeSerializer<?> getSerializer() {
         //noinspection ConstantConditions
-        return RecipeSubscriber.drying_rack;
+        return RecipeSubscriber.drying_rack_serializer;
     }
 
     @Override

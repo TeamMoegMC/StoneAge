@@ -1,22 +1,10 @@
 package com.yanny.age.stone.structures;
 
 import com.mojang.serialization.Codec;
-import com.yanny.age.stone.Reference;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.WorldGenLevel;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 
-import javax.annotation.Nonnull;
-import java.util.Random;
-
-import static com.yanny.age.stone.structures.FeatureUtils.generateStoneChest;
-import static com.yanny.age.stone.structures.FeatureUtils.replaceAirAndLiquidDownwards;
 
 public class BurialPlaceFeature extends Feature<ProbabilityFeatureConfiguration> {
 

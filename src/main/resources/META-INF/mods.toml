@@ -25,12 +25,6 @@ Stone Age gives you feeling of man from stone age. No more magically created pla
 [[dependencies.stone_age]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.5,1.17)"
-    ordering="NONE"
-    side="BOTH"
-[[dependencies.stone_age]]
-    modId="ages_api"
-    mandatory=true
-    versionRange="[1.16.3-1.2.0,)"
+    versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"

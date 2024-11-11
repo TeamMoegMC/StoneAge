@@ -1,20 +1,22 @@
 package com.yanny.age.stone.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.blocks.StoneChestBlock;
 import com.yanny.age.stone.blocks.StoneChestTileEntity;
 import com.yanny.age.stone.client.models.StoneChestModel;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
-import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -23,11 +25,12 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class StoneChestRenderer implements BlockEntityRenderer<StoneChestTileEntity> {
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/stone_chest.png");
-    private final StoneChestModel model = new StoneChestModel();
-
-    /*public StoneChestRenderer(@Nonnull BlockEntityRenderDispatcher rendererDispatcher) {
-        super(rendererDispatcher);
-    }*/
+    private final StoneChestModel model;
+    public static final ModelLayerLocation STONECHEST_LAYER = new ModelLayerLocation(
+            new ResourceLocation(Reference.MODID,"stonechest_layer"),"main");
+    public StoneChestRenderer(@Nonnull BlockEntityRendererProvider.Context context) {
+        model = new StoneChestModel(context.bakeLayer(STONECHEST_LAYER));
+    }
 
     @Override
     public void render(@Nonnull StoneChestTileEntity tileEntity, float partialTicks, @Nonnull PoseStack matrixStack,
@@ -44,7 +47,7 @@ public class StoneChestRenderer implements BlockEntityRenderer<StoneChestTileEnt
 
         if ((double)Math.abs(f) > 1.0E-5D) {
             matrixStack.translate(0.5, 0.5, 0.5);
-            matrixStack.mulPose(Vector3f.YP.rotationDegrees(f));
+            matrixStack.mulPose(Axis.YP.rotationDegrees(f));
             matrixStack.translate(-0.5, -0.5, -0.5);
         }
 

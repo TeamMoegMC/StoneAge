@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 
 public class RendererUtils {
 
-    public static void add(@Nonnull Fluid fluid, @Nonnull BlockAndTintGetter lightReader, @Nonnull BlockPos posIn, @Nonnull VertexConsumer renderer,
+    /*public static void add(@Nonnull Fluid fluid, @Nonnull BlockAndTintGetter lightReader, @Nonnull BlockPos posIn, @Nonnull VertexConsumer renderer,
                            @Nonnull PoseStack stack, float x, float y, float z, float u, float v) {
         int i = fluid.getFluid().getAttributes().getColor(lightReader, posIn);
         float alpha = (float)(i >> 24 & 255) / 255.0F;
@@ -25,7 +25,7 @@ public class RendererUtils {
                 .uv2(j & 0xffff, j >> 16 & 0xffff)
                 .normal(1, 0, 0)
                 .endVertex();
-    }
+    }*/
 
     public static int getCombinedAverageLight(@Nonnull BlockAndTintGetter lightReaderIn, @Nonnull BlockPos posIn) {
         int i = LevelRenderer.getLightColor(lightReaderIn, posIn);

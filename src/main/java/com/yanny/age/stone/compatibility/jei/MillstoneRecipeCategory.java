@@ -1,30 +1,7 @@
 package com.yanny.age.stone.compatibility.jei;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.yanny.age.stone.Reference;
-import com.yanny.age.stone.recipes.MillstoneRecipe;
-import com.yanny.age.stone.subscribers.BlockSubscriber;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.category.IRecipeCategory;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.resources.ResourceLocation;
-
-import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
-
-public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe> {
-    static final ResourceLocation UID = new ResourceLocation(Reference.MODID, "millstone_recipe_category");
+public class MillstoneRecipeCategory /*implements IRecipeCategory<MillstoneRecipe>*/ {
+    /*static final ResourceLocation UID = new ResourceLocation(Reference.MODID, "millstone_recipe_category");
 
     private final String localizedName;
     private final IDrawableStatic background;
@@ -102,5 +79,5 @@ public class MillstoneRecipeCategory implements IRecipeCategory<MillstoneRecipe>
         if (!recipe.getRecipeSecondOutput().isEmpty()) {
             Minecraft.getInstance().font.draw(matrixStack, String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100), 96, 38, -1);
         }
-    }
+    }*/
 }

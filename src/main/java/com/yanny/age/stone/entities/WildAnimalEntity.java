@@ -1,5 +1,6 @@
 package com.yanny.age.stone.entities;
 
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +34,7 @@ public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
         super(type, worldIn);
     }
 
-    public static boolean canMonsterSpawn(EntityType<? extends WildAnimalEntity> type, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, Random randomIn) {
+    public static boolean canMonsterSpawn(EntityType<? extends WildAnimalEntity> type, LevelAccessor worldIn, MobSpawnType reason, BlockPos pos, RandomSource randomIn) {
         return worldIn.getDifficulty() != Difficulty.PEACEFUL && checkMobSpawnRules(type, worldIn, reason, pos, randomIn);
     }
 
@@ -144,6 +145,6 @@ public abstract class WildAnimalEntity extends Animal implements IBecomeAngry {
     }
 
     private void calculateRotationYaw(double x, double z) {
-        this.yRot = (float)(Mth.atan2(z - this.getZ(), x - this.getX()) * (double)(180F / (float)Math.PI)) - 90.0F;
+        this.setYRot((float)(Mth.atan2(z - this.getZ(), x - this.getX()) * (double)(180F / (float)Math.PI)) - 90.0F);
     }
 }

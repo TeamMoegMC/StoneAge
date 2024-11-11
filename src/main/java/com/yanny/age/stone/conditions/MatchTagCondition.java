@@ -30,7 +30,8 @@ public class MatchTagCondition implements LootItemCondition {
     @Nonnull
     @Override
     public LootItemConditionType getType() {
-        return ModifierSubscriber.matchTag;
+//        return ModifierSubscriber.matchTag;
+        return null;
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -28,6 +28,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -36,8 +37,8 @@ import java.util.*;
 public class FeederTileEntity extends BlockEntity implements IInventoryInterface, MenuProvider {
     private static final Set<Item> VALID_ITEMS = new HashSet<>();
     static {
-        VALID_ITEMS.addAll(Tags.Items.SEEDS.getValues());
-        VALID_ITEMS.addAll(Tags.Items.CROPS.getValues());
+        VALID_ITEMS.addAll(ForgeRegistries.ITEMS.tags().getTag(Tags.Items.SEEDS).stream().toList());
+        VALID_ITEMS.addAll(ForgeRegistries.ITEMS.tags().getTag(Tags.Items.CROPS).stream().toList());
     }
 
     public static final int ITEMS = 4;
@@ -218,7 +219,7 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
                     winner.ageUp((int)((float)(-winner.getAge() / 20) * 0.1F), true);
                     itemStack.shrink(1);
                 } else {
-                    List<Animal> entities1 = level.getEntitiesOfClass(winner.getClass(), boundingBox,
+                    List<Animal> entities1 = level.getEntitiesOfClass((Class<Animal>)winner.getClass(), boundingBox,
                             livingEntity -> !livingEntity.is(winner) && !livingEntity.isBaby() && livingEntity.canBreed());
 
                     if (winner.getAge() == 0 && entities1.size() < 30) {

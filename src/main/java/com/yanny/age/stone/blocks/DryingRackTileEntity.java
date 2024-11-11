@@ -1,5 +1,6 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
@@ -177,7 +178,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
                     DryingItem item = items[i];
 
                     stacks.set(i, itemStack.split(1));
-                    item.setup(true, recipe.getDryingTime(), recipe.assemble(null));
+                    item.setup(true, recipe.getDryingTime(), recipe.assemble(null,level.registryAccess()));
 
                     level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
                     return;
@@ -237,7 +238,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
                     DryingRackRecipe recipe = getRecipe(stack).orElse(null);
 
                     if (recipe != null) {
-                        items[slot].setup(true, recipe.getDryingTime(), recipe.assemble(null));
+                        items[slot].setup(true, recipe.getDryingTime(), recipe.assemble(null,level.registryAccess()));
                         return super.insertItem(slot, stack, simulate);
                     }
                 }

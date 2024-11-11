@@ -9,14 +9,12 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.common.crafting.NBTIngredient;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class MillstoneRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MillstoneRecipe> {
+public class MillstoneRecipeSerializer implements RecipeSerializer<MillstoneRecipe> {
     private final MillstoneRecipeSerializer.IFactory<MillstoneRecipe> factory;
 
     public MillstoneRecipeSerializer(@Nonnull MillstoneRecipeSerializer.IFactory<MillstoneRecipe> factory) {
@@ -30,7 +28,7 @@ public class MillstoneRecipeSerializer extends ForgeRegistryEntry<RecipeSerializ
         JsonElement jsonelement = GsonHelper.isArrayNode(json, "ingredient")
                 ? GsonHelper.getAsJsonArray(json, "ingredient")
                 : GsonHelper.getAsJsonObject(json, "ingredient");
-        Ingredient ingredient = NBTIngredient.fromJson(jsonelement);
+        Ingredient ingredient = Ingredient.fromJson(jsonelement);
         ItemStack result;
         ItemStack secondResult = ItemStack.EMPTY;
         int activateCount = GsonHelper.getAsInt(json, "activateCount", 1);

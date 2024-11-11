@@ -4,10 +4,8 @@ import com.yanny.age.stone.subscribers.EntitySubscriber;
 import com.yanny.age.stone.subscribers.SoundSubscriber;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.entity.ai.goal.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -23,7 +21,6 @@ import net.minecraft.server.level.ServerLevel;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.world.entity.AgableMob;
 import net.minecraft.world.entity.ai.goal.BreedGoal;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.FollowParentGoal;
@@ -59,7 +56,7 @@ public class MammothEntity extends WildAnimalEntity {
         this.targetSelector.addGoal(2, new TargetAggressorGoal<>(this, MammothEntity.class));
     }
 
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 40.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
@@ -70,8 +67,8 @@ public class MammothEntity extends WildAnimalEntity {
 
         if (entityIn instanceof LivingEntity) {
             ((LivingEntity) entityIn).knockback(2.0F,
-                    Mth.sin(this.yRot * ((float)Math.PI / 180F)),
-                    -Mth.cos(this.yRot * ((float)Math.PI / 180F)));
+                    Mth.sin(this.getYRot() * ((float)Math.PI / 180F)),
+                    -Mth.cos(this.getYRot() * ((float)Math.PI / 180F)));
         }
 
         return entityIn.hurt(entityIn.damageSources().mobAttack(this), 8.0F);

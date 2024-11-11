@@ -1,5 +1,6 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
@@ -271,7 +272,7 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
                 getRecipe(inputStack).ifPresent(millstoneRecipe -> {
                     if (canCraft(millstoneRecipe)) {
                         inputStack.shrink(millstoneRecipe.getIngredients().get(0).getItems()[0].getCount());
-                        result = millstoneRecipe.assemble(null);
+                        result = millstoneRecipe.assemble(null,level.registryAccess());
                         secondResult = millstoneRecipe.getCraftingSecondResult();
                         secondChance = millstoneRecipe.getSecondChance();
                         active = true;
@@ -323,7 +324,7 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
         ItemStack outputStack = stacks.get(1);
         ItemStack outputSecondStack = stacks.get(2);
         ItemStack recipeInput = recipe.getIngredients().get(0).getItems()[0];
-        ItemStack recipeOutput = recipe.getResultItem();
+        ItemStack recipeOutput = recipe.getResultItem(level.registryAccess());
         ItemStack recipeSecondOutput = recipe.getRecipeSecondOutput();
         boolean emptyOutput = outputStack.isEmpty();
         boolean emptyRecipe = recipeOutput.isEmpty();

@@ -1,19 +1,10 @@
 package com.yanny.age.stone.compatibility.top;
 
-import mcjty.theoneprobe.api.*;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-
-import javax.annotation.Nullable;
-import java.util.function.Function;
-
 import static com.yanny.age.stone.compatibility.top.TopCompatibility.ID;
 
-public class TopRegistration implements Function<ITheOneProbe, Void> {
+public class TopRegistration /*implements Function<ITheOneProbe, Void> */{
 
-    @Nullable
+    /*@Nullable
     @Override
     public Void apply(ITheOneProbe theOneProbe) {
         theOneProbe.registerProvider(new IProbeInfoProvider() {
@@ -46,5 +37,5 @@ public class TopRegistration implements Function<ITheOneProbe, Void> {
         });
 
         return null;
-    }
+    }*/
 }

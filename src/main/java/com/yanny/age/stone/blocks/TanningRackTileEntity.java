@@ -1,5 +1,6 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
@@ -131,7 +132,7 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
             itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
 
             if (random.nextDouble() < Config.tanningRackFinishChance) {
-                stacks.set(pos + ITEMS, recipe.assemble(null));
+                stacks.set(pos + ITEMS, recipe.assemble(null,level.registryAccess()));
                 stacks.set(pos, ItemStack.EMPTY);
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }

@@ -1,5 +1,6 @@
 package com.yanny.age.stone.entities;
 
+import com.mojang.logging.LogUtils;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
@@ -63,10 +64,10 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
                 if (result instanceof AgeableMob) {
                     return (AgeableMob) child.create(level());
                 } else {
-                    LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", Config.fowlBreedingResult);
+                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", Config.fowlBreedingResult);
                 }
             } else {
-                LOGGER.warn("'{}' does not exists! Spawning default CHICKEN entity", Config.fowlBreedingResult);
+                LogUtils.getLogger().warn("'{}' does not exists! Spawning default CHICKEN entity", Config.fowlBreedingResult);
             }
 
             return EntityType.CHICKEN.create(level());
@@ -96,7 +97,7 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
         this.targetSelector.addGoal(2, new TargetAggressorGoal<>(this, FowlEntity.class));
     }
 
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 6.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
@@ -111,15 +112,15 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
         super.aiStep();
         this.oFlap = this.wingRotation;
         this.oFlapSpeed = this.destPos;
-        this.destPos = (float)((double)this.destPos + (double)(this.onGround ? -1 : 4) * 0.3D);
+        this.destPos = (float)((double)this.destPos + (double)(this.onGround() ? -1 : 4) * 0.3D);
         this.destPos = Mth.clamp(this.destPos, 0.0F, 1.0F);
-        if (!this.onGround && this.wingRotDelta < 1.0F) {
+        if (!this.onGround() && this.wingRotDelta < 1.0F) {
             this.wingRotDelta = 1.0F;
         }
 
         this.wingRotDelta = (float)((double)this.wingRotDelta * 0.9D);
         Vec3 vec3d = this.getDeltaMovement();
-        if (!this.onGround && vec3d.y < 0.0D) {
+        if (!this.onGround() && vec3d.y < 0.0D) {
             this.setDeltaMovement(vec3d.multiply(1.0D, 0.6D, 1.0D));
         }
 

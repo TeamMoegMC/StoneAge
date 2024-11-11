@@ -10,12 +10,11 @@ import net.minecraft.util.GsonHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public class TanningRackRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<TanningRackRecipe> {
+public class TanningRackRecipeSerializer implements RecipeSerializer<TanningRackRecipe> {
     private final TanningRackRecipeSerializer.IFactory<TanningRackRecipe> factory;
 
     public TanningRackRecipeSerializer(@Nonnull TanningRackRecipeSerializer.IFactory<TanningRackRecipe> factory) {

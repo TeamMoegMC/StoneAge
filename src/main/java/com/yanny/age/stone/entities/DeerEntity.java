@@ -59,7 +59,7 @@ public class DeerEntity extends Animal {
         this.goalSelector.addGoal(8, new RandomLookAroundGoal(this));
     }
 
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 12.0D).add(Attributes.MOVEMENT_SPEED, 0.2F).build();
     }
 

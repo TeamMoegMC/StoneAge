@@ -8,14 +8,11 @@ import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.ItemSubscriber;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.block.material.Material;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
 import org.joml.Matrix3f;
@@ -26,7 +23,7 @@ import java.util.Random;
 
 public class FeatureUtils {
 
-    public static void fillWithAir(WorldGenLevel seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+  /*  public static void fillWithAir(WorldGenLevel seedReader, BlockPos pos, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         for(int i = minY; i <= maxY; ++i) {
             for(int j = minX; j <= maxX; ++j) {
                 for(int k = minZ; k <= maxZ; ++k) {
@@ -139,5 +136,5 @@ public class FeatureUtils {
         BlockState state = seedReader.getBlockState(pos);
         return seedReader.isEmptyBlock(pos) || state.getMaterial().isLiquid() || state.getMaterial().isReplaceable() || state.getMaterial().equals(Material.SAND)
                 || state.getMaterial().equals(Material.DIRT) || state.getMaterial().equals(Material.GRASS);
-    }
+    }*/
 }

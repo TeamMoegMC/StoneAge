@@ -1,18 +1,17 @@
 package com.yanny.age.stone.subscribers;
 
-import com.yanny.age.stone.group.ModItemGroup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
-
-import javax.annotation.Nonnull;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 import static com.yanny.age.stone.Reference.MODID;
 
 @SuppressWarnings("unused")
-@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+//@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class FoodSubscriber {
     public static final Item fat = null;
     public static final Item cooked_fat = null;
@@ -52,9 +51,9 @@ public class FoodSubscriber {
     private static final FoodProperties TIGER_MEAT = (new FoodProperties.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
     private static final FoodProperties COOKED_TIGER_MEAT = (new FoodProperties.Builder()).nutrition(10).saturationMod(1.0f).meat().build();
 
-    @SubscribeEvent
-    public static void registerItems(@Nonnull RegistryEvent.Register<Item> event) {
-        IForgeRegistry<Item> registry = event.getRegistry();
+//    @SubscribeEvent
+    public static void registerFoodItems(RegisterEvent event) {
+        /*IForgeRegistry<Item> registry = event.getRegistry();
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(FAT)).setRegistryName(MODID, "fat"));
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(COOKED_FAT)).setRegistryName(MODID, "cooked_fat"));
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(VENISON)).setRegistryName(MODID, "venison"));
@@ -73,5 +72,28 @@ public class FoodSubscriber {
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(COOKED_RHINO_MEAT)).setRegistryName(MODID, "cooked_rhino_meat"));
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(TIGER_MEAT)).setRegistryName(MODID, "tiger_meat"));
         registry.register(new Item(new Item.Properties().tab(ModItemGroup.AGES).stacksTo(64).food(COOKED_TIGER_MEAT)).setRegistryName(MODID, "cooked_tiger_meat"));
+*/
+        event.register(ForgeRegistries.Keys.ITEMS,
+                helper -> {
+                    helper.register(new ResourceLocation(MODID, "fat"), new Item(new Item.Properties().stacksTo(64).food(FAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_fat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_FAT)));
+                    helper.register(new ResourceLocation(MODID, "venison"), new Item(new Item.Properties().stacksTo(64).food(VENISON)));
+                    helper.register(new ResourceLocation(MODID, "cooked_venison"), new Item(new Item.Properties().stacksTo(64).food(COOKED_VENISON)));
+                    helper.register(new ResourceLocation(MODID, "fowl_meat"), new Item(new Item.Properties().stacksTo(64).food(FOWL_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_fowl_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_FOWL_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "auroch_meat"), new Item(new Item.Properties().stacksTo(64).food(AUROCH_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_auroch_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_AUROCH_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "mouflon_meat"), new Item(new Item.Properties().stacksTo(64).food(MOUFLON_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_mouflon_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_MOUFLON_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "boar_meat"), new Item(new Item.Properties().stacksTo(64).food(BOAR_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_boar_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_BOAR_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "mammoth_meat"), new Item(new Item.Properties().stacksTo(64).food(MAMMOTH_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_mammoth_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_MAMMOTH_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "rhino_meat"), new Item(new Item.Properties().stacksTo(64).food(RHINO_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_rhino_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_RHINO_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "tiger_meat"), new Item(new Item.Properties().stacksTo(64).food(TIGER_MEAT)));
+                    helper.register(new ResourceLocation(MODID, "cooked_tiger_meat"), new Item(new Item.Properties().stacksTo(64).food(COOKED_TIGER_MEAT)));
+
+    });
     }
 }

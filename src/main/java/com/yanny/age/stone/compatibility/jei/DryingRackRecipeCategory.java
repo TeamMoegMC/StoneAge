@@ -13,10 +13,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class DryingRackRecipeCategory implements IRecipeCategory<DryingRackRecipe> {
+public class DryingRackRecipeCategory /*implements IRecipeCategory<DryingRackRecipe>*/ {
     static final ResourceLocation UID = new ResourceLocation(Reference.MODID, "drying_rack_recipe_category");
 
-    private final String localizedName;
+    /*private final String localizedName;
     private final IDrawableStatic background;
     private final IDrawable icon;
 
@@ -79,5 +79,5 @@ public class DryingRackRecipeCategory implements IRecipeCategory<DryingRackRecip
 
         recipeLayout.getItemStacks().init(2, false, 51, 21);
         recipeLayout.getItemStacks().set(2, Collections.singletonList(new ItemStack(BlockSubscriber.drying_rack)));
-    }
+    }*/
 }

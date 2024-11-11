@@ -1,5 +1,6 @@
 package com.yanny.age.stone.entities;
 
+import com.mojang.logging.LogUtils;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
@@ -55,10 +56,10 @@ public class MouflonEntity extends WildAnimalEntity implements TopEntityInfoProv
                 if (result instanceof AgeableMob) {
                     return (AgeableMob) child.create(level());
                 } else {
-                    LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default SHEEP entity", Config.mouflonBreedingResult);
+                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default SHEEP entity", Config.mouflonBreedingResult);
                 }
             } else {
-                LOGGER.warn("'{}' does not exists! Spawning default SHEEP entity", Config.mouflonBreedingResult);
+                LogUtils.getLogger().warn("'{}' does not exists! Spawning default SHEEP entity", Config.mouflonBreedingResult);
             }
 
             return EntityType.SHEEP.create(level());
@@ -89,7 +90,7 @@ public class MouflonEntity extends WildAnimalEntity implements TopEntityInfoProv
         this.targetSelector.addGoal(2, new TargetAggressorGoal<>(this, MouflonEntity.class));
     }
 
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 

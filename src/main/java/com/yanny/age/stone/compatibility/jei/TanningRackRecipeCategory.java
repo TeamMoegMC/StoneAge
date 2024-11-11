@@ -4,13 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
-import mezz.jei.api.constants.VanillaTypes;
-import mezz.jei.api.gui.IRecipeLayout;
-import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.drawable.IDrawableStatic;
-import mezz.jei.api.helpers.IGuiHelper;
-import mezz.jei.api.ingredients.IIngredients;
-import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.resources.ResourceLocation;
@@ -20,10 +13,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class TanningRackRecipeCategory implements IRecipeCategory<TanningRackRecipe> {
+public class TanningRackRecipeCategory /*implements IRecipeCategory<TanningRackRecipe>*/ {
     static final ResourceLocation UID = new ResourceLocation(Reference.MODID, "tanning_rack_recipe_category");
 
-    private final String localizedName;
+    /*private final String localizedName;
     private final IDrawableStatic background;
     private final IDrawable icon;
 
@@ -90,5 +83,5 @@ public class TanningRackRecipeCategory implements IRecipeCategory<TanningRackRec
 
         recipeLayout.getItemStacks().init(3, false, 51, 29);
         recipeLayout.getItemStacks().set(3, ingredients.getInputs(VanillaTypes.ITEM).get(1));
-    }
+    }*/
 }

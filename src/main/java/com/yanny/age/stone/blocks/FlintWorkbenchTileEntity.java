@@ -1,6 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import com.google.common.collect.Lists;
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.FlintWorkbenchRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
@@ -130,7 +131,7 @@ public class FlintWorkbenchTileEntity extends BlockEntity implements IInventoryI
             }
 
             FlintWorkbenchRecipe flintWorkbenchRecipe = recipes.get(0);
-            ItemStack result = flintWorkbenchRecipe.assemble(getInventory());
+            ItemStack result = flintWorkbenchRecipe.assemble(getInventory(),level.registryAccess());
             NonNullList<ItemStack> itemStacks = NonNullList.create();
             itemStacks.add(result);
             Containers.dropContents(level, getBlockPos(), itemStacks);
@@ -182,7 +183,7 @@ public class FlintWorkbenchTileEntity extends BlockEntity implements IInventoryI
 		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
 		            }
 
-		            recipeOutput = recipe.get(0).getResultItem().copy();
+		            recipeOutput = recipe.get(0).getResultItem(level.registryAccess()).copy();
 		        } else {
 		            recipeOutput = ItemStack.EMPTY;
 		        }
@@ -204,7 +205,7 @@ public class FlintWorkbenchTileEntity extends BlockEntity implements IInventoryI
 		                LOGGER.warn("Too many valid recipes! Selecting first valid recipe");
 		            }
 
-		            recipeOutput = recipe.get(0).getResultItem().copy();
+		            recipeOutput = recipe.get(0).getResultItem(level.registryAccess()).copy();
 		        } else {
 		            recipeOutput = ItemStack.EMPTY;
 		        }

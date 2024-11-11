@@ -3,6 +3,7 @@ package com.yanny.age.stone.recipes;
 import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import com.yanny.age.stone.subscribers.RecipeSubscriber;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
@@ -17,7 +18,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class TreeStumpRecipe implements Recipe<Container> {
-    public static final RecipeType<TreeStumpRecipe> tree_stump = RecipeType.register(Reference.MODID + ":tree_stump");
+    public static final RecipeType<TreeStumpRecipe> tree_stump = RecipeType.simple(new ResourceLocation(Reference.MODID + ":tree_stump"));
 
     private final RecipeType<?> type;
     private final ResourceLocation id;
@@ -45,7 +46,7 @@ public class TreeStumpRecipe implements Recipe<Container> {
 
     @Override
     @Nonnull
-    public ItemStack assemble(@Nullable Container inv) {
+    public ItemStack assemble(@Nullable Container inv, RegistryAccess access) {
         return this.result.copy();
     }
 
@@ -56,7 +57,7 @@ public class TreeStumpRecipe implements Recipe<Container> {
 
     @Override
     @Nonnull
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess access) {
         return result;
     }
 
@@ -70,7 +71,7 @@ public class TreeStumpRecipe implements Recipe<Container> {
     @Nonnull
     public RecipeSerializer<?> getSerializer() {
         //noinspection ConstantConditions
-        return RecipeSubscriber.tree_stump;
+        return RecipeSubscriber.tree_stump_serializer;
     }
 
     @Override

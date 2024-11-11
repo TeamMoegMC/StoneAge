@@ -1,5 +1,6 @@
 package com.yanny.age.stone.entities;
 
+import com.mojang.logging.LogUtils;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
@@ -54,10 +55,10 @@ public class AurochEntity extends WildAnimalEntity implements TopEntityInfoProvi
                 if (result instanceof AgeableMob) {
                     return (AgeableMob) child.create(level());
                 } else {
-                    LOGGER.warn("'{}' is not instance of Ageable entity! Spawning default COW entity", Config.aurochBreedingResult);
+                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default COW entity", Config.aurochBreedingResult);
                 }
             } else {
-                LOGGER.warn("'{}' does not exists! Spawning default COW entity", Config.aurochBreedingResult);
+                LogUtils.getLogger().warn("'{}' does not exists! Spawning default COW entity", Config.aurochBreedingResult);
             }
 
             return EntityType.COW.create(level());
@@ -86,15 +87,14 @@ public class AurochEntity extends WildAnimalEntity implements TopEntityInfoProvi
         this.targetSelector.addGoal(1, new AgroTargetGoal(this, AurochEntity.class));
         this.targetSelector.addGoal(2, new TargetAggressorGoal<>(this, AurochEntity.class));
     }
-
-    public static AttributeSupplier getAttributes() {
+    public static AttributeSupplier createAttributes() {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 20.0D).add(Attributes.MOVEMENT_SPEED, 0.3F).build();
     }
 
     @Override
     public boolean doHurtTarget(Entity entityIn) {
         this.playSound(SoundEvents.COW_HURT, 1.0F, (this.random.nextFloat() - this.random.nextFloat()) * 0.2F + 1.0F);
-        return entityIn.hurt(DamageSource.mobAttack(this), 5.0F);
+        return entityIn.hurt(entityIn.damageSources().mobAttack(this), 5.0F);
     }
 
     @Override

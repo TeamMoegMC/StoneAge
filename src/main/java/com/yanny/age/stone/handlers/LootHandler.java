@@ -13,6 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.LootTableLoadEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.tags.ITag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -37,10 +38,10 @@ import net.minecraft.world.level.storage.loot.entries.LootTableReference;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class LootHandler {
-    private static final Logger LOGGER = LogManager.getLogger();
+/*    private static final Logger LOGGER = LogManager.getLogger();
     private static final Map<String, Pair<String, Item>> REMOVE_LOOT = Maps.newHashMap();
     private static final Map<String, String> INJECT_POOL = Maps.newHashMap();
-    private static final Map<String, Pair<Block, Tag.Named<Item>>> INJECT_ITEM_POOL = Maps.newHashMap();
+    private static final Map<String, Pair<Block, ITag<Item>>> INJECT_ITEM_POOL = Maps.newHashMap();
     private static final Map<String, Pair<Block, Tag.Named<Item>>> INJECT_ALTERNATE_ENTRIES = Maps.newHashMap();
     private static final Map<String, Pair<Block, Tag.Named<Item>>> CHANGE_ALTERNATE_ENTRIES = Maps.newHashMap();
 
@@ -211,5 +212,5 @@ public class LootHandler {
         } catch (IllegalArgumentException | IllegalAccessException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

@@ -1,5 +1,6 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.TreeStumpRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
@@ -160,7 +161,7 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
             stacks.set(0, itemStack.split(1));
             totalChops = recipe.getChopTimes();
             chopLeft = recipe.getChopTimes();
-            recipeResult = recipe.assemble(null);
+            recipeResult = recipe.assemble(null,level.registryAccess());
             tools.addAll(recipe.getTools());
 
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -171,7 +172,7 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
             stacks.get(0).grow(itemStack.split(1).getCount());
             totalChops = recipe.getChopTimes();
             chopLeft = recipe.getChopTimes();
-            recipeResult = recipe.assemble(null);
+            recipeResult = recipe.assemble(null,level.registryAccess());
             tools.addAll(recipe.getTools());
 
             level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
@@ -241,7 +242,7 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
                     if (recipe != null && stacks.get(0).isEmpty()) {
                         totalChops = recipe.getChopTimes();
                         chopLeft = recipe.getChopTimes();
-                        recipeResult = recipe.assemble(null);
+                        recipeResult = recipe.assemble(null,level.registryAccess());
                         tools.addAll(recipe.getTools());
 
                         level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);

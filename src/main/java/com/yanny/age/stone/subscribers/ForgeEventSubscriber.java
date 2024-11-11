@@ -1,57 +1,46 @@
 package com.yanny.age.stone.subscribers;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.yanny.age.stone.api.enums.Age;
+import com.yanny.age.stone.api.utils.AgeUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.animal.Sheep;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
-import net.minecraft.world.level.levelgen.GenerationStep;
-import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static com.yanny.age.stone.Reference.MODID;
 import static com.yanny.age.stone.subscribers.EntitySubscriber.*;
 import static net.minecraft.world.level.block.Blocks.*;
-import static net.minecraft.entity.EntityClassification.CREATURE;
 import static net.minecraft.world.entity.EntityType.*;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventSubscriber {
-    private static final String PLAYER_MANUAL_NBT = MODID + "_manual";
+    /*private static final String PLAYER_MANUAL_NBT = MODID + "_manual";
     private static final Set<EntityType<?>> VANILLA_ENTITIES = Sets.newHashSet(COW, SHEEP, PIG, CHICKEN);
 
     private static final Set<ResourceLocation> RECIPES_TO_REMOVE = Sets.newHashSet(
@@ -78,9 +67,9 @@ public class ForgeEventSubscriber {
             new ResourceLocation("minecraft", "recipes/tools/stone_shovel"),
             new ResourceLocation("minecraft", "recipes/combat/stone_sword")
     );
-
+*/
     @SuppressWarnings("unchecked")
-    @SubscribeEvent
+   /* @SubscribeEvent
     public static void FMLServerStartingEvent(@Nonnull FMLServerStartingEvent event) {
         if (Config.removeVanillaRecipes) {
             Map<RecipeType<?>, Map<ResourceLocation, Recipe<?>>> recipesMap = event.getServer().getRecipeManager().recipes;
@@ -88,18 +77,18 @@ public class ForgeEventSubscriber {
 			recipesMap.forEach((iRecipeType, resourceLocationIRecipeMap) -> {
 			    Map<ResourceLocation, Recipe<?>> map1 = map.computeIfAbsent(iRecipeType, (recipeType) -> Maps.newHashMap());
 			    resourceLocationIRecipeMap.forEach(map1::put);
-			    RECIPES_TO_REMOVE.forEach(map1::remove);
+//			    RECIPES_TO_REMOVE.forEach(map1::remove);
 			});
-			event.getServer().getRecipeManager().recipes=ImmutableMap.copyOf(map);
-			ADVANCEMENTS_TO_REMOVE.forEach(event.getServer().getAdvancements().advancements.advancements::remove);
+//			event.getServer().getRecipeManager().recipes=ImmutableMap.copyOf(map);
+//			ADVANCEMENTS_TO_REMOVE.forEach(event.getServer().getAdvancements().advancements.advancements::remove);
         }
         if (Config.forceToolForWood) {
             setUseToolForWood();
         }
-    }
+    }*/
 
     @SubscribeEvent
-    public static void entitySpawnEvent(@Nonnull EntityJoinWorldEvent event) {
+    public static void entitySpawnEvent(@Nonnull EntityJoinLevelEvent event) {
         Entity entity = event.getEntity();
 
         if (entity instanceof Sheep) {
@@ -116,18 +105,18 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public static void advancementEvent(@Nonnull AdvancementEvent event) {
-        if (event.getAdvancement().getId().equals(new ResourceLocation(MODID, "stone_age/end_of_stone_age")) && (AgeUtils.getPlayerAge(event.getPlayer()) <= Age.STONE_AGE.value)) {
-            AgeUtils.setPlayerAge(event.getPlayer(), Age.BRONZE_AGE);
+        if (event.getAdvancement().getId().equals(new ResourceLocation(MODID, "stone_age/end_of_stone_age")) && (AgeUtils.getPlayerAge(event.getEntity()) <= Age.STONE_AGE.value)) {
+            AgeUtils.setPlayerAge(event.getEntity(), Age.BRONZE_AGE);
         }
     }
 
     @SubscribeEvent
     public static void litTorch(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         if (Config.LitTorche) {
-            Player player = event.getPlayer();
+            Player player = event.getEntity();
 
             if (event.getHand() == InteractionHand.MAIN_HAND && player.getMainHandItem().getItem().equals(ItemSubscriber.unlit_torch)) {
-                Level world = event.getWorld();
+                Level world = event.getLevel();
                 BlockPos pos = event.getPos();
                 BlockState blockState = world.getBlockState(pos);
 
@@ -141,18 +130,18 @@ public class ForgeEventSubscriber {
 
     @SubscribeEvent
     public static void makeFireWithSticksAndDriedGrass(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        Player player = event.getPlayer();
+        Player player = event.getEntity();
         ItemStack mainItem = player.getMainHandItem();
         ItemStack offItem = player.getOffhandItem();
         if (Config.MakeFire) {
             if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
-                Level world = event.getWorld();
+                Level world = event.getLevel();
                 BlockPos position = event.getPos().relative(event.getFace());
                 BlockState blockState = world.getBlockState(position);
                 List<ItemEntity> driedGrassList = world.getEntitiesOfClass(ItemEntity.class, new AABB(position),
                         itemEntity -> itemEntity.getItem().getItem().equals(ItemSubscriber.dried_grass));
 
-                if (blockState.getBlock().isAir(blockState, world, position) && !driedGrassList.isEmpty()) {
+                if (blockState.isAir() && !driedGrassList.isEmpty()) {
                     world.setBlock(position, FIRE.defaultBlockState(), 11);
                     player.broadcastBreakEvent(InteractionHand.MAIN_HAND);
                     player.broadcastBreakEvent(InteractionHand.OFF_HAND);
@@ -168,13 +157,13 @@ public class ForgeEventSubscriber {
                         player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
                     }
 
-                    driedGrassList.forEach(Entity::remove);
+                    driedGrassList.forEach((itemEntity)-> itemEntity.remove(Entity.RemovalReason.DISCARDED));
                 }
             }
         }
     }
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
+    /*@SubscribeEvent(priority = EventPriority.NORMAL)
     public static void structureLoadingEventRemove(@Nonnull StructureSpawnListGatherEvent event) {
         if (Config.removeVanillaGeneratedAnimals) {
             event.getEntitySpawns().forEach(((classification, spawners) -> spawners.forEach(spawner -> {
@@ -183,9 +172,9 @@ public class ForgeEventSubscriber {
                 }
             })));
         }
-    }
+    }*/
     
-    @SubscribeEvent(priority = EventPriority.HIGH)
+    /*@SubscribeEvent(priority = EventPriority.HIGH)
     public static void biomeLoadingEventAdd(@Nonnull BiomeLoadingEvent event) {
         MobSpawnInfoBuilder spawns = event.getSpawns();
 
@@ -228,9 +217,9 @@ public class ForgeEventSubscriber {
             event.getGeneration().getFeatures(GenerationStep.Decoration.SURFACE_STRUCTURES).add(() ->
                     FeatureSubscriber.burial_place_feature.configured(new ProbabilityFeatureConfiguration((float) Config.burialPlaceSpawnChance)).decorated(Features.Decorators.HEIGHTMAP_SQUARE));
         }
-    }
+    }*/
 
-    @SubscribeEvent(priority = EventPriority.NORMAL)
+    /*@SubscribeEvent(priority = EventPriority.NORMAL)
     public static void biomeLoadingEventRemove(@Nonnull BiomeLoadingEvent event) {
         MobSpawnInfoBuilder spawns = event.getSpawns();
 
@@ -238,12 +227,12 @@ public class ForgeEventSubscriber {
             spawns.getSpawner(CREATURE).removeIf(entry -> VANILLA_ENTITIES.contains(entry.type));
             spawns.getSpawner(MISC).removeIf(entry -> entry.type == PIG);
         }
-    }
+    }*/
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void axeHarvestCheck(@Nonnull PlayerEvent.HarvestCheck event) {
         BlockState state = event.getTargetBlock();
-        Player entity = event.getPlayer();
+        Player entity = event.getEntity();
         ItemStack stack = entity.getItemInHand(InteractionHand.MAIN_HAND);
         Item item = stack.getItem();
 
@@ -251,15 +240,15 @@ public class ForgeEventSubscriber {
                 (state.getBlock().getHarvestLevel(state) <= item.getHarvestLevel(stack, ToolType.AXE, entity, state))) {
             event.setCanHarvest(true);
         }
-    }
+    }*/
     static final ResourceLocation logs=new ResourceLocation("minecraft","logs");
     @SubscribeEvent
     public static void axeBreakCheck(@Nonnull PlayerEvent.BreakSpeed event) {
         BlockState state = event.getState();
-        Player entity = event.getPlayer();
+        Player entity = event.getEntity();
         ItemStack stack = entity.getItemInHand(InteractionHand.MAIN_HAND);
         
-        if (state.getBlock().getTags().contains(logs)&&!(stack.getItem() instanceof AxeItem||stack.isCorrectToolForDrops(state))) {
+        if (ForgeRegistries.BLOCKS.tags().getTag(BlockTags.create(logs)).contains(state.getBlock())&&!(stack.getItem() instanceof AxeItem||stack.isCorrectToolForDrops(state))) {
             event.setNewSpeed(0);
         }
     }
@@ -269,7 +258,7 @@ public class ForgeEventSubscriber {
             return;
         }
 
-        CompoundTag nbt = event.getPlayer().getPersistentData();
+        CompoundTag nbt = event.getEntity().getPersistentData();
         CompoundTag persistent;
 
         if (!nbt.contains(Player.PERSISTED_NBT_TAG)) {
@@ -278,7 +267,7 @@ public class ForgeEventSubscriber {
             persistent = nbt.getCompound(Player.PERSISTED_NBT_TAG);
         }
 
-        if (!persistent.contains(PLAYER_MANUAL_NBT)) {
+        /*if (!persistent.contains(PLAYER_MANUAL_NBT)) {
             persistent.putBoolean(PLAYER_MANUAL_NBT, true);
 
             ItemStack book = new ItemStack(ForgeRegistries.ITEMS.getValue(new ResourceLocation("patchouli", "guide_book")));
@@ -287,10 +276,10 @@ public class ForgeEventSubscriber {
                 book.getOrCreateTag().putString("patchouli:book", "stone_age:stone_tablet");
                 event.getPlayer().inventory.add(book);
             }
-        }
+        }*/
     }
 
-    private static boolean biomeComparator(Biome biome, BiomeLoadingEvent event) {
+    /*private static boolean biomeComparator(Biome biome, BiomeLoadingEvent event) {
         if (biome.getRegistryName() != null) {
             return biome.getRegistryName().compareTo(event.getName()) == 0;
         }
@@ -305,5 +294,5 @@ public class ForgeEventSubscriber {
             }
         });
 
-    }
+    }*/
 }

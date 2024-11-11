@@ -8,10 +8,10 @@ import net.minecraft.client.Minecraft;
 import javax.annotation.Nonnull;
 import java.util.stream.Collectors;
 
-@JeiPlugin
-public class JeiCompatPlugin implements IModPlugin {
+//@JeiPlugin
+public class JeiCompatPlugin /*implements IModPlugin*/ {
 
-    @Nonnull
+    /*@Nonnull
     @Override
     public ResourceLocation getPluginUid() {
         return new ResourceLocation(Reference.MODID, "main");
@@ -52,5 +52,5 @@ public class JeiCompatPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.flint_workbench), FlintWorkbenchRecipeCategory.UID);
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.tree_stump), TreeStumpRecipeCategory.UID);
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.millstone), MillstoneRecipeCategory.UID);
-    }
+    }*/
 }

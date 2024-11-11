@@ -17,6 +17,6 @@ class TargetAggressorGoal<T extends Mob> extends NearestAttackableTargetGoal<Pla
 
     @Override
     public boolean canUse() {
-        return entity.cast(mob).isAngry() && super.canUse() && mob.level.getDifficulty() != Difficulty.PEACEFUL;
+        return entity.cast(mob).isAngry() && super.canUse() && mob.level().getDifficulty() != Difficulty.PEACEFUL;
     }
 }

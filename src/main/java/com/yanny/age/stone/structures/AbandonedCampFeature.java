@@ -5,8 +5,6 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.ProbabilityFeatureConfiguration;
 
-import static com.yanny.age.stone.structures.FeatureUtils.*;
-import static net.minecraft.state.properties.BlockStateProperties.LIT;
 
 public class AbandonedCampFeature extends Feature<ProbabilityFeatureConfiguration> {
 
