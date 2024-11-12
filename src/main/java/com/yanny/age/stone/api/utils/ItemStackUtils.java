@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
@@ -175,7 +176,6 @@ public class ItemStackUtils {
             matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
             if (modelIn.isCustomRenderer() || itemStackIn.getItem() == Items.TRIDENT && !flag1) {
 //                itemStackIn.getItem().getItemStackTileEntityRenderer().renderByItem(itemStackIn, transformTypeIn, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
-
             } else {
                 RenderType rendertype = ItemBlockRenderTypes.getRenderType(itemStackIn, true);
                 RenderType rendertype1;

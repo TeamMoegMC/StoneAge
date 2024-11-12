@@ -1,6 +1,9 @@
 package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.ExampleMod;
+import com.yanny.age.stone.client.models.AurochModel;
+import com.yanny.age.stone.client.models.MillstoneModel;
+import com.yanny.age.stone.client.models.StoneChestModel;
 import com.yanny.age.stone.client.renderer.*;
 import com.yanny.age.stone.compatibility.top.TopCompatibility;
 import com.yanny.age.stone.entities.*;
@@ -9,6 +12,8 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
@@ -52,11 +57,14 @@ public class ModEventSubscriber {
     }*/
 
     @SuppressWarnings("ConstantConditions")
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onClientSetupEvent(@Nonnull FMLClientSetupEvent event) {
         ItemBlockRenderTypes.setRenderLayer(BlockSubscriber.fishing_net, RenderType.cutoutMipped());
         ItemBlockRenderTypes.setRenderLayer(BlockSubscriber.dried_grass_bed, RenderType.cutoutMipped());
     }
+
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void RegisterEntityRender(EntityRenderersEvent.RegisterRenderers event){
         event.registerBlockEntityRenderer(TileEntitySubscriber.flint_workbench, FlintWorkbenchRenderer::new);
@@ -66,6 +74,25 @@ public class ModEventSubscriber {
         event.registerBlockEntityRenderer(TileEntitySubscriber.tree_stump, TreeStumpRenderer::new);
         event.registerBlockEntityRenderer(TileEntitySubscriber.feeder, FeederRenderer::new);
         event.registerBlockEntityRenderer(TileEntitySubscriber.millstone, MillstoneRenderer::new);
+
+        event.registerEntityRenderer(EntitySubscriber.deer,DeerRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.boar,BoarRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.auroch,AurochRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.fowl,FowlRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.mouflon,MouflonRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.mammoth,MammothRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.saber_tooth_tiger,SaberToothTigerRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.woolly_rhino,WoollyRhinoRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.terror_bird,TerrorBirdRenderer::new);
+        event.registerEntityRenderer(EntitySubscriber.coelacanth,CoelacanthRenderer::new);
+    }
+
+    @OnlyIn(Dist.CLIENT)
+    @SubscribeEvent
+    public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
+        event.registerLayerDefinition(AurochModel.AUROCH_LAYER, AurochModel::createBodyLayer);
+        event.registerLayerDefinition(MillstoneModel.MILLSTONE_LAYER, MillstoneModel::createBodyLayer);
+        event.registerLayerDefinition(StoneChestModel.STONECHEST_LAYER, StoneChestModel::createBodyLayer);
     }
     /*@SubscribeEvent
     public static void dataGen(@Nonnull GatherDataEvent event) {

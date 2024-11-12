@@ -19,7 +19,7 @@ import javax.annotation.Nonnull;
 public class MammothRenderer extends MobRenderer<MammothEntity, MammothModel> {
     private static final ResourceLocation MAMMOTH_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/mammoth.png");
 
-    private MammothRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public MammothRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new MammothModel(), 1.0f);
     }
 

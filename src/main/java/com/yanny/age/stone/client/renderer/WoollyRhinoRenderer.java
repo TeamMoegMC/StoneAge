@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 public class WoollyRhinoRenderer extends MobRenderer<WoollyRhinoEntity, WoollyRhinoModel> {
     private static final ResourceLocation WOOLLY_RHINO_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/woolly_rhino.png");
 
-    private WoollyRhinoRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public WoollyRhinoRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new WoollyRhinoModel(), 0.7f);
     }
 

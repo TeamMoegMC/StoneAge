@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class TerrorBirdRenderer extends MobRenderer<TerrorBirdEntity, TerrorBirdModel> {
     private static final ResourceLocation TERROR_BIRD_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/terror_bird.png");
 
-    private TerrorBirdRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public TerrorBirdRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new TerrorBirdModel(), 0.3f);
     }
 

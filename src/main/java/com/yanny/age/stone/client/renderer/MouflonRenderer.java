@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class MouflonRenderer extends MobRenderer<MouflonEntity, MouflonModel> {
     private static final ResourceLocation MOUFLON_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/mouflon.png");
 
-    private MouflonRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public MouflonRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new MouflonModel(), 0.5f);
     }
 

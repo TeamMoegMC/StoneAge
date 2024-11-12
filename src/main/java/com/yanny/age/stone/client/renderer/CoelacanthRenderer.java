@@ -17,7 +17,7 @@ import javax.annotation.Nonnull;
 public class CoelacanthRenderer extends MobRenderer<CoelacanthEntity, CoelacanthModel> {
     private static final ResourceLocation COELACANT_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/coelacanth.png");
 
-    private CoelacanthRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public CoelacanthRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new CoelacanthModel(), 0.3f);
     }
 

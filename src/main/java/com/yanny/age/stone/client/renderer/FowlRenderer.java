@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
     private static final ResourceLocation FOWL_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/fowl.png");
 
-    private FowlRenderer(@Nonnull EntityRendererProvider.Context context) {
+    public FowlRenderer(@Nonnull EntityRendererProvider.Context context) {
         super(context, new FowlModel(), 0.3f);
     }
 
