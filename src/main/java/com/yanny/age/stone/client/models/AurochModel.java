@@ -7,10 +7,7 @@ import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
-import net.minecraft.client.model.geom.builders.CubeListBuilder;
-import net.minecraft.client.model.geom.builders.LayerDefinition;
-import net.minecraft.client.model.geom.builders.MeshDefinition;
-import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
@@ -45,7 +42,7 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 
 		head = new ModelPart(this, 32, 0);
 		head.setPos(0.0F, 3.0F, -7.0F);
-		head.addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8, 0.0F, false);
+		head.addBox(,-4.0F, -4.0F, -8.0F, 8, 8 8, 0.0F, false);
 
 		ModelPart horns = new ModelPart(this, 0, 30);
 		horns.setPos(0.0F, 0.0F, -4.0F);
@@ -76,8 +73,8 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition partDefinition = mesh.getRoot();
 
-		partDefinition .addOrReplaceChild("head", CubeListBuilder.create().addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 0F,0F));
-		partDefinition .addOrReplaceChild("body", CubeListBuilder.create().addBox(-6.0F, -10.0F, -7.0F, 12.0F, 18.0F, 10.0F), PartPose.ZERO);
+		partDefinition .addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 36).addBox(-6.0F, -4.0F, -9.0F, 12, 10, 18), PartPose.offset(0.0F, 5.0F,0F));
+		partDefinition .addOrReplaceChild("head", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 5.0F,0F));
 /*		CubeListBuilder foot = CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F);
 		partDefinition .addOrReplaceChild("right_hind_leg", foot, PartPose.offset(-4.0F, 12.0F, 7.0F));
 		partDefinition .addOrReplaceChild("left_hind_leg", foot, PartPose.offset(4.0F, 12.0F, 7.0F));
