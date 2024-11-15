@@ -21,14 +21,21 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 			new ResourceLocation(Reference.MODID,"auroch_layer"),"main");
 	private final ModelPart body;
 	private final ModelPart head;
-	/*private final ModelPart foot1;
+//	private final ModelPart horns;
+	private final ModelPart foot1;
 	private final ModelPart foot2;
 	private final ModelPart foot3;
-	private final ModelPart foot4;*/
+	private final ModelPart foot4;
 
 	public AurochModel(ModelPart part ){
 		this.head = part.getChild("head");
 		this.body = part.getChild("body");
+//		this.horns = part.getChild("horns");
+//		this.horns = this.head.getChild("horns");
+		this.foot1 = part.getChild("foot1");
+		this.foot2 = part.getChild("foot2");
+		this.foot3 = part.getChild("foot3");
+		this.foot4 = part.getChild("foot4");
 /*		this.foot1 = part.getChild("foot1");
 		this.foot2 = part.getChild("foot2");
 		this.foot3 = part.getChild("foot3");
@@ -73,14 +80,22 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition partDefinition = mesh.getRoot();
 
-		partDefinition .addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 36).addBox(-6.0F, -4.0F, -9.0F, 12, 10, 18), PartPose.offset(0.0F, 5.0F,0F));
-		partDefinition .addOrReplaceChild("head", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 5.0F,0F));
-/*		CubeListBuilder foot = CubeListBuilder.create().texOffs(0, 16).addBox(-2.0F, 0.0F, -2.0F, 4.0F, 12.0F, 4.0F);
-		partDefinition .addOrReplaceChild("right_hind_leg", foot, PartPose.offset(-4.0F, 12.0F, 7.0F));
-		partDefinition .addOrReplaceChild("left_hind_leg", foot, PartPose.offset(4.0F, 12.0F, 7.0F));
-		partDefinition .addOrReplaceChild("right_front_leg", foot, PartPose.offset(-4.0F, 12.0F, -6.0F));
-		partDefinition .addOrReplaceChild("left_front_leg", foot, PartPose.offset(4.0F, 12.0F, -6.0F));*/
-		return LayerDefinition.create(mesh, 64, 32);
+		partDefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 36).addBox(-6.0F, -4.0F, -9.0F, 12, 10, 18), PartPose.offset(0.0F, 5.0F, 0.0F));
+		PartDefinition partdefinition1 = partDefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 3.0F, -7.0F));
+		partdefinition1.addOrReplaceChild("horns", CubeListBuilder.create().texOffs(0, 30)
+				.addBox(4.0F, -1.0F, -1.0F, 3, 1, 1)
+				.addBox(-7.0F, -1.0F, -1.0F, 3, 1, 1)
+				.addBox(6.0F, -3.0F, -1.0F, 1, 2, 1)
+				.addBox(-7.0F, -3.0F, -1.0F, 1, 2, 1), PartPose.offsetAndRotation(0.0F, 0.0F, -4.0F,0.6981F,0F,0F));
+
+
+		CubeListBuilder foot = CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, 0.0F, -2.0F, 4, 13, 4);
+		partDefinition .addOrReplaceChild("foot1", foot, PartPose.offset(-3.0F, 11.0F, 6.0F));
+		partDefinition .addOrReplaceChild("foot2", foot, PartPose.offset(3.0F, 11.0F, 6.0F));
+		partDefinition .addOrReplaceChild("foot3", foot, PartPose.offset(3.0F, 11.0F, -6.0F));
+		partDefinition .addOrReplaceChild("foot4", foot, PartPose.offset(-3.0F, 11.0F, -6.0F));
+		//size
+		return LayerDefinition.create(mesh, 64, 64);
 	}
 	@Nonnull
 	@Override
@@ -91,7 +106,7 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(head, body);
+		return ImmutableList.of(head/*horns*/,body,foot1,foot2,foot3,foot4);
 	}
 
 	@Override
@@ -102,9 +117,12 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
 		this.head.xRot = headPitch * ((float)Math.PI / 180F);
 		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-/*		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+//		this.horns.xRot = headPitch * ((float)Math.PI / 180F);
+//		this.horns.yRot = netHeadYaw * ((float)Math.PI / 180F);
+
+		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
 		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;*/
+		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 }
