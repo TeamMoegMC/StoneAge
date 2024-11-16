@@ -1,9 +1,7 @@
 package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.ExampleMod;
-import com.yanny.age.stone.client.models.AurochModel;
-import com.yanny.age.stone.client.models.MillstoneModel;
-import com.yanny.age.stone.client.models.StoneChestModel;
+import com.yanny.age.stone.client.models.*;
 import com.yanny.age.stone.client.renderer.*;
 import com.yanny.age.stone.compatibility.top.TopCompatibility;
 import com.yanny.age.stone.entities.*;
@@ -91,6 +89,10 @@ public class ModEventSubscriber {
     @SubscribeEvent
     public static void registerLayer(EntityRenderersEvent.RegisterLayerDefinitions event){
         event.registerLayerDefinition(AurochModel.AUROCH_LAYER, AurochModel::createBodyLayer);
+        event.registerLayerDefinition(BoarModel.BOAR_LAYER, BoarModel::createBodyLayer);
+        event.registerLayerDefinition(CoelacanthModel.COELACANTH_LAYER, CoelacanthModel::createBodyLayer);
+        event.registerLayerDefinition(DeerModel.DEER_LAYER, DeerModel::createBodyLayer);
+
         event.registerLayerDefinition(MillstoneModel.MILLSTONE_LAYER, MillstoneModel::createBodyLayer);
         event.registerLayerDefinition(StoneChestModel.STONECHEST_LAYER, StoneChestModel::createBodyLayer);
     }

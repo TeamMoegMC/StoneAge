@@ -1,6 +1,7 @@
 package com.yanny.age.stone.client.renderer;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.client.models.CoelacanthModel;
 import com.yanny.age.stone.client.models.DeerModel;
 import com.yanny.age.stone.entities.DeerEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -18,7 +19,7 @@ public class DeerRenderer extends MobRenderer<DeerEntity, DeerModel> {
     private static final ResourceLocation DEER_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/deer.png");
 
     public DeerRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new DeerModel(), 0.5f);
+        super(context, new DeerModel(context.bakeLayer(DeerModel.DEER_LAYER)), 0.5f);
     }
 
     @Nonnull

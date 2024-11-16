@@ -20,13 +20,15 @@ import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class StoneChestModel extends Model {
-//	private final ModelPart body;
+	private final ModelPart body;
 	private final ModelPart lid;
 	public static final ModelLayerLocation STONECHEST_LAYER = new ModelLayerLocation(
 			new ResourceLocation(Reference.MODID,"stonechest_layer"),"main");
 
 	public StoneChestModel(ModelPart part) {
 		super(RenderType::entityCutout);
+		this.lid = part.getChild("lid");
+		this.body = part.getChild("body");
 		/*texWidth = 64;
 		texHeight = 64;
 
@@ -47,7 +49,6 @@ public class StoneChestModel extends Model {
 		lid = new ModelPart(this, 0, 0);
 		lid.setPos(3.0F, 10.0F, 5.0F);
 		lid.addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14, 0.0F, false);*/
-		this.lid = part.getChild("lid");
 	}
 
 	public ModelPart getLid() {
@@ -56,17 +57,17 @@ public class StoneChestModel extends Model {
 
 	@Override
 	public void renderToBuffer(@Nonnull PoseStack matrixStack, @Nonnull VertexConsumer iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
-//		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
-//		lid.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+		lid.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition partDefinition = mesh.getRoot();
+		PartDefinition partDefinitionRoot = mesh.getRoot();
 
-		partDefinition .addOrReplaceChild("body", CubeListBuilder.create().addBox(-7.0F, -2.0F, -7.0F, 14, 2, 14), PartPose.ZERO);
-		partDefinition .addOrReplaceChild("body1", CubeListBuilder.create().addBox(-7.0F, -12.0F, -7.0F, 2, 10, 14).addBox(5.0F, -12.0F, -7.0F, 2, 10, 14), PartPose.ZERO);
-		partDefinition .addOrReplaceChild("body2", CubeListBuilder.create().addBox(-5.0F, -12.0F, -7.0F, 10, 10, 2).addBox(-5.0F, -12.0F, 5.0F, 10, 10, 2), PartPose.ZERO);
-		partDefinition .addOrReplaceChild("lid", CubeListBuilder.create().addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14), PartPose.ZERO);
-		return LayerDefinition.create(mesh, 64, 32);
+		PartDefinition partDefinition1 = partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 48).addBox(-7.0F, -2.0F, -7.0F, 14, 2, 14), PartPose.offset(0.0F, 24.0F, 0.0F));
+		partDefinition1.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(0, 24).addBox(-7.0F, -12.0F, -7.0F, 2, 10, 14).addBox(5.0F, -12.0F, -7.0F, 2, 10, 14), PartPose.ZERO);
+		partDefinition1.addOrReplaceChild("body2", CubeListBuilder.create().texOffs(32, 36).addBox(-5.0F, -12.0F, -7.0F, 10, 10, 2).addBox(-5.0F, -12.0F, 5.0F, 10, 10, 2), PartPose.ZERO);
+		partDefinitionRoot.addOrReplaceChild("lid", CubeListBuilder.create().addBox(-10.0F, 0.0F, -12.0F, 14, 2, 14), PartPose.offset(3.0F, 10.0F, 5.0F));
+		return LayerDefinition.create(mesh, 64, 64);
 	}
 }

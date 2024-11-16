@@ -59,38 +59,38 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
         }
     }
 
-    public void tick() {
-        assert this.level != null;
-        int i = this.worldPosition.getX();
-        int j = this.worldPosition.getY();
-        int k = this.worldPosition.getZ();
+    public static void tick(Level level, BlockPos blockPos, BlockState state, StoneChestTileEntity tile) {
+        assert level != null;
+        int i = blockPos.getX();
+        int j = blockPos.getY();
+        int k = blockPos.getZ();
 
-        ++this.ticksSinceSync;
-        this.numPlayersUsing = calculatePlayersUsingSync(this.level, this, this.ticksSinceSync, i, j, k, this.numPlayersUsing);
-        this.prevLidAngle = this.lidAngle;
+        ++tile.ticksSinceSync;
+        tile.numPlayersUsing = calculatePlayersUsingSync(level, tile, tile.ticksSinceSync, i, j, k, tile.numPlayersUsing);
+        tile.prevLidAngle = tile.lidAngle;
 
-        if (this.numPlayersUsing > 0 && this.lidAngle == 0.0F) {
-            this.playSound();
+        if (tile.numPlayersUsing > 0 && tile.lidAngle == 0.0F) {
+            tile.playSound();
         }
 
-        if ((this.numPlayersUsing == 0 && this.lidAngle > 0.0F) || (this.numPlayersUsing > 0 && this.lidAngle < 1.0F)) {
-            float f1 = this.lidAngle;
-            if (this.numPlayersUsing > 0) {
-                this.lidAngle += 0.05F;
+        if ((tile.numPlayersUsing == 0 && tile.lidAngle > 0.0F) || (tile.numPlayersUsing > 0 && tile.lidAngle < 1.0F)) {
+            float f1 = tile.lidAngle;
+            if (tile.numPlayersUsing > 0) {
+                tile.lidAngle += 0.05F;
             } else {
-                this.lidAngle -= 0.05F;
+                tile.lidAngle -= 0.05F;
             }
 
-            if (this.lidAngle > 1.0F) {
-                this.lidAngle = 1.0F;
+            if (tile.lidAngle > 1.0F) {
+                tile.lidAngle = 1.0F;
             }
 
-            if (this.lidAngle < 0.5F && f1 >= 0.5F) {
-                this.playSound();
+            if (tile.lidAngle < 0.5F && f1 >= 0.5F) {
+                tile.playSound();
             }
 
-            if (this.lidAngle < 0.0F) {
-                this.lidAngle = 0.0F;
+            if (tile.lidAngle < 0.0F) {
+                tile.lidAngle = 0.0F;
             }
         }
     }
@@ -213,7 +213,7 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
 
     public void startOpen(@Nonnull Player player) {
         if (!player.isSpectator()) {
-            assert this.level != null;
+            assert level != null;
 
             if (this.numPlayersUsing < 0) {
                 this.numPlayersUsing = 0;
@@ -246,7 +246,7 @@ public class StoneChestTileEntity extends RandomizableContainerBlockEntity imple
         double d0 = (double)this.worldPosition.getX() + 0.5D;
         double d1 = (double)this.worldPosition.getY() + 0.5D;
         double d2 = (double)this.worldPosition.getZ() + 0.5D;
-        this.level.playSound(null, d0, d1, d2, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5F, this.level.random.nextFloat() * 0.1F + 0.9F);
+        this.level.playSound(null, d0, d1, d2, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
     }
 
     @Nonnull

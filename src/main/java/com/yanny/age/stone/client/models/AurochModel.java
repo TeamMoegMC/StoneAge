@@ -27,7 +27,7 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 	private final ModelPart foot3;
 	private final ModelPart foot4;
 
-	public AurochModel(ModelPart part ){
+	public AurochModel(ModelPart part){
 		this.head = part.getChild("head");
 		this.body = part.getChild("body");
 //		this.horns = part.getChild("horns");
@@ -78,10 +78,10 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 	}
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition partDefinition = mesh.getRoot();
+		PartDefinition partDefinitionRoot = mesh.getRoot();
 
-		partDefinition.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 36).addBox(-6.0F, -4.0F, -9.0F, 12, 10, 18), PartPose.offset(0.0F, 5.0F, 0.0F));
-		PartDefinition partdefinition1 = partDefinition.addOrReplaceChild("head", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 3.0F, -7.0F));
+		partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 36).addBox(-6.0F, -4.0F, -9.0F, 12, 10, 18), PartPose.offset(0.0F, 5.0F, 0.0F));
+		PartDefinition partdefinition1 = partDefinitionRoot.addOrReplaceChild("head", CubeListBuilder.create().texOffs(32, 0).addBox(-4.0F, -4.0F, -8.0F, 8, 8, 8), PartPose.offset(0.0F, 3.0F, -7.0F));
 		partdefinition1.addOrReplaceChild("horns", CubeListBuilder.create().texOffs(0, 30)
 				.addBox(4.0F, -1.0F, -1.0F, 3, 1, 1)
 				.addBox(-7.0F, -1.0F, -1.0F, 3, 1, 1)
@@ -90,10 +90,10 @@ public class AurochModel extends AgeableListModel<AurochEntity> {
 
 
 		CubeListBuilder foot = CubeListBuilder.create().texOffs(0, 0).addBox(-2.0F, 0.0F, -2.0F, 4, 13, 4);
-		partDefinition .addOrReplaceChild("foot1", foot, PartPose.offset(-3.0F, 11.0F, 6.0F));
-		partDefinition .addOrReplaceChild("foot2", foot, PartPose.offset(3.0F, 11.0F, 6.0F));
-		partDefinition .addOrReplaceChild("foot3", foot, PartPose.offset(3.0F, 11.0F, -6.0F));
-		partDefinition .addOrReplaceChild("foot4", foot, PartPose.offset(-3.0F, 11.0F, -6.0F));
+		partDefinitionRoot.addOrReplaceChild("foot1", foot, PartPose.offset(-3.0F, 11.0F, 6.0F));
+		partDefinitionRoot.addOrReplaceChild("foot2", foot, PartPose.offset(3.0F, 11.0F, 6.0F));
+		partDefinitionRoot.addOrReplaceChild("foot3", foot, PartPose.offset(3.0F, 11.0F, -6.0F));
+		partDefinitionRoot.addOrReplaceChild("foot4", foot, PartPose.offset(-3.0F, 11.0F, -6.0F));
 		//size
 		return LayerDefinition.create(mesh, 64, 64);
 	}

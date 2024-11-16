@@ -1,6 +1,7 @@
 package com.yanny.age.stone.client.renderer;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.client.models.BoarModel;
 import com.yanny.age.stone.client.models.CoelacanthModel;
 import com.yanny.age.stone.entities.CoelacanthEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -18,7 +19,7 @@ public class CoelacanthRenderer extends MobRenderer<CoelacanthEntity, Coelacanth
     private static final ResourceLocation COELACANT_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/coelacanth.png");
 
     public CoelacanthRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new CoelacanthModel(), 0.3f);
+        super(context, new CoelacanthModel(context.bakeLayer(CoelacanthModel.COELACANTH_LAYER)), 0.3f);
     }
 
     @Nonnull

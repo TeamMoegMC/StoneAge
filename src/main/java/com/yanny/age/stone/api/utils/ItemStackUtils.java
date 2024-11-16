@@ -175,6 +175,7 @@ public class ItemStackUtils {
             modelIn = ForgeHooksClient.handleCameraTransforms(matrixStackIn, modelIn, transformTypeIn, false);
             matrixStackIn.translate(-0.5D, -0.5D, -0.5D);
             if (modelIn.isCustomRenderer() || itemStackIn.getItem() == Items.TRIDENT && !flag1) {
+//                Minecraft.getInstance().getItemRenderer().render(itemStackIn, transformTypeIn, true,matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn,modelIn);
 //                itemStackIn.getItem().getItemStackTileEntityRenderer().renderByItem(itemStackIn, transformTypeIn, matrixStackIn, bufferIn, combinedLightIn, combinedOverlayIn);
             } else {
                 RenderType rendertype = ItemBlockRenderTypes.getRenderType(itemStackIn, true);

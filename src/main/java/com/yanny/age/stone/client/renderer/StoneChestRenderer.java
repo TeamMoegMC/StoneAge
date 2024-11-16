@@ -26,10 +26,9 @@ import javax.annotation.Nonnull;
 public class StoneChestRenderer implements BlockEntityRenderer<StoneChestTileEntity> {
     private static final ResourceLocation TEXTURE_NORMAL = new ResourceLocation(Reference.MODID, "textures/entity/stone_chest.png");
     private final StoneChestModel model;
-    public static final ModelLayerLocation STONECHEST_LAYER = new ModelLayerLocation(
-            new ResourceLocation(Reference.MODID,"stonechest_layer"),"main");
     public StoneChestRenderer(@Nonnull BlockEntityRendererProvider.Context context) {
-        model = new StoneChestModel(context.bakeLayer(STONECHEST_LAYER));
+
+        model = new StoneChestModel(context.bakeLayer(StoneChestModel.STONECHEST_LAYER));
     }
 
     @Override

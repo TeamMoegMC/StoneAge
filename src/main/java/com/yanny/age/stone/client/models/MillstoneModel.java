@@ -38,16 +38,16 @@ public class MillstoneModel extends Model {
 	public void rotate(float angle) {
 		this.body.yRot = angle;
 	}
-
+//render
 	@Override
 	public void renderToBuffer(@Nonnull PoseStack matrixStack, @Nonnull VertexConsumer iVertexBuilder, int i, int i1, float v, float v1, float v2, float v3) {
-//		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
+		body.render(matrixStack, iVertexBuilder, i, i1, v, v1, v2, v3);
 	}
 	public static LayerDefinition createBodyLayer() {
 		MeshDefinition mesh = new MeshDefinition();
 		PartDefinition partDefinition = mesh.getRoot();
 
-		partDefinition .addOrReplaceChild("body", CubeListBuilder.create().addBox(-5.0F, 7.0F, -5.0F, 10, 4, 10), PartPose.ZERO);
-		return LayerDefinition.create(mesh, 64, 32);
+		partDefinition.addOrReplaceChild("body", CubeListBuilder.create().addBox(-5.0F, 7.0F, -5.0F, 10, 4, 10), PartPose.ZERO);
+		return LayerDefinition.create(mesh, 64, 64);
 	}
 }

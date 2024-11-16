@@ -1,8 +1,11 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.compatibility.top.TopBlockInfoProvider;
+import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -36,7 +39,13 @@ public class MillstoneBlock extends Block implements TopBlockInfoProvider , Enti
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new MillstoneTileEntity(pos,state);
     }
-
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TileEntitySubscriber.millstone,MillstoneTileEntity::tick);
+    }
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> type, BlockEntityType<E> entitytype, BlockEntityTicker<? super E> ticker) {
+        return type == entitytype ? (BlockEntityTicker<A>) ticker : null;
+    }
     @SuppressWarnings("deprecation")
     @Nonnull
     @Override

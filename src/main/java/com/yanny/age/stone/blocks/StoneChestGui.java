@@ -31,7 +31,10 @@ public class StoneChestGui extends AbstractContainerScreen<AbstractContainerMenu
         if (minecraft == null) {
             return;
         }
-
+        this.minecraft.getTextureManager().bindForSetup(GUI);
+        int i = (this.width - this.imageWidth) / 2;
+        int j = (this.height - this.imageHeight) / 2;
+        guiGraphics.blit(GUI, i, j, 0, 0, this.imageWidth, this.imageHeight);
 /*        minecraft.getTextureManager().bind(GUI);
         blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);*/
     }

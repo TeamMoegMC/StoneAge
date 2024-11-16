@@ -1,6 +1,7 @@
 package com.yanny.age.stone.client.renderer;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.client.models.AurochModel;
 import com.yanny.age.stone.client.models.BoarModel;
 import com.yanny.age.stone.entities.BoarEntity;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -18,7 +19,7 @@ public class BoarRenderer extends MobRenderer<BoarEntity, BoarModel> {
     private static final ResourceLocation BOAR_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/boar.png");
 
     public BoarRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new BoarModel(), 0.5f);
+        super(context, new BoarModel(context.bakeLayer(BoarModel.BOAR_LAYER)), 0.5f);
     }
 
     @Nonnull

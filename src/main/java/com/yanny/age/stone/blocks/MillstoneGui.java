@@ -31,12 +31,12 @@ public class MillstoneGui extends AbstractContainerScreen<MillstoneContainer> {
             return;
         }
 
-/*        minecraft.getTextureManager().bind(GUI);
-        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        minecraft.getTextureManager().bindForSetup(GUI);
+        guiGraphics.blit(GUI, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         if (menu.getProgress() > 0) {
             int l = (int) Math.ceil(menu.getProgress() / 100.0 * 16);
-            blit(matrixStack, leftPos + 80, topPos + 35, 176, 0, l, 16);
-        }*/
+//            guiGraphics.blit(GUI, leftPos + 80, topPos + 35, 176, 0, l, 16);
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -61,45 +62,45 @@ public class MillstoneTileEntity extends BlockEntity implements IInventoryInterf
     }
 
 
-    public void tick() {
+    public static void tick(Level level, BlockPos blockPos, BlockState state, MillstoneTileEntity tile) {
         assert level != null;
 
-        if (active) {
+        if (tile.active) {
             if (level.random.nextInt(5) == 0) {
-                double d0 = worldPosition.getX() + level.random.nextFloat() / 2 + 0.25;
-                double d1 = worldPosition.getY() + 7 / 16f + 0.025D;
-                double d2 = worldPosition.getZ() + level.random.nextFloat() / 2 + 0.25;
+                double d0 = blockPos.getX() + level.random.nextFloat() / 2 + 0.25;
+                double d1 = blockPos.getY() + 7 / 16f + 0.025D;
+                double d2 = blockPos.getZ() + level.random.nextFloat() / 2 + 0.25;
                 level.addParticle(ParticleTypes.CRIT, d0, d1, d2, 0, level.random.nextFloat(), 0);
             }
 
-            rotation += PI2 / 80;
-            rotation = (float) (rotation % PI2);
-            ticks++;
+            tile.rotation += PI2 / 80;
+            tile.rotation = (float) (tile.rotation % PI2);
+            tile.ticks++;
 
-            if (ticks % 20 == 0) {
-                active = false;
+            if (tile.ticks % 20 == 0) {
+                tile.active = false;
 
-                if (ticks == activateTicks) {
-                    if (stacks.get(1).isEmpty()) {
-                        stacks.set(1, result);
+                if (tile.ticks == tile.activateTicks) {
+                    if (tile.stacks.get(1).isEmpty()) {
+                        tile.stacks.set(1, tile.result);
                     } else {
-                        stacks.get(1).grow(result.getCount());
+                        tile.stacks.get(1).grow(tile.result.getCount());
                     }
 
-                    if (level.random.nextDouble() < secondChance) {
-                        if (stacks.get(2).isEmpty()) {
-                            stacks.set(2, secondResult);
+                    if (level.random.nextDouble() < tile.secondChance) {
+                        if (tile.stacks.get(2).isEmpty()) {
+                            tile.stacks.set(2, tile.secondResult);
                         } else {
-                            stacks.get(2).grow(secondResult.getCount());
+                            tile.stacks.get(2).grow(tile.secondResult.getCount());
                         }
                     }
 
-                    result = ItemStack.EMPTY;
-                    secondResult = ItemStack.EMPTY;
-                    ticks = 0;
+                    tile.result = ItemStack.EMPTY;
+                    tile.secondResult = ItemStack.EMPTY;
+                    tile.ticks = 0;
 
                     if (!level.isClientSide) {
-                        level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                        level.sendBlockUpdated(blockPos, state, state, 3);
                     }
                 }
             }
