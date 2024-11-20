@@ -5,6 +5,7 @@ import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
@@ -51,34 +52,34 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
     }
 
 
-    public void tick() {
+    public static void tick(Level level, BlockPos blockPos, BlockState state, DryingRackTileEntity tile) {
         assert level != null;
         if (!level.isClientSide) {
             if (Config.DryingRackNeedDaytime) {
                 if (level.isDay()) {
                     for (int i = 0; i < ITEMS; i++) {
-                        if (items[i].active) {
-                            if (items[i].isDried()) {
-                                stacks.set(i + ITEMS, items[i].result);
-                                stacks.set(i, ItemStack.EMPTY);
-                                items[i].reset();
-                                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                        if (tile.items[i].active) {
+                            if (tile.items[i].isDried()) {
+                                tile.stacks.set(i + ITEMS, tile.items[i].result);
+                                tile.stacks.set(i, ItemStack.EMPTY);
+                                tile.items[i].reset();
+                                level.sendBlockUpdated(blockPos, state, state, 3);
                             } else {
-                                items[i].remaining--;
+                                tile.items[i].remaining--;
                             }
                         }
                     }
                 }
             } else {
                 for (int i = 0; i < ITEMS; i++) {
-                    if (items[i].active) {
-                        if (items[i].isDried()) {
-                            stacks.set(i + ITEMS, items[i].result);
-                            stacks.set(i, ItemStack.EMPTY);
-                            items[i].reset();
-                            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                    if (tile.items[i].active) {
+                        if (tile.items[i].isDried()) {
+                            tile.stacks.set(i + ITEMS, tile.items[i].result);
+                            tile.stacks.set(i, ItemStack.EMPTY);
+                            tile.items[i].reset();
+                            level.sendBlockUpdated(blockPos, state, state, 3);
                         } else {
-                            items[i].remaining--;
+                            tile.items[i].remaining--;
                         }
                     }
                 }

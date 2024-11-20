@@ -1,9 +1,12 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.compatibility.top.TopBlockInfoProvider;
+import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +37,13 @@ public class DryingRackBlock extends HorizontalDirectionalBlock implements TopBl
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new DryingRackTileEntity(pos,state);
+    }
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TileEntitySubscriber.drying_rack,DryingRackTileEntity::tick);
+    }
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> type, BlockEntityType<E> entitytype, BlockEntityTicker<? super E> ticker) {
+        return type == entitytype ? (BlockEntityTicker<A>) ticker : null;
     }
     @SuppressWarnings("deprecation")
     @Override

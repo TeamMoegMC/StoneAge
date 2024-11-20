@@ -4,6 +4,7 @@ import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.player.Player;
@@ -57,11 +58,11 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     }
 
 
-    public void tick() {
+    public static void tick(Level level, BlockPos blockPos, BlockState state, FeederTileEntity tile) {
         if (level != null && !level.isClientSide) {
-            if (level.random.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && getItem().isPresent()) {
-                useOnEntity();
-                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+            if (level.random.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && tile.getItem().isPresent()) {
+                tile.useOnEntity();
+                level.sendBlockUpdated(blockPos, state, state, 3);
             }
         }
     }

@@ -1,8 +1,11 @@
 package com.yanny.age.stone.blocks;
 
+import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.Containers;
@@ -50,7 +53,13 @@ public class FishingNetBlock extends Block implements SimpleWaterloggedBlock, En
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new FishingNetTileEntity(pos,state);
     }
-
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level world, BlockState state, BlockEntityType<T> type) {
+        return createTickerHelper(type, TileEntitySubscriber.fishing_net,FishingNetTileEntity::tick);
+    }
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> type, BlockEntityType<E> entitytype, BlockEntityTicker<? super E> ticker) {
+        return type == entitytype ? (BlockEntityTicker<A>) ticker : null;
+    }
     @Override
     public boolean hasDynamicShape() {
         return true;

@@ -4,6 +4,7 @@ import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -60,16 +61,16 @@ public class FishingNetTileEntity extends BlockEntity implements IInventoryInter
     }
 
 
-    public void tick() {
+    public static void tick(Level level, BlockPos blockPos, BlockState state, FishingNetTileEntity tile) {
         if (level != null && !level.isClientSide) {
-            if (!stacks.get(0).isEmpty() && level.random.nextInt(Config.fishingNetChance) == 0 && hasWaterAround()) {
-                if (stacks.get(0).hurt(1, level.random, null)) {
-                    stacks.set(0, ItemStack.EMPTY);
-                    level.setBlockAndUpdate(getBlockPos(), getBlockState().setValue(BlockStateProperties.ATTACHED, false));
+            if (!tile.stacks.get(0).isEmpty() && level.random.nextInt(Config.fishingNetChance) == 0 && tile.hasWaterAround()) {
+                if (tile.stacks.get(0).hurt(1, level.random, null)) {
+                    tile.stacks.set(0, ItemStack.EMPTY);
+                    level.setBlockAndUpdate(blockPos, state.setValue(BlockStateProperties.ATTACHED, false));
                 }
 
-                generateLoot();
-                level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                tile.generateLoot();
+                level.sendBlockUpdated(blockPos, state, state, 3);
             }
         }
     }
