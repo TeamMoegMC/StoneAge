@@ -33,10 +33,10 @@ public class ModEventSubscriber {
         ExampleMod.proxy.init();
     }
 
-    @SubscribeEvent
-    public static void registerTOP(@Nonnull InterModEnqueueEvent event) {
-        TopCompatibility.register();
-    }
+//    @SubscribeEvent
+//    public static void registerTOP(@Nonnull InterModEnqueueEvent event) {
+//        TopCompatibility.register();
+//    }
 
     /*@SubscribeEvent
     public static void onModConfigEvent(@Nonnull ModConfig.ModConfigEvent event) {

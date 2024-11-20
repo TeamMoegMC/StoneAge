@@ -39,6 +39,6 @@ public class FeederGui extends AbstractContainerScreen<AbstractContainerMenu> {
         }
 
 //        minecraft.getTextureManager().bind(GUI);
-//        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        guiGraphics.blit(GUI, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 }

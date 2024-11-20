@@ -31,7 +31,7 @@ public class MillstoneGui extends AbstractContainerScreen<MillstoneContainer> {
             return;
         }
 
-        minecraft.getTextureManager().bindForSetup(GUI);
+//        minecraft.getTextureManager().bindForSetup(GUI);
         guiGraphics.blit(GUI, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         if (menu.getProgress() > 0) {

@@ -32,7 +32,7 @@ public class FishingNetGui extends AbstractContainerScreen<AbstractContainerMenu
             return;
         }
 
-//        minecraft.getTextureManager().bind(GUI);
-//        blit(matrixStack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+//        minecraft.getTextureManager().bindForSetup(GUI);
+        guiGraphics.blit(GUI, leftPos, topPos, 0, 0, imageWidth, imageHeight);
     }
 }

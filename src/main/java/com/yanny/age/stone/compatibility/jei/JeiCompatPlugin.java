@@ -11,12 +11,9 @@ import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeManager;
 
 import javax.annotation.Nonnull;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @JeiPlugin
 public class JeiCompatPlugin implements IModPlugin {
@@ -51,7 +48,7 @@ public class JeiCompatPlugin implements IModPlugin {
         registration.addRecipes(DryingRackRecipeCategory.DRYINGRACK_RECIPE_TYPE, recipeManager.getAllRecipesFor(DryingRackRecipe.drying_rack));
         registration.addRecipes(TanningRackRecipeCategory.TANNINGRACK_RECIPE_TYPE, recipeManager.getAllRecipesFor(TanningRackRecipe.tanning_rack));
         registration.addRecipes(FlintWorkbenchRecipeCategory.FLINETWORKBENCH_RECIPE_TYPE, recipeManager.getAllRecipesFor(FlintWorkbenchRecipe.flint_workbench));
-        registration.addRecipes(TanningRackRecipeCategory.TANNINGRACK_RECIPE_TYPE, recipeManager.getAllRecipesFor(TanningRackRecipe.tanning_rack));
+        registration.addRecipes(TreeStumpRecipeCategory.TREESTUMP_RECIPE_TYPE, recipeManager.getAllRecipesFor(TreeStumpRecipe.tree_stump));
         registration.addRecipes(MillstoneRecipeCategory.MILLSTONE_RECIPE_TYPE, recipeManager.getAllRecipesFor(MillstoneRecipe.millstone));
     }
 
