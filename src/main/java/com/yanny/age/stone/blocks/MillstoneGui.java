@@ -36,7 +36,7 @@ public class MillstoneGui extends AbstractContainerScreen<MillstoneContainer> {
 
         if (menu.getProgress() > 0) {
             int l = (int) Math.ceil(menu.getProgress() / 100.0 * 16);
-//            guiGraphics.blit(GUI, leftPos + 80, topPos + 35, 176, 0, l, 16);
+            guiGraphics.blit(GUI, leftPos + 80, topPos + 35, 176, 0, l, 16);
         }
     }
 }
