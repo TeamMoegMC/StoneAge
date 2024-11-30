@@ -20,7 +20,7 @@ public class SaberToothTigerRenderer extends MobRenderer<SaberToothTigerEntity, 
     private static final ResourceLocation SABER_TOOTH_TIGER_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/saber_tooth_tiger.png");
 
     public SaberToothTigerRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new SaberToothTigerModel(), 0.5f);
+        super(context, new SaberToothTigerModel(context.bakeLayer(SaberToothTigerModel.SABERTOOTHTIGER_LAYER)), 0.5f);
     }
 
     @Override

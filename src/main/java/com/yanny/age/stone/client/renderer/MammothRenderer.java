@@ -20,7 +20,7 @@ public class MammothRenderer extends MobRenderer<MammothEntity, MammothModel> {
     private static final ResourceLocation MAMMOTH_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/mammoth.png");
 
     public MammothRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new MammothModel(), 1.0f);
+        super(context, new MammothModel(context.bakeLayer(MammothModel.MAMMOTH_LAYER)), 1.0f);
     }
 
     @Override

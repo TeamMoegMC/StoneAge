@@ -16,7 +16,7 @@ public class WoollyRhinoRenderer extends MobRenderer<WoollyRhinoEntity, WoollyRh
     private static final ResourceLocation WOOLLY_RHINO_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/woolly_rhino.png");
 
     public WoollyRhinoRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new WoollyRhinoModel(), 0.7f);
+        super(context, new WoollyRhinoModel(context.bakeLayer(WoollyRhinoModel.WOOLLYRHINO_LAYER)), 0.7f);
     }
 
     @Nonnull

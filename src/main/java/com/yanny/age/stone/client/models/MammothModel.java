@@ -1,22 +1,38 @@
 package com.yanny.age.stone.client.models;
 
 import com.google.common.collect.ImmutableList;
+import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.entities.MammothEntity;
 import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
 
 public class MammothModel extends AgeableListModel<MammothEntity> {
-//	private final ModelPart body;
-//	private final ModelPart head;
-//	private final ModelPart foot1;
-//	private final ModelPart foot2;
-//	private final ModelPart foot3;
-//	private final ModelPart foot4;
+	public static final ModelLayerLocation MAMMOTH_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Reference.MODID,"mammoth_layer"),"main");
+	private final ModelPart body;
+	private final ModelPart head;
+	private final ModelPart foot1;
+	private final ModelPart foot2;
+	private final ModelPart foot3;
+	private final ModelPart foot4;
 
-	public MammothModel() {
+	public MammothModel(ModelPart part) {
+		this.body = part.getChild("body");
+		this.head = part.getChild("head");
+		this.foot1 = part.getChild("foot1");
+		this.foot2 = part.getChild("foot2");
+		this.foot3 = part.getChild("foot3");
+		this.foot4 = part.getChild("foot4");
 		/*texWidth = 64;
 		texHeight = 64;
 
@@ -113,7 +129,40 @@ public class MammothModel extends AgeableListModel<MammothEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(/*head, body, foot1, foot2, foot3, foot4*/);
+		return ImmutableList.of(head, body, foot1, foot2, foot3, foot4);
+	}
+
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition mesh = new MeshDefinition();
+		PartDefinition partDefinitionRoot = mesh.getRoot();
+
+		PartDefinition partDefinitionBody = partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 39).addBox(-6.0F, -8.0F, -9.0F, 12, 17, 8), PartPose.offset(0.0F, 5.0F, 0.0F));
+		partDefinitionBody.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(2, 41).addBox(-6.0F, -7.0F, -1.0F, 12, 16, 6)
+				.addBox(-6.0F, -6.0F, 5.0F, 12, 15, 6), PartPose.ZERO);
+
+		PartDefinition partDefinitionHead = partDefinitionRoot.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0 , 17).addBox(-4.0F, -3.0F, -8.0F, 8, 9, 8), PartPose.offsetAndRotation(0.0F, -1.0F, -7.0F,-0.3491F, 0.0F, 0.0F));
+		partDefinitionHead.addOrReplaceChild("head1", CubeListBuilder.create().texOffs(4, 1).addBox(-3.0F, 6.0F, -7.0F, 6, 8, 7), PartPose.ZERO);
+		partDefinitionHead.addOrReplaceChild("head2", CubeListBuilder.create().texOffs(32, 0)
+				.addBox(3.0F, 6.0F, -5.0F, 1, 11, 1)
+				.addBox(-4.0F, 6.0F, -5.0F, 1, 11, 1), PartPose.ZERO);
+		partDefinitionHead.addOrReplaceChild("ears2", CubeListBuilder.create().texOffs(10,7).addBox(-9.0F, -5.0F, 1.0F, 5, 6, 1), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F,0.0F, 0.2618F, 0.0F));
+		partDefinitionHead.addOrReplaceChild("ears", CubeListBuilder.create().texOffs(12,  7).addBox(4.0F, -5.0F, 1.0F, 5, 6, 1), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F,0.0F, -0.2618F, 0.0F));
+
+		partDefinitionHead.addOrReplaceChild("horns", CubeListBuilder.create().texOffs( 32, 0).addBox(-4.0F, 0.0F, -1.0F, 1, 7, 1)
+				.addBox(3.0F, 0.0F, -1.0F, 1, 7, 1), PartPose.offsetAndRotation(0.0F, 17.0F, -4.0F,-1.2217F, 0.0F, 0.0F));
+		partDefinitionHead.addOrReplaceChild("horns2", CubeListBuilder.create().texOffs( 32, 0).addBox(-4.0F, 0.0F, -1.0F, 1, 7, 1)
+				.addBox(3.0F, 0.0F, -1.0F, 1, 7, 1), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F,-0.8727F, 0.0F, 0.0F));
+
+		partDefinitionHead.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(10, 4).addBox(-2.0F, -0.342F, 0.0603F, 4, 5, 4), PartPose.offsetAndRotation(0.0F, 14.0F, -6.0F,0.3491F,0.0F, 0.0F));
+		partDefinitionHead.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(14, 5).addBox(-1.0F, -0.0405F, 0.7704F, 2, 5, 3), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F,0.3491F,0.0F, 0.0F));
+		partDefinitionHead.addOrReplaceChild("bone3", CubeListBuilder.create().texOffs(15, 6).addBox(-1.0F, -0.081F, 0.0408F, 2, 7, 2), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F,0.8727F,0.0F, 0.0F));
+
+		CubeListBuilder foot = CubeListBuilder.create().texOffs(48, 49).addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4);
+		partDefinitionRoot.addOrReplaceChild("foot1", foot, PartPose.offset(-3.0F, 13.0F, 8.0F));
+		partDefinitionRoot.addOrReplaceChild("foot2", foot, PartPose.offset(3.0F, 13.0F, 8.0F));
+		partDefinitionRoot.addOrReplaceChild("foot3", foot, PartPose.offset(3.0F, 13.0F, -6.0F));
+		partDefinitionRoot.addOrReplaceChild("foot4", foot, PartPose.offset(-3.0F, 13.0F, -6.0F));
+		return LayerDefinition.create(mesh, 64, 64);
 	}
 
 	@Override
@@ -128,11 +177,11 @@ public class MammothModel extends AgeableListModel<MammothEntity> {
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float netHeadYaw, float headPitch) {
-//		this.head.xRot = headPitch * ((float)Math.PI / 180F) - 0.7854F;
-//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-//		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
-//		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.head.xRot = headPitch * ((float)Math.PI / 180F) - 0.7854F;
+		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+		this.foot1.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.foot2.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.foot3.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.foot4.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 }

@@ -92,6 +92,11 @@ public class ModEventSubscriber {
         event.registerLayerDefinition(BoarModel.BOAR_LAYER, BoarModel::createBodyLayer);
         event.registerLayerDefinition(CoelacanthModel.COELACANTH_LAYER, CoelacanthModel::createBodyLayer);
         event.registerLayerDefinition(DeerModel.DEER_LAYER, DeerModel::createBodyLayer);
+        event.registerLayerDefinition(FowlModel.FOWL_LAYER, FowlModel::createBodyLayer);
+        event.registerLayerDefinition(MammothModel.MAMMOTH_LAYER, MammothModel::createBodyLayer);
+        event.registerLayerDefinition(MouflonModel.MOUFLON_LAYER, MouflonModel::createBodyLayer);
+        event.registerLayerDefinition(SaberToothTigerModel.SABERTOOTHTIGER_LAYER, SaberToothTigerModel::createBodyLayer);
+        event.registerLayerDefinition(WoollyRhinoModel.WOOLLYRHINO_LAYER, WoollyRhinoModel::createBodyLayer);
 
         event.registerLayerDefinition(MillstoneModel.MILLSTONE_LAYER, MillstoneModel::createBodyLayer);
         event.registerLayerDefinition(StoneChestModel.STONECHEST_LAYER, StoneChestModel::createBodyLayer);

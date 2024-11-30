@@ -13,19 +13,19 @@ import javax.annotation.Nonnull;
 import static com.yanny.age.stone.Reference.MODID;
 
 //@ObjectHolder(Reference.MODID)
-@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+//@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class SoundSubscriber {
-    public static final SoundEvent mammoth_ambient = null;
-    public static final SoundEvent mammoth_hit = null;
-    public static final SoundEvent mammoth_death = null;
-    public static final SoundEvent saber_tooth_tiger_ambient = null;
-    public static final SoundEvent saber_tooth_tiger_hit = null;
-    public static final SoundEvent saber_tooth_tiger_death = null;
-    public static final SoundEvent woolly_rhino_ambient = null;
-    public static final SoundEvent woolly_rhino_hit = null;
-    public static final SoundEvent woolly_rhino_death = null;
+    public static final SoundEvent mammoth_ambient = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_ambient"));
+    public static final SoundEvent mammoth_hit = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_hit"));
+    public static final SoundEvent mammoth_death = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_death"));
+    public static final SoundEvent saber_tooth_tiger_ambient = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_hit"));
+    public static final SoundEvent saber_tooth_tiger_hit = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_hit"));
+    public static final SoundEvent saber_tooth_tiger_death = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_death"));
+    public static final SoundEvent woolly_rhino_ambient = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_ambient"));
+    public static final SoundEvent woolly_rhino_hit = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_hit"));
+    public static final SoundEvent woolly_rhino_death = SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_death"));
 
-    @SubscribeEvent
+//    @SubscribeEvent
     public static void registerSounds(@Nonnull RegisterEvent event) {
         /*IForgeRegistry<SoundEvent> registry = event.getRegistry();
         registry.register(new SoundEvent(new ResourceLocation(Reference.MODID, "mammoth_ambient")).setRegistryName(MODID, "mammoth_ambient"));
@@ -39,15 +39,15 @@ public class SoundSubscriber {
         registry.register(new SoundEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_death")).setRegistryName(MODID, "woolly_rhino_death"));*/
         event.register(ForgeRegistries.Keys.SOUND_EVENTS,
                 helper -> {
-                    helper.register(new ResourceLocation(MODID, "mammoth_ambient"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_ambient")));
-                    helper.register(new ResourceLocation(MODID, "mammoth_hit"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_hit")));
-                    helper.register(new ResourceLocation(MODID, "mammoth_death"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "mammoth_death")));
-                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_ambient"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_hit")));
-                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_hit"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_hit")));
-                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_death"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "saber_tooth_tiger_death")));
-                    helper.register(new ResourceLocation(MODID, "woolly_rhino_ambient"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_ambient")));
-                    helper.register(new ResourceLocation(MODID, "woolly_rhino_hit"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_hit")));
-                    helper.register(new ResourceLocation(MODID, "woolly_rhino_death"), SoundEvent.createVariableRangeEvent(new ResourceLocation(Reference.MODID, "woolly_rhino_death")));
+                    helper.register(new ResourceLocation(MODID, "mammoth_ambient"), mammoth_ambient);
+                    helper.register(new ResourceLocation(MODID, "mammoth_hit"), mammoth_hit);
+                    helper.register(new ResourceLocation(MODID, "mammoth_death"), mammoth_death);
+                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_ambient"), saber_tooth_tiger_ambient);
+                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_hit"), saber_tooth_tiger_hit);
+                    helper.register(new ResourceLocation(MODID, "saber_tooth_tiger_death"), saber_tooth_tiger_death);
+                    helper.register(new ResourceLocation(MODID, "woolly_rhino_ambient"), woolly_rhino_ambient);
+                    helper.register(new ResourceLocation(MODID, "woolly_rhino_hit"), woolly_rhino_hit);
+                    helper.register(new ResourceLocation(MODID, "woolly_rhino_death"), woolly_rhino_death);
                 }
         );
     }

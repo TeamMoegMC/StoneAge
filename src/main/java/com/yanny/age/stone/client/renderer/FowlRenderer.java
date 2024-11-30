@@ -1,8 +1,10 @@
 package com.yanny.age.stone.client.renderer;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.client.models.DeerModel;
 import com.yanny.age.stone.client.models.FowlModel;
 import com.yanny.age.stone.entities.FowlEntity;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -17,9 +19,8 @@ import javax.annotation.Nonnull;
 @OnlyIn(Dist.CLIENT)
 public class FowlRenderer extends MobRenderer<FowlEntity, FowlModel> {
     private static final ResourceLocation FOWL_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/fowl.png");
-
     public FowlRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new FowlModel(), 0.3f);
+        super(context, new FowlModel(context.bakeLayer(FowlModel.FOWL_LAYER)), 0.3f);
     }
 
     @Nonnull

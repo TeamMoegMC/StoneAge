@@ -2,6 +2,7 @@ package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -56,8 +57,46 @@ public class ItemSubscriber {
     public static Item terror_bird_spawn_egg;
     public static Item coelacanth_spawn_egg;
 
+    public static Item fat;
+    public static Item cooked_fat;
+    public static Item venison;
+    public static Item cooked_venison;
+    public static Item fowl_meat;
+    public static Item cooked_fowl_meat;
+    public static Item auroch_meat;
+    public static Item cooked_auroch_meat;
+    public static Item mouflon_meat;
+    public static Item cooked_mouflon_meat;
+    public static Item boar_meat;
+    public static Item cooked_boar_meat;
+    public static Item mammoth_meat;
+    public static Item cooked_mammoth_meat;
+    public static Item rhino_meat;
+    public static Item cooked_rhino_meat;
+    public static Item tiger_meat;
+    public static Item cooked_tiger_meat;
+
 //    public static  Item stone_hammer;
 //    public static  Item stone_axe_head;
+    private static final FoodProperties FAT = (new FoodProperties.Builder()).nutrition(1).saturationMod(0.1f).meat().build();
+    private static final FoodProperties COOKED_FAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
+    private static final FoodProperties VENISON = (new FoodProperties.Builder()).nutrition(1).saturationMod(0.15f).meat().build();
+    private static final FoodProperties COOKED_VENISON = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
+    private static final FoodProperties FOWL_MEAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.2f).meat().build();
+    private static final FoodProperties COOKED_FOWL_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
+    private static final FoodProperties AUROCH_MEAT = (new FoodProperties.Builder()).nutrition(2).saturationMod(0.25f).meat().build();
+    private static final FoodProperties COOKED_AUROCH_MEAT = (new FoodProperties.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
+    private static final FoodProperties MOUFLON_MEAT = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.3f).meat().build();
+    private static final FoodProperties COOKED_MOUFLON_MEAT = (new FoodProperties.Builder()).nutrition(6).saturationMod(0.6f).meat().build();
+    private static final FoodProperties BOAR_MEAT = (new FoodProperties.Builder()).nutrition(3).saturationMod(0.35f).meat().build();
+    private static final FoodProperties COOKED_BOAR_MEAT = (new FoodProperties.Builder()).nutrition(7).saturationMod(0.7f).meat().build();
+    private static final FoodProperties MAMMOTH_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.4f).meat().build();
+    private static final FoodProperties COOKED_MAMMOTH_MEAT = (new FoodProperties.Builder()).nutrition(8).saturationMod(0.8f).meat().build();
+    private static final FoodProperties RHINO_MEAT = (new FoodProperties.Builder()).nutrition(4).saturationMod(0.45f).meat().build();
+    private static final FoodProperties COOKED_RHINO_MEAT = (new FoodProperties.Builder()).nutrition(9).saturationMod(0.9f).meat().build();
+    private static final FoodProperties TIGER_MEAT = (new FoodProperties.Builder()).nutrition(5).saturationMod(0.5f).meat().build();
+    private static final FoodProperties COOKED_TIGER_MEAT = (new FoodProperties.Builder()).nutrition(10).saturationMod(1.0f).meat().build();
+
     static {
         raw_hide = new Item(new Item.Properties());
         antler = new Item(new Item.Properties());
@@ -99,7 +138,27 @@ public class ItemSubscriber {
         woolly_rhino_spawn_egg = new SpawnEggItem(EntitySubscriber.woolly_rhino, 0xec6512, 0xc33905,new Item.Properties());
         terror_bird_spawn_egg = new SpawnEggItem(EntitySubscriber.terror_bird, 0x925512, 0x225515,new Item.Properties());
         coelacanth_spawn_egg = new SpawnEggItem(EntitySubscriber.coelacanth, 0xfa9987, 0x0977aff,new Item.Properties());
+
+        fat = new Item(new Item.Properties().stacksTo(64).food(FAT));
+        cooked_fat = new Item(new Item.Properties().stacksTo(64).food(COOKED_FAT));
+        venison = new Item(new Item.Properties().stacksTo(64).food(VENISON));
+        cooked_venison = new Item(new Item.Properties().stacksTo(64).food(COOKED_VENISON));
+        fowl_meat = new Item(new Item.Properties().stacksTo(64).food(FOWL_MEAT));
+        cooked_fowl_meat = new Item(new Item.Properties().stacksTo(64).food(COOKED_FOWL_MEAT));
+        auroch_meat= new Item(new Item.Properties().stacksTo(64).food(AUROCH_MEAT));
+        cooked_auroch_meat = new Item(new Item.Properties().stacksTo(64).food(COOKED_AUROCH_MEAT));
+        mouflon_meat = new Item(new Item.Properties().stacksTo(64).food(MOUFLON_MEAT));
+        cooked_mouflon_meat = new Item(new Item.Properties().stacksTo(64).food(BOAR_MEAT));
+        boar_meat = new Item(new Item.Properties().stacksTo(64).food(BOAR_MEAT));
+        cooked_boar_meat =  new Item(new Item.Properties().stacksTo(64).food(COOKED_BOAR_MEAT));
+        mammoth_meat = new Item(new Item.Properties().stacksTo(64).food(MAMMOTH_MEAT));
+        cooked_mammoth_meat = new Item(new Item.Properties().stacksTo(64).food(COOKED_MAMMOTH_MEAT));
+        rhino_meat= new Item(new Item.Properties().stacksTo(64).food(RHINO_MEAT));
+        cooked_rhino_meat = new Item(new Item.Properties().stacksTo(64).food(COOKED_RHINO_MEAT)) ;
+        tiger_meat = new Item(new Item.Properties().stacksTo(64).food(TIGER_MEAT));
+        cooked_tiger_meat =new Item(new Item.Properties().stacksTo(64).food(COOKED_TIGER_MEAT));
     }
+
 //    @SubscribeEvent
     public static void registerItems(RegisterEvent event) {
       /*  IForgeRegistry<Item> registry = event.getRegistry();
@@ -181,6 +240,25 @@ public class ItemSubscriber {
                     helper.register(new ResourceLocation(MODID, "millstone"), millstone);
                     helper.register(new ResourceLocation(MODID, "fishing_net"), fishing_net);
                     helper.register(new ResourceLocation(MODID, "thatch_block"), thatch_block);
+
+                    helper.register(new ResourceLocation(MODID, "fat"), fat);
+                    helper.register(new ResourceLocation(MODID, "cooked_fat"), cooked_fat);
+                    helper.register(new ResourceLocation(MODID, "venison"), venison);
+                    helper.register(new ResourceLocation(MODID, "cooked_venison"), cooked_venison);
+                    helper.register(new ResourceLocation(MODID, "fowl_meat"), fowl_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_fowl_meat"), cooked_fowl_meat);
+                    helper.register(new ResourceLocation(MODID, "auroch_meat"),auroch_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_auroch_meat"), cooked_auroch_meat);
+                    helper.register(new ResourceLocation(MODID, "mouflon_meat"), mouflon_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_mouflon_meat"), cooked_mouflon_meat);
+                    helper.register(new ResourceLocation(MODID, "boar_meat"), boar_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_boar_meat"), cooked_boar_meat);
+                    helper.register(new ResourceLocation(MODID, "mammoth_meat"), mammoth_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_mammoth_meat"), cooked_mammoth_meat);
+                    helper.register(new ResourceLocation(MODID, "rhino_meat"), rhino_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_rhino_meat"), cooked_rhino_meat);
+                    helper.register(new ResourceLocation(MODID, "tiger_meat"), tiger_meat);
+                    helper.register(new ResourceLocation(MODID, "cooked_tiger_meat"),cooked_tiger_meat);
                 });
     }
 }

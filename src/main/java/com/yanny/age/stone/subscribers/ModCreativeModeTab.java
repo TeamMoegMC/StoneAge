@@ -44,6 +44,27 @@ public class ModCreativeModeTab {
                  output.accept(ItemSubscriber.fishing_net);
                  output.accept(ItemSubscriber.thatch_block);
 
+                output.accept(ItemSubscriber.fat);
+                output.accept(ItemSubscriber.cooked_fat);
+                output.accept(ItemSubscriber.venison);
+                output.accept(ItemSubscriber.cooked_venison);
+                output.accept(ItemSubscriber.fowl_meat);
+                output.accept(ItemSubscriber.cooked_fowl_meat);
+                output.accept(ItemSubscriber.auroch_meat);
+                output.accept(ItemSubscriber.cooked_auroch_meat);
+                output.accept(ItemSubscriber.mouflon_meat);
+                output.accept(ItemSubscriber.cooked_mouflon_meat);
+                output.accept(ItemSubscriber.boar_meat);
+                output.accept(ItemSubscriber.cooked_boar_meat);
+                output.accept(ItemSubscriber.mammoth_meat);
+                output.accept(ItemSubscriber.cooked_mammoth_meat);
+                output.accept(ItemSubscriber.rhino_meat);
+                output.accept(ItemSubscriber.cooked_rhino_meat);
+                output.accept(ItemSubscriber.tiger_meat);
+                output.accept(ItemSubscriber.cooked_tiger_meat);
+
+
+
                  output.accept(ItemSubscriber.deer_spawn_egg);
                  output.accept(ItemSubscriber.boar_spawn_egg);
                  output.accept(ItemSubscriber.auroch_spawn_egg);

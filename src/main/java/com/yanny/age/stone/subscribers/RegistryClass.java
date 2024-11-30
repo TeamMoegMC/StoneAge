@@ -20,7 +20,6 @@ public class RegistryClass {
     @SubscribeEvent
     public static void registerItems(RegisterEvent event) {
         ItemSubscriber.registerItems(event);
-        FoodSubscriber.registerFoodItems(event);
     }
 
     @SubscribeEvent
@@ -41,5 +40,10 @@ public class RegistryClass {
     @SubscribeEvent
     public static void registerEntity(RegisterEvent event) {
         EntitySubscriber.registerEntities(event);
+    }
+
+    @SubscribeEvent
+    public static void registerSounds(RegisterEvent event) {
+        SoundSubscriber.registerSounds(event);
     }
 }
