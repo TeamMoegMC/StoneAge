@@ -179,10 +179,10 @@ public class DeerModel extends AgeableListModel<DeerEntity> {
 		partDefinitionfoot1.addOrReplaceChild("footH1_r1", CubeListBuilder.create().texOffs(23, 44).addBox(-2.0F, -4.0F, -0.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(0.5F, 3.0F, -1.0F,-0.2182F, 0.0F, 0.0F));
 
 		PartDefinition partDefinitionfoot2 = partDefinitionRoot.addOrReplaceChild("foot2", CubeListBuilder.create().texOffs(56, 49).addBox(-0.5F, 5.0F, 2.0F, 2.0F, 6.0F, 2.0F), PartPose.offset(4.0F, 13.0F, 6.0F));
-		partDefinitionfoot2.addOrReplaceChild("footH2_r1", CubeListBuilder.create().texOffs(23, 44).addBox(-0.5F, -5.5F, -1.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(-0.5F, 4.5F, 2.5F,0.2618F, 0.0F, 0.0F));
+		partDefinitionfoot2.addOrReplaceChild("footH2_r1", CubeListBuilder.create().texOffs(23, 54).addBox(-0.5F, -5.5F, -1.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(-0.5F, 4.5F, 2.5F,0.2618F, 0.0F, 0.0F));
 
 		PartDefinition partDefinitionfoot3 = partDefinitionRoot.addOrReplaceChild("foot3", CubeListBuilder.create().texOffs(56, 49).addBox(-1.5F, 5.0F, 2.0F, 2.0F, 6.0F, 2.0F), PartPose.offset(-4.0F, 13.0F, 6.0F));
-		partDefinitionfoot3.addOrReplaceChild("footH3_r1", CubeListBuilder.create().texOffs(23, 44).addBox(-2.5F, -5.5F, -1.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(0.5F, 4.5F, 2.5F,0.2618F, 0.0F, 0.0F));
+		partDefinitionfoot3.addOrReplaceChild("footH3_r1", CubeListBuilder.create().texOffs(23, 54).addBox(-2.5F, -5.5F, -1.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(0.5F, 4.5F, 2.5F,0.2618F, 0.0F, 0.0F));
 
 		PartDefinition partDefinitionfoot4 = partDefinitionRoot.addOrReplaceChild("foot4", CubeListBuilder.create().texOffs(56, 49).addBox(-1.0F, 6.0F, -1.5F, 2.0F, 6.0F, 2.0F), PartPose.offset(-4.0F, 12.0F, -6.0F));
 		partDefinitionfoot4.addOrReplaceChild("footH4_r1", CubeListBuilder.create().texOffs(23, 44).addBox(-1.0F, -4.0F, -0.5F, 3.0F, 7.0F, 3.0F), PartPose.offsetAndRotation(-0.5F, 3.0F, -1.0F,-0.2182F, 0.0F, 0.0F));

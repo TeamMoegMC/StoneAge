@@ -104,4 +104,9 @@ public class TreeStumpRecipe implements Recipe<Container> {
     public int getChopTimes() {
         return chopTimes;
     }
+    @Override
+    public boolean isSpecial()
+    {
+        return true;
+    }
 }

@@ -179,4 +179,9 @@ public class FlintWorkbenchRecipe implements Recipe<Container> {
     public boolean testTool(ItemStack itemStack) {
         return Arrays.stream(tool.getItems()).anyMatch(item -> item.getItem() == itemStack.getItem());
     }
+    @Override
+    public boolean isSpecial()
+    {
+        return true;
+    }
 }

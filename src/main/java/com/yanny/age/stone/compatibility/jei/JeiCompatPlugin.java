@@ -1,10 +1,12 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.blocks.MillstoneGui;
 import com.yanny.age.stone.recipes.*;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.registration.IGuiHandlerRegistration;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
@@ -59,5 +61,9 @@ public class JeiCompatPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.flint_workbench), FlintWorkbenchRecipeCategory.FLINETWORKBENCH_RECIPE_TYPE);
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.tree_stump), TreeStumpRecipeCategory.TREESTUMP_RECIPE_TYPE);
         registration.addRecipeCatalyst(new ItemStack(BlockSubscriber.millstone), MillstoneRecipeCategory.MILLSTONE_RECIPE_TYPE);
+    }
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        registration.addRecipeClickArea(MillstoneGui.class,81,36,16,16,MillstoneRecipeCategory.MILLSTONE_RECIPE_TYPE);
     }
 }

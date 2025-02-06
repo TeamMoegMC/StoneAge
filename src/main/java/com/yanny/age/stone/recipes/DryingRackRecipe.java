@@ -95,4 +95,9 @@ public class DryingRackRecipe implements Recipe<Container> {
     public int getDryingTime() {
         return dryingTime;
     }
+    @Override
+    public boolean isSpecial()
+    {
+        return true;
+    }
 }

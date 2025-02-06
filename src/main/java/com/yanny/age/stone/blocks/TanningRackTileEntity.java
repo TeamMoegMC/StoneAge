@@ -43,10 +43,12 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
     private final RecipeWrapper inventoryWrapper = new RecipeWrapper(nonSidedItemHandler);
     private final IItemHandlerModifiable tmpItemHandler = new ItemStackHandler(1);
     private final RecipeWrapper tmpItemHandlerWrapper = new RecipeWrapper(tmpItemHandler);
+    public int count;
 
     public TanningRackTileEntity(BlockPos pos, BlockState state) {
         //noinspection ConstantConditions
         super(TileEntitySubscriber.tanning_rack,pos,state);
+        count = 0;
     }
 
     @Nonnull
@@ -130,10 +132,11 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
 
         if (recipe != null && recipe.getTool().test(itemMainhand) && !stacks.get(pos).isEmpty()) {
             itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-
-            if (random.nextDouble() < Config.tanningRackFinishChance) {
+            count += 1;
+            if (random.nextDouble() < Config.tanningRackFinishChance || count >9) {
                 stacks.set(pos + ITEMS, recipe.assemble(null,level.registryAccess()));
                 stacks.set(pos, ItemStack.EMPTY);
+                count = 0;
                 level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
             }
 

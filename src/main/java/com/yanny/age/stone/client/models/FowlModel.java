@@ -97,25 +97,74 @@ public class FowlModel extends AgeableListModel<FowlEntity> {
 		return ImmutableList.of(head, body, foot1, foot2, wing1, wing2);
 	}
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition partDefinitionRoot = mesh.getRoot();
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition root = meshdefinition.getRoot();
 
-		PartDefinition partDefinition1 = partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(36, 0).addBox(-3.0F, -3.0F, -4.0F, 6, 6, 8), PartPose.offset(0.0F, 17.0F, 0.0F));
-		partDefinition1.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(52, 14).addBox(-1.0F, -5.0F, 3.0F, 2, 5, 4), PartPose.ZERO);
+		// body
+		PartDefinition body = root.addOrReplaceChild("body",
+				CubeListBuilder.create()
+						.texOffs(36, 0)
+						.addBox(-3.0F, -3.0F, -4.0F, 6, 6, 8),
+				PartPose.offset(0.0F, 17.0F, 0.0F));
 
-		PartDefinition partDefinition2 = partDefinitionRoot.addOrReplaceChild("head", CubeListBuilder.create().texOffs(22, 0).addBox(-2.0F, -5.0F, -2.0F, 4, 7, 3), PartPose.offset(0.0F, 14.0F, -4.0F));
-		partDefinition2.addOrReplaceChild("head1", CubeListBuilder.create().texOffs(36, 5).addBox(-1.0F, -3.0F, -4.0F, 2, 1, 2), PartPose.ZERO);
+		body.addOrReplaceChild("body1",
+				CubeListBuilder.create()
+						.texOffs(52, 14)
+						.addBox(-1.0F, -5.0F, 3.0F, 2, 5, 4),
+				PartPose.ZERO);
 
-		CubeListBuilder foot = CubeListBuilder.create().texOffs(60, 0).addBox(-1.0F, -1.0F, 0.0F, 1, 5, 1);
-		PartDefinition partDefinitionfoot1= partDefinitionRoot.addOrReplaceChild("foot1", foot, PartPose.offset(-1.0F, 20.0F, 0.0F));
-		partDefinitionfoot1.addOrReplaceChild("foot11", CubeListBuilder.create().texOffs(24, 11).addBox(-2.0F, 4.0F, -2.0F, 3, 0, 3), PartPose.ZERO);
+		// head
+		PartDefinition head = root.addOrReplaceChild("head",
+				CubeListBuilder.create()
+						.texOffs(22, 0)
+						.addBox(-2.0F, -5.0F, -2.0F, 4, 7, 3),
+				PartPose.offset(0.0F, 14.0F, -4.0F));
 
-		PartDefinition partDefinitionfoot2= partDefinitionRoot.addOrReplaceChild("foot2", foot, PartPose.offset(1.0F, 20.0F, 0.0F));
-		partDefinitionfoot2.addOrReplaceChild("foot21", CubeListBuilder.create().texOffs(24, 11).addBox(-2.0F, 4.0F, -2.0F, 3, 0, 3), PartPose.ZERO);
+		head.addOrReplaceChild("head1",
+				CubeListBuilder.create()
+						.texOffs(36, 5)
+						.addBox(-1.0F, -3.0F, -4.0F, 2, 1, 2),
+				PartPose.ZERO);
 
-		partDefinitionRoot.addOrReplaceChild("wing1", CubeListBuilder.create().texOffs(0, 0).addBox(0.0F, 0.0F, -3.0F, 1, 4, 5), PartPose.offset(3.0F, 15.0F, 0.0F));
-		partDefinitionRoot.addOrReplaceChild("wing2", CubeListBuilder.create().texOffs(0, 0).addBox(-1.0F, 0.0F, -3.0F, 1, 4, 5), PartPose.offset(-3.0F, 18.0F, -6.0F));
-		return LayerDefinition.create(mesh, 64, 64);
+		// feet
+		PartDefinition foot1 = root.addOrReplaceChild("foot1",
+				CubeListBuilder.create()
+						.texOffs(60, 0)
+						.addBox(-1.0F, -1.0F, 0.0F, 1, 5, 1),
+				PartPose.offset(-1.0F, 20.0F, 0.0F));
+
+		foot1.addOrReplaceChild("foot11",
+				CubeListBuilder.create()
+						.texOffs(24, 11)
+						.addBox(-2.0F, 4.0F, -2.0F, 3, 0, 3),
+				PartPose.ZERO);
+
+		PartDefinition foot2 = root.addOrReplaceChild("foot2",
+				CubeListBuilder.create()
+						.texOffs(60, 0)
+						.addBox(0.0F, -1.0F, 0.0F, 1, 5, 1),
+				PartPose.offset(1.0F, 20.0F, 0.0F));
+
+		foot2.addOrReplaceChild("foot21",
+				CubeListBuilder.create()
+						.texOffs(24, 11)
+						.addBox(-1.0F, 4.0F, -2.0F, 3, 0, 3),
+				PartPose.ZERO);
+
+		// wing
+		root.addOrReplaceChild("wing1",
+				CubeListBuilder.create()
+						.texOffs(0, 0)
+						.addBox(0.0F, 0.0F, -3.0F, 1, 4, 5),
+				PartPose.offset(3.0F, 15.0F, 0.0F));
+
+		root.addOrReplaceChild("wing2",
+				CubeListBuilder.create()
+						.texOffs(0, 0)
+						.addBox(-1.0F, 0.0F, -3.0F, 1, 4, 5),
+				PartPose.offset(-3.0F, 15.0F, 0.0F));
+
+		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	public void setRotationAngles(float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

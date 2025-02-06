@@ -113,4 +113,9 @@ public class MillstoneRecipe implements Recipe<Container> {
     public int getActivateCount() {
         return activateCount;
     }
+    @Override
+    public boolean isSpecial()
+    {
+        return true;
+    }
 }

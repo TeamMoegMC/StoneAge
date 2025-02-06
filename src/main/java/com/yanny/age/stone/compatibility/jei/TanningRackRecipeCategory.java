@@ -96,6 +96,6 @@ public class TanningRackRecipeCategory implements IRecipeCategory<TanningRackRec
 
 //        recipeLayout.getItemStacks().init(3, false, 51, 29);
 //        recipeLayout.getItemStacks().set(3, ingredients.getInputs(VanillaTypes.ITEM).get(1));
-        builder.addSlot(RecipeIngredientRole.INPUT, 52, 30).addIngredients(tanningRackRecipe.getIngredients().get(1));
+        builder.addSlot(RecipeIngredientRole.INPUT, 52, 30).addIngredients(tanningRackRecipe.getTool());
     }
 }

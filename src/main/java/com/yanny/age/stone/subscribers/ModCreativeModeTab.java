@@ -13,7 +13,7 @@ public class ModCreativeModeTab {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB =DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Reference.MODID);
 
     public static final RegistryObject<CreativeModeTab> STONE_AGE = CREATIVE_MODE_TAB.register(Reference.MODID, () -> CreativeModeTab.builder()
-            .title(Component.translatable("stone_age"))
+            .title(Component.translatable("itemGroup.stone_age"))
             .icon(() -> new ItemStack(ItemSubscriber.flint_knife))
             .displayItems((params, output) -> {
                 output.accept(ItemSubscriber.raw_hide);

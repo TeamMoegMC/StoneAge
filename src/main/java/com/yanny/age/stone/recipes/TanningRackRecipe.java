@@ -96,4 +96,9 @@ public class TanningRackRecipe implements Recipe<Container> {
     public Ingredient getTool() {
         return tool;
     }
+    @Override
+    public boolean isSpecial()
+    {
+        return true;
+    }
 }

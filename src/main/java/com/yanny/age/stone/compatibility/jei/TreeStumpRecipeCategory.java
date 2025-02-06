@@ -94,7 +94,7 @@ public class TreeStumpRecipeCategory implements IRecipeCategory<TreeStumpRecipe>
 
 //        recipeLayout.getItemStacks().init(2, false, 51, 13);
 //        recipeLayout.getItemStacks().set(2, ingredients.getInputs(VanillaTypes.ITEM).get(1));
-        builder.addSlot(RecipeIngredientRole.INPUT, 52, 14).addIngredients(treeStumpRecipe.getIngredients().get(1));
+        builder.addSlot(RecipeIngredientRole.INPUT, 52, 14).addIngredients(treeStumpRecipe.getTools().get(0));
 
 //        recipeLayout.getItemStacks().init(3, false, 51, 29);
 //        recipeLayout.getItemStacks().set(3, Collections.singletonList(new ItemStack(BlockSubscriber.tree_stump)));

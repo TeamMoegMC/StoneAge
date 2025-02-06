@@ -133,36 +133,116 @@ public class MammothModel extends AgeableListModel<MammothEntity> {
 	}
 
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition partDefinitionRoot = mesh.getRoot();
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition root = meshdefinition.getRoot();
 
-		PartDefinition partDefinitionBody = partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 39).addBox(-6.0F, -8.0F, -9.0F, 12, 17, 8), PartPose.offset(0.0F, 5.0F, 0.0F));
-		partDefinitionBody.addOrReplaceChild("body1", CubeListBuilder.create().texOffs(2, 41).addBox(-6.0F, -7.0F, -1.0F, 12, 16, 6)
-				.addBox(-6.0F, -6.0F, 5.0F, 12, 15, 6), PartPose.ZERO);
+		// body
+		PartDefinition body = root.addOrReplaceChild("body",
+				CubeListBuilder.create()
+						.texOffs(0, 39)
+						.addBox(-6.0F, -8.0F, -9.0F, 12, 17, 8),
+				PartPose.offset(0.0F, 5.0F, 0.0F));
 
-		PartDefinition partDefinitionHead = partDefinitionRoot.addOrReplaceChild("head", CubeListBuilder.create().texOffs(0 , 17).addBox(-4.0F, -3.0F, -8.0F, 8, 9, 8), PartPose.offsetAndRotation(0.0F, -1.0F, -7.0F,-0.3491F, 0.0F, 0.0F));
-		partDefinitionHead.addOrReplaceChild("head1", CubeListBuilder.create().texOffs(4, 1).addBox(-3.0F, 6.0F, -7.0F, 6, 8, 7), PartPose.ZERO);
-		partDefinitionHead.addOrReplaceChild("head2", CubeListBuilder.create().texOffs(32, 0)
-				.addBox(3.0F, 6.0F, -5.0F, 1, 11, 1)
-				.addBox(-4.0F, 6.0F, -5.0F, 1, 11, 1), PartPose.ZERO);
-		partDefinitionHead.addOrReplaceChild("ears2", CubeListBuilder.create().texOffs(10,7).addBox(-9.0F, -5.0F, 1.0F, 5, 6, 1), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F,0.0F, 0.2618F, 0.0F));
-		partDefinitionHead.addOrReplaceChild("ears", CubeListBuilder.create().texOffs(12,  7).addBox(4.0F, -5.0F, 1.0F, 5, 6, 1), PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F,0.0F, -0.2618F, 0.0F));
+		body.addOrReplaceChild("body1",
+				CubeListBuilder.create()
+						.texOffs(2, 41)
+						.addBox(-6.0F, -7.0F, -1.0F, 12, 16, 6)
+						.addBox(-6.0F, -6.0F, 5.0F, 12, 15, 6),
+				PartPose.ZERO);
 
-		partDefinitionHead.addOrReplaceChild("horns", CubeListBuilder.create().texOffs( 32, 0).addBox(-4.0F, 0.0F, -1.0F, 1, 7, 1)
-				.addBox(3.0F, 0.0F, -1.0F, 1, 7, 1), PartPose.offsetAndRotation(0.0F, 17.0F, -4.0F,-1.2217F, 0.0F, 0.0F));
-		partDefinitionHead.addOrReplaceChild("horns2", CubeListBuilder.create().texOffs( 32, 0).addBox(-4.0F, 0.0F, -1.0F, 1, 7, 1)
-				.addBox(3.0F, 0.0F, -1.0F, 1, 7, 1), PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F,-0.8727F, 0.0F, 0.0F));
+		// head
+		PartDefinition head = root.addOrReplaceChild("head",
+				CubeListBuilder.create()
+						.texOffs(0, 17)
+						.addBox(-4.0F, -3.0F, -8.0F, 8, 9, 8),
+				PartPose.offsetAndRotation(0.0F, -1.0F, -7.0F, -0.3491F, 0.0F, 0.0F));
 
-		partDefinitionHead.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(10, 4).addBox(-2.0F, -0.342F, 0.0603F, 4, 5, 4), PartPose.offsetAndRotation(0.0F, 14.0F, -6.0F,0.3491F,0.0F, 0.0F));
-		partDefinitionHead.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(14, 5).addBox(-1.0F, -0.0405F, 0.7704F, 2, 5, 3), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F,0.3491F,0.0F, 0.0F));
-		partDefinitionHead.addOrReplaceChild("bone3", CubeListBuilder.create().texOffs(15, 6).addBox(-1.0F, -0.081F, 0.0408F, 2, 7, 2), PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F,0.8727F,0.0F, 0.0F));
+		head.addOrReplaceChild("head1",
+				CubeListBuilder.create()
+						.texOffs(4, 1)
+						.addBox(-3.0F, 6.0F, -7.0F, 6, 8, 7),
+				PartPose.ZERO);
 
-		CubeListBuilder foot = CubeListBuilder.create().texOffs(48, 49).addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4);
-		partDefinitionRoot.addOrReplaceChild("foot1", foot, PartPose.offset(-3.0F, 13.0F, 8.0F));
-		partDefinitionRoot.addOrReplaceChild("foot2", foot, PartPose.offset(3.0F, 13.0F, 8.0F));
-		partDefinitionRoot.addOrReplaceChild("foot3", foot, PartPose.offset(3.0F, 13.0F, -6.0F));
-		partDefinitionRoot.addOrReplaceChild("foot4", foot, PartPose.offset(-3.0F, 13.0F, -6.0F));
-		return LayerDefinition.create(mesh, 64, 64);
+		head.addOrReplaceChild("head2",
+				CubeListBuilder.create()
+						.texOffs(32, 0)
+						.addBox(3.0F, 6.0F, -5.0F, 1, 11, 1)
+						.addBox(-4.0F, 6.0F, -5.0F, 1, 11, 1),
+				PartPose.ZERO);
+
+		// ear
+		head.addOrReplaceChild("ears2",
+				CubeListBuilder.create()
+						.texOffs(10, 7)
+						.addBox(-9.0F, -5.0F, 1.0F, 5, 6, 1),
+				PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F, 0.0F, 0.2618F, 0.0F));
+
+		head.addOrReplaceChild("ears",
+				CubeListBuilder.create()
+						.texOffs(12, 7)
+						.addBox(4.0F, -5.0F, 1.0F, 5, 6, 1),
+				PartPose.offsetAndRotation(0.0F, 2.0F, -6.0F, 0.0F, -0.2618F, 0.0F));
+
+		// horn
+		PartDefinition horns = head.addOrReplaceChild("horns",
+				CubeListBuilder.create()
+						.texOffs(32, 0)
+						.addBox(-4.0F, 0.0F, -1.0F, 1, 7, 1)
+						.addBox(3.0F, 0.0F, -1.0F, 1, 7, 1),
+				PartPose.offsetAndRotation(0.0F, 17.0F, -4.0F, -1.2217F, 0.0F, 0.0F));
+
+		horns.addOrReplaceChild("horns2",
+				CubeListBuilder.create()
+						.texOffs(32, 0)
+						.addBox(-4.0F, 0.0F, -1.0F, 1, 4, 1)
+						.addBox(3.0F, 0.0F, -1.0F, 1, 4, 1),
+				PartPose.offsetAndRotation(0.0F, 7.0F, 0.0F, -0.8727F, 0.0F, 0.0F));
+
+		// bone
+		PartDefinition bone = head.addOrReplaceChild("bone",
+				CubeListBuilder.create()
+						.texOffs(10, 4)
+						.addBox(-2.0F, -0.342F, 0.0603F, 4, 5, 4),
+				PartPose.offsetAndRotation(0.0F, 14.0F, -6.0F, 0.3491F, 0.0F, 0.0F));
+
+		PartDefinition bone2 = bone.addOrReplaceChild("bone2",
+				CubeListBuilder.create()
+						.texOffs(14, 5)
+						.addBox(-1.0F, -0.0405F, 0.7704F, 2, 5, 3),
+				PartPose.offsetAndRotation(0.0F, 5.0F, 0.0F, 0.3491F, 0.0F, 0.0F));
+
+		bone2.addOrReplaceChild("bone3",
+				CubeListBuilder.create()
+						.texOffs(15, 6)
+						.addBox(-1.0F, -0.081F, 0.0408F, 2, 7, 2),
+				PartPose.offsetAndRotation(0.0F, 5.0F, 1.0F, 0.8727F, 0.0F, 0.0F));
+
+		// feet
+		root.addOrReplaceChild("foot1",
+				CubeListBuilder.create()
+						.texOffs(48, 49)
+						.addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4),
+				PartPose.offset(-3.0F, 13.0F, 8.0F));
+
+		root.addOrReplaceChild("foot2",
+				CubeListBuilder.create()
+						.texOffs(48, 49)
+						.addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4),
+				PartPose.offset(3.0F, 13.0F, 8.0F));
+
+		root.addOrReplaceChild("foot3",
+				CubeListBuilder.create()
+						.texOffs(48, 49)
+						.addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4),
+				PartPose.offset(3.0F, 13.0F, -6.0F));
+
+		root.addOrReplaceChild("foot4",
+				CubeListBuilder.create()
+						.texOffs(48, 49)
+						.addBox(-2.0F, 0.0F, -2.0F, 4, 11, 4),
+				PartPose.offset(-3.0F, 13.0F, -6.0F));
+
+		return LayerDefinition.create(meshdefinition, 64, 64);
 	}
 
 	@Override

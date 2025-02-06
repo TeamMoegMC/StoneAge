@@ -17,7 +17,7 @@ public class TerrorBirdRenderer extends MobRenderer<TerrorBirdEntity, TerrorBird
     private static final ResourceLocation TERROR_BIRD_TEXTURE = new ResourceLocation(Reference.MODID, "textures/entity/terror_bird.png");
 
     public TerrorBirdRenderer(@Nonnull EntityRendererProvider.Context context) {
-        super(context, new TerrorBirdModel(), 0.3f);
+        super(context, new TerrorBirdModel(context.bakeLayer(TerrorBirdModel.TERRORBIRD_LAYER)), 0.3f);
     }
 
     @Nonnull

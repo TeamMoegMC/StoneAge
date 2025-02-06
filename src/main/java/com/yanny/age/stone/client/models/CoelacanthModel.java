@@ -60,24 +60,46 @@ public class CoelacanthModel extends ListModel<CoelacanthEntity> {
 	public Iterable<ModelPart> parts() {
 		return ImmutableList.of(this.body, this.head);
 	}
+
 	public static LayerDefinition createBodyLayer() {
-		MeshDefinition mesh = new MeshDefinition();
-		PartDefinition partDefinitionRoot = mesh.getRoot();
+		MeshDefinition meshdefinition = new MeshDefinition();
+		PartDefinition partdefinition = meshdefinition.getRoot();
 
-		PartDefinition partDefinition1 = partDefinitionRoot.addOrReplaceChild("body", CubeListBuilder.create().texOffs(0, 22).addBox(-5.0F, -4.0F, -8.0F, 10, 8, 16)
-				.texOffs(20, 25).addBox(-0.5F, -3.75F, 1.0F, 2.0F, 3.0F, 4.0F)
-				.texOffs(12, 21).addBox(0.0F, -3.75F, 5.0F, 1.0F, 3.0F, 4.0F), PartPose.offset(0.0F, 24.0F, 0.0F));
-		partDefinition1.addOrReplaceChild("bone", CubeListBuilder.create().texOffs(0, 6)
-				.addBox(0.0F, -0.9957F, -0.4347F, 0.0F, 2.0F, 3.0F)
-				.addBox(0.0F, 0.9493F, 4.1782F, 0.0F, 2.0F, 3.0F)
-				.texOffs(21, 0).addBox(0.0F, 3.1472F, 9.3933F, 0.0F, 2.0F, 3.0F), PartPose.offsetAndRotation(0.0F, 2.0F, -7.0F,0.3491F,0F,0F));
-		partDefinition1.addOrReplaceChild("bone2", CubeListBuilder.create().texOffs(0, 6)
-				.addBox(0.5F, -4.2457F, -2.4347F, 0.0F, 2.0F, 3.0F)
-				.texOffs(21, 0).addBox(0.5F, -7.4983F, 3.3438F, 0.0F, 3.0F, 3.0F), PartPose.offsetAndRotation(0.0F, 2.25F, 3.0F,-0.3491F, 0.0F, 0.0F));
+		PartDefinition body = partdefinition.addOrReplaceChild("body",
+				CubeListBuilder.create()
+						.texOffs(0, 22)
+						.addBox(-1.0F, -4.0F, -5.0F, 3.0F, 4.0F, 6.0F)
+						.texOffs(20, 25)
+						.addBox(-0.5F, -3.75F, 1.0F, 2.0F, 3.0F, 4.0F)
+						.texOffs(12, 21)
+						.addBox(0.0F, -3.75F, 5.0F, 1.0F, 3.0F, 4.0F),
+				PartPose.offset(0.0F, 24.0F, 0.0F));
 
-		partDefinitionRoot.addOrReplaceChild("head", CubeListBuilder.create().texOffs(22, 19).addBox(-0.5F, -1.8232F, -1.1768F, 2.0F, 3.0F, 3.0F), PartPose.offsetAndRotation(0.0F, 22.5F, -5.0F,0.7854F, 0.0F, 0.0F));
+		body.addOrReplaceChild("bone",
+				CubeListBuilder.create()
+						.texOffs(0, 6)
+						.addBox(0.0F, -0.9957F, -0.4347F, 0.0F, 2.0F, 3.0F)
+						.texOffs(0, 6)
+						.addBox(0.0F, 0.9493F, 4.1782F, 0.0F, 2.0F, 3.0F)
+						.texOffs(21, 0)
+						.addBox(0.0F, 3.1472F, 9.3933F, 0.0F, 2.0F, 3.0F),
+				PartPose.offsetAndRotation(0.5F, -3.25F, -2.0F, 0.3491F, 0.0F, 0.0F));
 
-		return LayerDefinition.create(mesh, 32, 32);
+		body.addOrReplaceChild("bone2",
+				CubeListBuilder.create()
+						.texOffs(0, 6)
+						.addBox(0.5F, -4.2457F, -2.4347F, 0.0F, 2.0F, 3.0F)
+						.texOffs(21, 0)
+						.addBox(0.5F, -7.4983F, 3.3438F, 0.0F, 3.0F, 3.0F),
+				PartPose.offsetAndRotation(0.0F, 2.25F, 3.0F, -0.3491F, 0.0F, 0.0F));
+
+		partdefinition.addOrReplaceChild("head",
+				CubeListBuilder.create()
+						.texOffs(22, 19)
+						.addBox(-0.5F, -1.8232F, -1.1768F, 2.0F, 3.0F, 3.0F),
+				PartPose.offsetAndRotation(0.0F, 22.5F, -5.0F, 0.7854F, 0.0F, 0.0F));
+
+		return LayerDefinition.create(meshdefinition, 32, 32);
 	}
 	@Override
 	public void setupAnim(CoelacanthEntity entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {

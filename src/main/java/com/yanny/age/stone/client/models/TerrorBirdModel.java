@@ -3,20 +3,35 @@ package com.yanny.age.stone.client.models;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.yanny.age.stone.Reference;
 import com.yanny.age.stone.entities.TerrorBirdEntity;
 import net.minecraft.client.model.AgeableListModel;
+import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.model.geom.PartPose;
+import net.minecraft.client.model.geom.builders.CubeListBuilder;
+import net.minecraft.client.model.geom.builders.LayerDefinition;
+import net.minecraft.client.model.geom.builders.MeshDefinition;
+import net.minecraft.client.model.geom.builders.PartDefinition;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
 
 public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
-//	private final ModelPart rfeet;
-//	private final ModelPart body;
-//	private final ModelPart head;
-//	private final ModelPart lfeet;
+	public static final ModelLayerLocation TERRORBIRD_LAYER = new ModelLayerLocation(
+			new ResourceLocation(Reference.MODID,"terrorbird_layer"),"main");
+	private final ModelPart rfeet;
+	private final ModelPart body;
+	private final ModelPart head;
+	private final ModelPart lfeet;
 
-	public TerrorBirdModel() {
+	public TerrorBirdModel(ModelPart root) {
+		this.body = root.getChild("body");
+		this.rfeet = root.getChild("rfeet");
+		this.head = root.getChild("head");
+		this.lfeet = root.getChild("lfeet");
+
 		/*texWidth = 64;
 		texHeight = 64;
 
@@ -72,13 +87,87 @@ public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
 		setRotationAngle(knee2, -0.1745F, 0.0F, 0.0F);
 		knee2.texOffs(0, 39).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 4.0F, 1.0F, 0.0F, false);*/
 	}
+	public static LayerDefinition createBodyLayer() {
+		MeshDefinition mesh = new MeshDefinition();
+		PartDefinition parts = mesh.getRoot();
 
+		// (rfeet)
+		PartDefinition rfeet = parts.addOrReplaceChild("rfeet",
+				CubeListBuilder.create()
+						.texOffs(23, 54).addBox(0.0F, 6.0F, -3.0F, 2.0F, 1.0F, 3.0F)
+						.texOffs(0, 53).addBox(0.0F, -1.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+				PartPose.offset(1.0F, 17.0F, 1.0F)
+		);
+
+		// rknee
+		rfeet.addOrReplaceChild("knee",
+				CubeListBuilder.create()
+						.texOffs(0, 39).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 4.0F, 1.0F),
+				PartPose.offsetAndRotation(1.0F, 4.25F, -0.5F, -0.1745F, 0.0F, 0.0F)
+		);
+
+		// body
+		PartDefinition body = parts.addOrReplaceChild("body",
+				CubeListBuilder.create()
+						.texOffs(0, 51).addBox(-3.5F, -7.25F, -4.5F, 7.0F, 5.0F, 8.0F),
+				PartPose.offset(0.0F, 19.25F, -0.5F)
+		);
+
+		// bone
+		body.addOrReplaceChild("bone",
+				CubeListBuilder.create()
+						.texOffs(30, 56).addBox(-2.5F, -2.0F, -2.5F, 5.0F, 4.0F, 4.0F)
+						.texOffs(48, 61).addBox(-1.5F, -1.5F, 1.5F, 3.0F, 2.0F, 1.0F)
+						.texOffs(50, 56).addBox(-1.5F, -1.5F, 2.5F, 3.0F, 1.0F, 4.0F),
+				PartPose.offsetAndRotation(0.0F, -4.25F, 5.0F, -0.1745F, 0.0F, 0.0F)
+		);
+
+		// head
+		PartDefinition head = parts.addOrReplaceChild("head",
+				CubeListBuilder.create()
+						.texOffs(37, 43).addBox(-2.0F, -9.0F, -5.0F, 4.0F, 3.0F, 4.0F)
+						.texOffs(10, 38).addBox(-1.5F, -9.0F, -10.0F, 3.0F, 2.0F, 5.0F)
+						.texOffs(26, 32).addBox(-1.0F, -7.75F, -10.15F, 2.0F, 1.0F, 1.0F),
+				PartPose.offset(0.0F, 13.0F, -4.0F)
+		);
+
+		// bone2
+		head.addOrReplaceChild("bone2",
+				CubeListBuilder.create()
+						.texOffs(0, 8).addBox(-1.0F, -2.0F, -1.0F, 2.0F, 8.0F, 2.0F),
+				PartPose.offsetAndRotation(0.0F, -5.0F, -2.0F, 0.3491F, 0.0F, 0.0F)
+		);
+
+		// bone3
+		head.addOrReplaceChild("bone3",
+				CubeListBuilder.create()
+						.texOffs(4, 30).addBox(-1.5F, 0.0F, -4.0F, 3.0F, 1.0F, 4.0F),
+				PartPose.offsetAndRotation(0.0F, -7.0F, -5.0F, 0.0873F, 0.0F, 0.0F)
+		);
+
+		// lfeet
+		PartDefinition lfeet = parts.addOrReplaceChild("lfeet",
+				CubeListBuilder.create()
+						.texOffs(23, 54).addBox(-2.0F, 6.0F, -3.0F, 2.0F, 1.0F, 3.0F)
+						.texOffs(0, 53).addBox(-2.0F, -1.0F, -1.0F, 2.0F, 4.0F, 2.0F),
+				PartPose.offset(-1.0F, 17.0F, 1.0F)
+		);
+
+		// lknee
+		lfeet.addOrReplaceChild("knee2",
+				CubeListBuilder.create()
+						.texOffs(0, 39).addBox(-0.5F, -2.0F, -0.5F, 1.0F, 4.0F, 1.0F),
+				PartPose.offsetAndRotation(-1.0F, 4.25F, -0.5F, -0.1745F, 0.0F, 0.0F)
+		);
+
+		return LayerDefinition.create(mesh, 64, 64);
+	}
 	@Override
 	public void setupAnim(@Nonnull TerrorBirdEntity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch){
-//		this.head.xRot = headPitch * ((float)Math.PI / 180F);
-//		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
-//		this.lfeet.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
-//		this.rfeet.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
+		this.head.xRot = headPitch * ((float)Math.PI / 180F);
+		this.head.yRot = netHeadYaw * ((float)Math.PI / 180F);
+		this.lfeet.xRot = Mth.cos(limbSwing * 0.6662F) * 1.4F * limbSwingAmount;
+		this.rfeet.xRot = Mth.cos(limbSwing * 0.6662F + (float)Math.PI) * 1.4F * limbSwingAmount;
 	}
 
 	@Override
@@ -97,7 +186,7 @@ public class TerrorBirdModel extends AgeableListModel<TerrorBirdEntity> {
 	@Nonnull
 	@Override
 	protected Iterable<ModelPart> bodyParts() {
-		return ImmutableList.of(/*body, rfeet, lfeet, head*/);
+		return ImmutableList.of(body, rfeet, lfeet, head);
 	}
 
 	public void setRotationAngle(ModelPart modelRenderer, float x, float y, float z) {
