@@ -109,7 +109,9 @@ public class FlintWorkbenchRenderer implements BlockEntityRenderer<FlintWorkbenc
             }
 
             matrixStack.scale(0.5F, 0.5F, 0.5F);
-            ItemStackUtils.renderItem(tileEntity.getRecipeOutput(), ItemDisplayContext.FIXED, overlayUV, lightmapUV, matrixStack, renderTypeBuffer, 0.6f);
+//            ItemStackUtils.renderItem(tileEntity.getRecipeOutput(), ItemDisplayContext.FIXED, overlayUV, lightmapUV, matrixStack, renderTypeBuffer, 0.6f);
+            Minecraft.getInstance().getItemRenderer().renderStatic(tileEntity.getRecipeOutput(), ItemDisplayContext.FIXED,
+                    overlayUV, lightmapUV, matrixStack, renderTypeBuffer,tileEntity.getLevel(),p);
 
             matrixStack.popPose();
         }
