@@ -103,13 +103,13 @@ public class ForgeEventSubscriber {
 
 
 
-    @SubscribeEvent
+    /*@SubscribeEvent
     public static void advancementEvent(@Nonnull AdvancementEvent event) {
         if (event.getAdvancement().getId().equals(new ResourceLocation(MODID, "stone_age/end_of_stone_age")) && (AgeUtils.getPlayerAge(event.getEntity()) <= Age.STONE_AGE.value)) {
             AgeUtils.setPlayerAge(event.getEntity(), Age.BRONZE_AGE);
         }
     }
-
+*/
     @SubscribeEvent
     public static void litTorch(@Nonnull PlayerInteractEvent.RightClickBlock event) {
         if (Config.LitTorche) {

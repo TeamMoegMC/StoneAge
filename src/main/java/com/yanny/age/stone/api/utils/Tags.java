@@ -14,9 +14,9 @@ public class Tags {
     public static class Items {
         public static final TagKey<Item> AXES = tag(new ResourceLocation(Reference.MODID, "axes"));
         public static final TagKey<Item> HAMMERS = tag(new ResourceLocation(Reference.MODID, "hammers"));
-        public static final TagKey<Item> KNIVES = tag(new ResourceLocation(Reference.MODID, "knives"));
-        public static final TagKey<Item> FISHING_NET_MESHES = tag(new ResourceLocation(Reference.MODID, "fishing_net_meshes"));
-        public static final TagKey<Item> BONES = tag(new ResourceLocation(Reference.MODID, "bones"));
+        public static final TagKey<Item> KNIVES = tag(new ResourceLocation("ages_api", "knives"));
+        public static final TagKey<Item> FISHING_NET_MESHES = tag(new ResourceLocation("ages_api", "fishing_net_meshes"));
+        public static final TagKey<Item> BONES = tag(new ResourceLocation("ages_api", "bones"));
 
         private static TagKey<Item> tag(ResourceLocation resourceLocation) {;
             return TagKey.create(Registries.ITEM, resourceLocation);

@@ -1,6 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.api.utils.ItemStackUtils;
+import com.yanny.age.stone.api.utils.Tags;
 import com.yanny.age.stone.config.Config;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
@@ -25,7 +26,6 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -42,6 +42,7 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class FishingNetTileEntity extends BlockEntity implements IInventoryInterface, MenuProvider {
 
@@ -193,7 +194,7 @@ public class FishingNetTileEntity extends BlockEntity implements IInventoryInter
 
             @Override
             public boolean isItemValid(int slot, @Nonnull ItemStack stack) {
-                return (slot == 0);/* &&   Tags.Items.FISHING_NET_MESHES.contains(stack.getItem());*/
+                return (slot == 0) && ForgeRegistries.ITEMS.tags().getTag(Tags.Items.FISHING_NET_MESHES).contains(stack.getItem());
             }
 
             @Override

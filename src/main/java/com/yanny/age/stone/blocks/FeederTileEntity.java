@@ -36,11 +36,11 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 public class FeederTileEntity extends BlockEntity implements IInventoryInterface, MenuProvider {
-    private static final Set<Item> VALID_ITEMS = new HashSet<>();
+    /*private static final Set<Item> VALID_ITEMS = new HashSet<>();
     static {
         VALID_ITEMS.addAll(ForgeRegistries.ITEMS.tags().getTag(Tags.Items.SEEDS).stream().toList());
         VALID_ITEMS.addAll(ForgeRegistries.ITEMS.tags().getTag(Tags.Items.CROPS).stream().toList());
-    }
+    }*/
 
     public static final int ITEMS = 4;
 
@@ -148,7 +148,8 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     }
 
     boolean isItemValid(@Nonnull ItemStack itemStack) {
-        return VALID_ITEMS.contains(itemStack.getItem());
+        return ForgeRegistries.ITEMS.tags().getTag(Tags.Items.SEEDS).contains(itemStack.getItem())
+                || ForgeRegistries.ITEMS.tags().getTag(Tags.Items.CROPS).contains(itemStack.getItem());
     }
 
     @Nonnull
@@ -209,7 +210,9 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
 
     private void useOnEntity() {
         assert level != null;
-        List<Animal> entities = level.getEntitiesOfClass(Animal.class, boundingBox, Animal::canBreed);
+        List<Animal> entities = level.getEntitiesOfClass(Animal.class, boundingBox, (animal)->{
+            return animal.isFood(getItem().orElse(ItemStack.EMPTY));
+        });
         Collections.shuffle(entities);
 
         if (!entities.isEmpty()) {

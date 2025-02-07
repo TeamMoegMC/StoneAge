@@ -1,6 +1,7 @@
 package com.yanny.age.stone.subscribers;
 
 import com.yanny.age.stone.Reference;
+import com.yanny.age.stone.items.MeshItem;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
@@ -110,8 +111,8 @@ public class ItemSubscriber {
         mammoth_tusk = new Item(new Item.Properties());
         rhino_tusk = new Item(new Item.Properties());
         saber_teeth = new Item(new Item.Properties());
-        grass_mesh = new Item(new Item.Properties());
-        cobweb_mesh = new Item(new Item.Properties());
+        grass_mesh = new MeshItem(new Item.Properties().durability(15));
+        cobweb_mesh = new MeshItem(new Item.Properties().durability(30));
         grass_lead = new Item(new Item.Properties());
 
         Item.Properties combatProperties = new Item.Properties().stacksTo(1);
