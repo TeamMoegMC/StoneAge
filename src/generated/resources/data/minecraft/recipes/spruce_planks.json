@@ -1,7 +1,7 @@
 {
   "type": "stone_age:tree_stump",
   "tool": {
-    "tag": "ages_api:axes"
+    "tag": "minecraft:axes"
   },
   "ingredient": {
     "item": "minecraft:spruce_log"

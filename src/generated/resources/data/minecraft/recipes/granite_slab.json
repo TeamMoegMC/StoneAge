@@ -1,7 +1,7 @@
 {
   "type": "stone_age:tree_stump",
   "tool": {
-    "tag": "stone_age:hammers"
+    "tag": "forge:hammers"
   },
   "ingredient": {
     "item": "minecraft:granite"
