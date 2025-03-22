@@ -4,11 +4,11 @@
     "#"
   ],
   "tool": {
-    "tag": "ages_api:knives"
+    "tag": "stone_age:knives"
   },
   "key": {
     "#": {
-      "tag": "ages_api:bones"
+      "tag": "stone_age:bones"
     }
   },
   "result": {
