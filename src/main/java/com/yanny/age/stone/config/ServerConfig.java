@@ -1,114 +1,122 @@
 package com.yanny.age.stone.config;
 
+import com.google.common.collect.Sets;
 import com.yanny.age.stone.Reference;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-class ServerConfig {
-    final ForgeConfigSpec.BooleanValue removeVanillaRecipes;
-    final ForgeConfigSpec.BooleanValue removeVanillaGeneratedAnimals;
-    final ForgeConfigSpec.IntValue domesticateAfterGenerations;
-    final ForgeConfigSpec.DoubleValue tanningRackFinishChance;
-    final ForgeConfigSpec.IntValue feederTickChanceBreedAnimalEffect;
-    final ForgeConfigSpec.IntValue feederEffectRange;
-    final ForgeConfigSpec.BooleanValue forceToolForWood;
-    final ForgeConfigSpec.BooleanValue givePlayerManualOnFirstConnect;
-    final ForgeConfigSpec.IntValue fishingNetChance;
-    final ForgeConfigSpec.BooleanValue disableVanillaCraftingTable;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledUseInStoneAgeList;
+import static net.minecraft.world.level.biome.Biomes.*;
+import static net.minecraft.world.level.biome.Biomes.JUNGLE;
+import static net.minecraft.world.level.levelgen.structure.structures.MineshaftStructure.Type.MESA;
+import static net.minecraftforge.common.BiomeManager.BiomeType.ICY;
 
-    final ForgeConfigSpec.DoubleValue abandonedCampSpawnChance;
-    final ForgeConfigSpec.DoubleValue burialPlaceSpawnChance;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> abandonedCampAllowedBiomes;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> burialPlaceAllowedBiomes;
+public class ServerConfig {
+    public final ForgeConfigSpec.BooleanValue removeVanillaRecipes;
+    public final ForgeConfigSpec.BooleanValue removeVanillaGeneratedAnimals;
+    public final ForgeConfigSpec.IntValue domesticateAfterGenerations;
+    public final ForgeConfigSpec.DoubleValue tanningRackFinishChance;
+    public final ForgeConfigSpec.IntValue feederTickChanceBreedAnimalEffect;
+    public final ForgeConfigSpec.IntValue feederEffectRange;
+    public final ForgeConfigSpec.BooleanValue forceToolForWood;
+    public final ForgeConfigSpec.BooleanValue givePlayerManualOnFirstConnect;
+    public final ForgeConfigSpec.IntValue fishingNetChance;
+    public final ForgeConfigSpec.BooleanValue disableVanillaCraftingTable;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> disabledUseInStoneAgeList;
 
-    final ForgeConfigSpec.BooleanValue spawnDeerEnable;
-    final ForgeConfigSpec.IntValue spawnDeerWeight;
-    final ForgeConfigSpec.IntValue spawnDeerMinCount;
-    final ForgeConfigSpec.IntValue spawnDeerMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnDeerAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnDeerAllowedBiomes;
+    public final ForgeConfigSpec.DoubleValue abandonedCampSpawnChance;
+    public final ForgeConfigSpec.DoubleValue burialPlaceSpawnChance;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> abandonedCampAllowedBiomes;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> burialPlaceAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnBoarEnable;
-    final ForgeConfigSpec.IntValue spawnBoarWeight;
-    final ForgeConfigSpec.IntValue spawnBoarMinCount;
-    final ForgeConfigSpec.IntValue spawnBoarMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnBoarAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<String> boarBreedingResult;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnBoarAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnDeerEnable;
+    public final ForgeConfigSpec.IntValue spawnDeerWeight;
+    public final ForgeConfigSpec.IntValue spawnDeerMinCount;
+    public final ForgeConfigSpec.IntValue spawnDeerMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnDeerAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnDeerAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnAurochEnable;
-    final ForgeConfigSpec.IntValue spawnAurochWeight;
-    final ForgeConfigSpec.IntValue spawnAurochMinCount;
-    final ForgeConfigSpec.IntValue spawnAurochMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnAurochAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<String> aurochBreedingResult;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnAurochAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnBoarEnable;
+    public final ForgeConfigSpec.IntValue spawnBoarWeight;
+    public final ForgeConfigSpec.IntValue spawnBoarMinCount;
+    public final ForgeConfigSpec.IntValue spawnBoarMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnBoarAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<String> boarBreedingResult;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnBoarAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnFowlEnable;
-    final ForgeConfigSpec.IntValue spawnFowlWeight;
-    final ForgeConfigSpec.IntValue spawnFowlMinCount;
-    final ForgeConfigSpec.IntValue spawnFowlMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnFowlAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<String> fowlBreedingResult;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnFowlAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnAurochEnable;
+    public final ForgeConfigSpec.IntValue spawnAurochWeight;
+    public final ForgeConfigSpec.IntValue spawnAurochMinCount;
+    public final ForgeConfigSpec.IntValue spawnAurochMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnAurochAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<String> aurochBreedingResult;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnAurochAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnMouflonEnable;
-    final ForgeConfigSpec.IntValue spawnMouflonWeight;
-    final ForgeConfigSpec.IntValue spawnMouflonMinCount;
-    final ForgeConfigSpec.IntValue spawnMouflonMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnMouflonAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<String> mouflonBreedingResult;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnMouflonAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnFowlEnable;
+    public final ForgeConfigSpec.IntValue spawnFowlWeight;
+    public final ForgeConfigSpec.IntValue spawnFowlMinCount;
+    public final ForgeConfigSpec.IntValue spawnFowlMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnFowlAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<String> fowlBreedingResult;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnFowlAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnMammothEnable;
-    final ForgeConfigSpec.IntValue spawnMammothWeight;
-    final ForgeConfigSpec.IntValue spawnMammothMinCount;
-    final ForgeConfigSpec.IntValue spawnMammothMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnMammothAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnMammothAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnMouflonEnable;
+    public final ForgeConfigSpec.IntValue spawnMouflonWeight;
+    public final ForgeConfigSpec.IntValue spawnMouflonMinCount;
+    public final ForgeConfigSpec.IntValue spawnMouflonMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnMouflonAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<String> mouflonBreedingResult;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnMouflonAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnSaberToothTigerEnable;
-    final ForgeConfigSpec.IntValue spawnSaberToothTigerWeight;
-    final ForgeConfigSpec.IntValue spawnSaberToothTigerMinCount;
-    final ForgeConfigSpec.IntValue spawnSaberToothTigerMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnSaberToothTigerAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnSaberToothTigerAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnMammothEnable;
+    public final ForgeConfigSpec.IntValue spawnMammothWeight;
+    public final ForgeConfigSpec.IntValue spawnMammothMinCount;
+    public final ForgeConfigSpec.IntValue spawnMammothMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnMammothAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnMammothAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnWoollyRhinoEnable;
-    final ForgeConfigSpec.IntValue spawnWoollyRhinoWeight;
-    final ForgeConfigSpec.IntValue spawnWoollyRhinoMinCount;
-    final ForgeConfigSpec.IntValue spawnWoollyRhinoMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnWoollyRhinoAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnWoollyRhinoAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnSaberToothTigerEnable;
+    public final ForgeConfigSpec.IntValue spawnSaberToothTigerWeight;
+    public final ForgeConfigSpec.IntValue spawnSaberToothTigerMinCount;
+    public final ForgeConfigSpec.IntValue spawnSaberToothTigerMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnSaberToothTigerAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnSaberToothTigerAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnTerrorBirdEnable;
-    final ForgeConfigSpec.IntValue spawnTerrorBirdWeight;
-    final ForgeConfigSpec.IntValue spawnTerrorBirdMinCount;
-    final ForgeConfigSpec.IntValue spawnTerrorBirdMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnTerrorBirdAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnTerrorBirdAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnWoollyRhinoEnable;
+    public final ForgeConfigSpec.IntValue spawnWoollyRhinoWeight;
+    public final ForgeConfigSpec.IntValue spawnWoollyRhinoMinCount;
+    public final ForgeConfigSpec.IntValue spawnWoollyRhinoMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnWoollyRhinoAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnWoollyRhinoAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue spawnCoelacanthEnable;
-    final ForgeConfigSpec.IntValue spawnCoelacanthWeight;
-    final ForgeConfigSpec.IntValue spawnCoelacanthMinCount;
-    final ForgeConfigSpec.IntValue spawnCoelacanthMaxCount;
-    final ForgeConfigSpec.BooleanValue spawnCoelacanthAllowedBiomesBlacklist;
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnCoelacanthAllowedBiomes;
+    public final ForgeConfigSpec.BooleanValue spawnTerrorBirdEnable;
+    public final ForgeConfigSpec.IntValue spawnTerrorBirdWeight;
+    public final ForgeConfigSpec.IntValue spawnTerrorBirdMinCount;
+    public final ForgeConfigSpec.IntValue spawnTerrorBirdMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnTerrorBirdAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnTerrorBirdAllowedBiomes;
 
-    final ForgeConfigSpec.ConfigValue<List<? extends String>> infinityWaterSourceBiomeList;
+    public final ForgeConfigSpec.BooleanValue spawnCoelacanthEnable;
+    public final ForgeConfigSpec.IntValue spawnCoelacanthWeight;
+    public final ForgeConfigSpec.IntValue spawnCoelacanthMinCount;
+    public final ForgeConfigSpec.IntValue spawnCoelacanthMaxCount;
+    public final ForgeConfigSpec.BooleanValue spawnCoelacanthAllowedBiomesBlacklist;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> spawnCoelacanthAllowedBiomes;
 
-    final ForgeConfigSpec.BooleanValue GrassBedSleep;
-    final ForgeConfigSpec.BooleanValue DryingRackNeedDaytime;
-    final ForgeConfigSpec.BooleanValue MakeFire;
-    final ForgeConfigSpec.BooleanValue LitTorche;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> infinityWaterSourceBiomeList;
+
+    public final ForgeConfigSpec.BooleanValue GrassBedSleep;
+    public final ForgeConfigSpec.BooleanValue DryingRackNeedDaytime;
+    public final ForgeConfigSpec.BooleanValue MakeFire;
+    public final ForgeConfigSpec.BooleanValue LitTorche;
 
     ServerConfig(@Nonnull final ForgeConfigSpec.Builder builder) {
         builder.push("general");
@@ -155,7 +163,7 @@ class ServerConfig {
         disabledUseInStoneAgeList = builder
                 .comment("List of blocks that have disabled use until end of stone age")
                 .translation(Reference.MODID + ".config.disabled_use_in_stone_age_list")
-                .defineList("disabledUseInStoneAgeList", Config.DEFAULT_DISABLED_USE_BLOCKS.stream()
+                .defineList("disabledUseInStoneAgeList", Sets.newHashSet(Blocks.CRAFTING_TABLE).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BLOCKS.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -168,7 +176,8 @@ class ServerConfig {
         abandonedCampAllowedBiomes = builder
                 .comment("Abandoned camp allowed biomes")
                 .translation(Reference.MODID + ".config.abandoned_camp_allowed_biomes")
-                .defineList("abandonedCampAllowedBiomes", Config.DEFAULT_STRUCTURE_BIOMES.stream()
+                .defineList("abandonedCampAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !Set.of(OCEAN, RIVER, THE_END, NETHER_WASTES)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         burialPlaceSpawnChance = builder
@@ -178,7 +187,8 @@ class ServerConfig {
         burialPlaceAllowedBiomes = builder
                 .comment("Burial place allowed biomes")
                 .translation(Reference.MODID + ".config.burial_place_allowed_biomes")
-                .defineList("burialPlaceAllowedBiomes", Config.DEFAULT_STRUCTURE_BIOMES.stream()
+                .defineList("burialPlaceAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !Set.of(OCEAN, RIVER, THE_END, NETHER_WASTES)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -208,7 +218,8 @@ class ServerConfig {
         spawnDeerAllowedBiomes = builder
                 .comment("Spawn deer in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_deer_allowed_biomes")
-                .defineList("spawnDeerAllowedBiomes", Config.DEFAULT_DEER_BIOMES.stream()
+                .defineList("spawnDeerAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, BEACH, SWAMP, JUNGLE, MESA, ICY)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -240,7 +251,8 @@ class ServerConfig {
         spawnBoarAllowedBiomes = builder
                 .comment("Spawn boar in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_boar_allowed_biomes")
-                .defineList("spawnBoarAllowedBiomes", Config.DEFAULT_BOAR_BIOMES.stream()
+                .defineList("spawnBoarAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, SWAMP, JUNGLE)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -272,7 +284,8 @@ class ServerConfig {
         spawnAurochAllowedBiomes = builder
                 .comment("Spawn auroch in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_auroch_allowed_biomes")
-                .defineList("spawnAurochAllowedBiomes", Config.DEFAULT_AUROCH_BIOMES.stream()
+                .defineList("spawnAurochAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, BEACH)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -304,7 +317,8 @@ class ServerConfig {
         spawnFowlAllowedBiomes = builder
                 .comment("Spawn fowl in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_fowl_allowed_biomes")
-                .defineList("spawnFowlAllowedBiomes", Config.DEFAULT_FOWL_BIOMES.stream()
+                .defineList("spawnFowlAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SAVANNA, SWAMP, JUNGLE, BEACH, MESA)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -336,7 +350,8 @@ class ServerConfig {
         spawnMouflonAllowedBiomes = builder
                 .comment("Spawn mouflon in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_mouflon_allowed_biomes")
-                .defineList("spawnMouflonAllowedBiomes", Config.DEFAULT_MOUFLON_BIOMES.stream()
+                .defineList("spawnMouflonAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(FOREST, PLAINS, TAIGA, WINDSWEPT_HILLS, SWAMP, MESA)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -364,7 +379,8 @@ class ServerConfig {
         spawnMammothAllowedBiomes = builder
                 .comment("Spawn mammoth in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_mammoth_allowed_biomes")
-                .defineList("spawnMammothAllowedBiomes", Config.DEFAULT_MAMMOTH_BIOMES.stream()
+                .defineList("spawnMammothAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, WINDSWEPT_HILLS, DESERT, SAVANNA)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -392,7 +408,8 @@ class ServerConfig {
         spawnSaberToothTigerAllowedBiomes = builder
                 .comment("Spawn saber-tooth tiger in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_saber_tooth_tiger_allowed_biomes")
-                .defineList("spawnSaberToothTigerAllowedBiomes", Config.DEFAULT_TIGER_BIOMES.stream()
+                .defineList("spawnSaberToothTigerAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, DESERT, FOREST, BEACH, JUNGLE, MUSHROOM_FIELDS)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -420,7 +437,8 @@ class ServerConfig {
         spawnWoollyRhinoAllowedBiomes = builder
                 .comment("Spawn woolly rhino in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_woolly_rhino_allowed_biomes")
-                .defineList("spawnWoollyRhinoAllowedBiomes", Config.DEFAULT_RHINO_BIOMES.stream()
+                .defineList("spawnWoollyRhinoAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, ICY, TAIGA, BEACH, SAVANNA, MUSHROOM_FIELDS, RIVER, SWAMP)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -448,7 +466,8 @@ class ServerConfig {
         spawnTerrorBirdAllowedBiomes = builder
                 .comment("Spawn terror bird in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_terror_bird_allowed_biomes")
-                .defineList("spawnTerrorBirdAllowedBiomes", Config.DEFAULT_TERROR_BIRD_BIOMES.stream()
+                .defineList("spawnTerrorBirdAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(PLAINS, SAVANNA, FOREST, JUNGLE, MUSHROOM_FIELDS)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -476,7 +495,8 @@ class ServerConfig {
         spawnCoelacanthAllowedBiomes = builder
                 .comment("Spawn coelacanth in allowed biomes")
                 .translation(Reference.MODID + ".config.spawn_coelacanth_allowed_biomes")
-                .defineList("spawnCoelacanthAllowedBiomes", Config.DEFAULT_COELACANTH_BIOMES.stream()
+                .defineList("spawnCoelacanthAllowedBiomes", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> !Set.of(OCEAN, RIVER, SWAMP)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -485,7 +505,8 @@ class ServerConfig {
         infinityWaterSourceBiomeList = builder
                 .comment("List of biomes where aqueduct doesn't remove water source")
                 .translation(Reference.MODID + ".config.infinity_water_source_biome_list")
-                .defineList("infinityWaterSourceBiomeList", Config.DEFAULT_INFINITY_WATER_SOURCE_BIOMES.stream()
+                .defineList("infinityWaterSourceBiomeList", ForgeRegistries.BIOMES.getValues().stream().filter(biome -> Set.of(OCEAN, RIVER, SWAMP)
+                                        .contains(biome)).collect(Collectors.toSet()).stream()
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));
         builder.pop();
@@ -493,8 +514,8 @@ class ServerConfig {
         builder.push("Config");
         GrassBedSleep = builder.comment("If grass bed can sleep").define("sleep", true);
         DryingRackNeedDaytime = builder.comment("If Drying rack need daytime").define("need daytime", true);
-        MakeFire = builder.define("Make fire", true);
-        LitTorche = builder.define("Lit torche", true);
+        MakeFire = builder.define("makeFire", true);
+        LitTorche = builder.define("litTorche", true);
         builder.pop();
     }
 }

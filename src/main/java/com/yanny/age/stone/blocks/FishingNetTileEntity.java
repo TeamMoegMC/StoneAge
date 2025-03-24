@@ -2,7 +2,7 @@ package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.api.utils.ItemStackUtils;
 import com.yanny.age.stone.api.utils.Tags;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -38,7 +38,6 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
-import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -64,7 +63,7 @@ public class FishingNetTileEntity extends BlockEntity implements IInventoryInter
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, FishingNetTileEntity tile) {
         if (level != null && !level.isClientSide) {
-            if (!tile.stacks.get(0).isEmpty() && level.random.nextInt(Config.fishingNetChance) == 0 && tile.hasWaterAround()) {
+            if (!tile.stacks.get(0).isEmpty() && level.random.nextInt(ConfigHolder.SERVER.fishingNetChance.get()) == 0 && tile.hasWaterAround()) {
                 if (tile.stacks.get(0).hurt(1, level.random, null)) {
                     tile.stacks.set(0, ItemStack.EMPTY);
                     level.setBlockAndUpdate(blockPos, state.setValue(BlockStateProperties.ATTACHED, false));

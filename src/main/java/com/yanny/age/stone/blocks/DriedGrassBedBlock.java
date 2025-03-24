@@ -1,8 +1,8 @@
 package com.yanny.age.stone.blocks;
 
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
+import com.yanny.age.stone.config.ServerConfig;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -14,9 +14,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.AABB;
@@ -24,7 +22,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -103,7 +100,7 @@ public class DriedGrassBedBlock extends BedBlock {
 
                 return InteractionResult.SUCCESS;
             } else {
-                if (Config.GrassBedSleep) {
+                if (ConfigHolder.SERVER.GrassBedSleep.get()) {
                     player.startSleepInBed(pos).ifLeft((result) -> {
                         if (result != null) {
                             player.displayClientMessage(result.getMessage(), true);

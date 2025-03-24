@@ -2,7 +2,7 @@ package com.yanny.age.stone.entities;
 
 import com.mojang.logging.LogUtils;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,8 +55,8 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
 
     @Override
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
-        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
-            EntityType<?> child = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(Config.fowlBreedingResult));
+        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= ConfigHolder.SERVER.domesticateAfterGenerations.get()) {
+            EntityType<?> child = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(ConfigHolder.SERVER.fowlBreedingResult.get()));
 
             if (child != null) {
                 Entity result = child.create(level());
@@ -64,10 +64,10 @@ public class FowlEntity extends WildAnimalEntity implements TopEntityInfoProvide
                 if (result instanceof AgeableMob) {
                     return (AgeableMob) child.create(level());
                 } else {
-                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", Config.fowlBreedingResult);
+                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default CHICKEN entity", ConfigHolder.SERVER.fowlBreedingResult);
                 }
             } else {
-                LogUtils.getLogger().warn("'{}' does not exists! Spawning default CHICKEN entity", Config.fowlBreedingResult);
+                LogUtils.getLogger().warn("'{}' does not exists! Spawning default CHICKEN entity", ConfigHolder.SERVER.fowlBreedingResult);
             }
 
             return EntityType.CHICKEN.create(level());

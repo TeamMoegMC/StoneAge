@@ -1,12 +1,11 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.api.utils.ItemStackUtils;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.Container;
@@ -55,7 +54,7 @@ public class DryingRackTileEntity extends BlockEntity implements IInventoryInter
     public static void tick(Level level, BlockPos blockPos, BlockState state, DryingRackTileEntity tile) {
         assert level != null;
         if (!level.isClientSide) {
-            if (Config.DryingRackNeedDaytime) {
+            if (ConfigHolder.SERVER.DryingRackNeedDaytime.get()) {
                 if (level.isDay()) {
                     for (int i = 0; i < ITEMS; i++) {
                         if (tile.items[i].active) {

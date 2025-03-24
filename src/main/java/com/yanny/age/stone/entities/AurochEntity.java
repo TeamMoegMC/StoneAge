@@ -2,7 +2,7 @@ package com.yanny.age.stone.entities;
 
 import com.mojang.logging.LogUtils;
 import com.yanny.age.stone.compatibility.top.TopEntityInfoProvider;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.subscribers.EntitySubscriber;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.level.block.state.BlockState;
@@ -46,8 +46,8 @@ public class AurochEntity extends WildAnimalEntity implements TopEntityInfoProvi
     @Nullable
     @Override
     public AgeableMob getBreedOffspring(@Nonnull ServerLevel serverWorld, @Nonnull AgeableMob ageable) {
-        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= Config.domesticateAfterGenerations) {
-            EntityType<?> child = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(Config.aurochBreedingResult));
+        if (Math.min(entityData.get(GENERATION), ageable.getEntityData().get(GENERATION)) >= ConfigHolder.SERVER.domesticateAfterGenerations.get()) {
+            EntityType<?> child = ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation(ConfigHolder.SERVER.aurochBreedingResult.get()));
 
             if (child != null) {
                 Entity result = child.create(level());
@@ -55,10 +55,10 @@ public class AurochEntity extends WildAnimalEntity implements TopEntityInfoProvi
                 if (result instanceof AgeableMob) {
                     return (AgeableMob) child.create(level());
                 } else {
-                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default COW entity", Config.aurochBreedingResult);
+                    LogUtils.getLogger().warn("'{}' is not instance of Ageable entity! Spawning default COW entity", ConfigHolder.SERVER.aurochBreedingResult);
                 }
             } else {
-                LogUtils.getLogger().warn("'{}' does not exists! Spawning default COW entity", Config.aurochBreedingResult);
+                LogUtils.getLogger().warn("'{}' does not exists! Spawning default COW entity", ConfigHolder.SERVER.aurochBreedingResult);
             }
 
             return EntityType.COW.create(level());

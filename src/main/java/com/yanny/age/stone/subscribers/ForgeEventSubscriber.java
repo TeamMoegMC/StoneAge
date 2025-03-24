@@ -1,8 +1,6 @@
 package com.yanny.age.stone.subscribers;
 
-import com.yanny.age.stone.api.enums.Age;
-import com.yanny.age.stone.api.utils.AgeUtils;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.entities.SaberToothTigerEntity;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.state.BlockState;
@@ -22,7 +20,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.player.AdvancementEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
@@ -34,9 +31,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import static com.yanny.age.stone.Reference.MODID;
-import static com.yanny.age.stone.subscribers.EntitySubscriber.*;
 import static net.minecraft.world.level.block.Blocks.*;
-import static net.minecraft.world.entity.EntityType.*;
 
 @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ForgeEventSubscriber {
@@ -112,7 +107,7 @@ public class ForgeEventSubscriber {
 */
     @SubscribeEvent
     public static void litTorch(@Nonnull PlayerInteractEvent.RightClickBlock event) {
-        if (Config.LitTorche) {
+        if (ConfigHolder.SERVER.LitTorche.get()) {
             Player player = event.getEntity();
 
             if (event.getHand() == InteractionHand.MAIN_HAND && player.getMainHandItem().getItem().equals(ItemSubscriber.unlit_torch)) {
@@ -133,7 +128,7 @@ public class ForgeEventSubscriber {
         Player player = event.getEntity();
         ItemStack mainItem = player.getMainHandItem();
         ItemStack offItem = player.getOffhandItem();
-        if (Config.MakeFire) {
+        if (ConfigHolder.SERVER.MakeFire.get()) {
             if (mainItem.getItem() == Items.STICK && offItem.getItem() == Items.STICK && event.getFace() != null) {
                 Level world = event.getLevel();
                 BlockPos position = event.getPos().relative(event.getFace());
@@ -254,7 +249,7 @@ public class ForgeEventSubscriber {
     }
     @SubscribeEvent
     public static void addManualToPlayer(@Nonnull PlayerEvent.PlayerLoggedInEvent event) {
-        if (!Config.givePlayerManualOnFirstConnect) {
+        if (!ConfigHolder.SERVER.givePlayerManualOnFirstConnect.get()) {
             return;
         }
 

@@ -1,7 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.api.utils.ItemStackUtils;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
@@ -12,7 +12,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
@@ -60,7 +59,7 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, FeederTileEntity tile) {
         if (level != null && !level.isClientSide) {
-            if (level.random.nextInt(Config.feederTickChanceBreedAnimalEffect) == 0 && tile.getItem().isPresent()) {
+            if (level.random.nextInt(ConfigHolder.SERVER.feederTickChanceBreedAnimalEffect.get()) == 0 && tile.getItem().isPresent()) {
                 tile.useOnEntity();
                 level.sendBlockUpdated(blockPos, state, state, 3);
             }
@@ -136,8 +135,8 @@ public class FeederTileEntity extends BlockEntity implements IInventoryInterface
     @Override
     public void clearRemoved() {
         super.clearRemoved();
-        boundingBox = new AABB(worldPosition.getX() - Config.feederEffectRange, worldPosition.getY() - 1, worldPosition.getZ() - Config.feederEffectRange,
-                worldPosition.getX() + Config.feederEffectRange + 1, worldPosition.getY() + 2, worldPosition.getZ() + Config.feederEffectRange + 1);
+        boundingBox = new AABB(worldPosition.getX() - ConfigHolder.SERVER.feederEffectRange.get(), worldPosition.getY() - 1, worldPosition.getZ() - ConfigHolder.SERVER.feederEffectRange.get(),
+                worldPosition.getX() + ConfigHolder.SERVER.feederEffectRange.get() + 1, worldPosition.getY() + 2, worldPosition.getZ() + ConfigHolder.SERVER.feederEffectRange.get() + 1);
     }
 
     @Override

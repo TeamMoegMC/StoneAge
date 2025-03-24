@@ -1,7 +1,7 @@
 package com.yanny.age.stone.blocks;
 
 import com.yanny.age.stone.api.utils.ItemStackUtils;
-import com.yanny.age.stone.config.Config;
+import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.recipes.TanningRackRecipe;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
@@ -133,7 +133,7 @@ public class TanningRackTileEntity extends BlockEntity implements IInventoryInte
         if (recipe != null && recipe.getTool().test(itemMainhand) && !stacks.get(pos).isEmpty()) {
             itemMainhand.hurtAndBreak(1, player, playerEntity -> playerEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
             count += 1;
-            if (random.nextDouble() < Config.tanningRackFinishChance || count >9) {
+            if (random.nextDouble() < ConfigHolder.SERVER.tanningRackFinishChance.get() || count >9) {
                 stacks.set(pos + ITEMS, recipe.assemble(null,level.registryAccess()));
                 stacks.set(pos, ItemStack.EMPTY);
                 count = 0;

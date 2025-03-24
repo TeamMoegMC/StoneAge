@@ -7,8 +7,8 @@ public class ConfigHolder {
 
     public static final ForgeConfigSpec CLIENT_SPEC;
     public static final ForgeConfigSpec SERVER_SPEC;
-    static final ClientConfig CLIENT;
-    static final ServerConfig SERVER;
+    public static final ClientConfig CLIENT;
+    public static final ServerConfig SERVER;
 
     static {
         {
