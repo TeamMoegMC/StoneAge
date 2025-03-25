@@ -497,7 +497,7 @@ public class ServerConfig {
                                 .map(value -> Objects.requireNonNull(ForgeRegistries.BIOMES.getKey(value)).toString()).collect(Collectors.toList()),
                         string -> string instanceof String && ForgeRegistries.BIOMES.containsKey(new ResourceLocation((String) string)));*/
         builder.pop();
-        
+        builder.pop();
         builder.push("aqueduct");
         infinityWaterSourceBiomeList = builder
                 .comment("List of biomes where aqueduct doesn't remove water source")
