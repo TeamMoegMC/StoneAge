@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "stone_age:drying_rack",
+    "stone_age:tanning_rack",
+    "stone_age:tree_stump",
+    "stone_age:feeder",
+    "stone_age:flint_workbench",
+    "stone_age:fishing_net"
+  ]
+}
