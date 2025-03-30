@@ -1,7 +1,6 @@
 package com.yanny.age.stone.compatibility.jei;
 
 import com.yanny.age.stone.Reference;
-import com.yanny.age.stone.recipes.DryingRackRecipe;
 import com.yanny.age.stone.recipes.MillstoneRecipe;
 import com.yanny.age.stone.subscribers.BlockSubscriber;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -107,6 +106,14 @@ public RecipeType<MillstoneRecipe> getRecipeType() {
     @Override
     public void draw(MillstoneRecipe recipe, @Nonnull IRecipeSlotsView recipeSlotsView, GuiGraphics guiGraphics, double mouseX, double mouseY) {
         if (!recipe.getRecipeSecondOutput().isEmpty()) {
+            guiGraphics.drawString(
+                    Minecraft.getInstance().font,
+                    String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100),
+                    96,
+                    38,
+                    0xFFFFFF,
+                    false
+            );
 //            Minecraft.getInstance().font.draw(guiGraphics, String.format(Locale.ENGLISH, "%.0f%%", recipe.getSecondChance() * 100), 96, 38, -1);
         }
     }
