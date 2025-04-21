@@ -152,7 +152,7 @@ public class ServerConfig {
         fishingNetChance = builder
                 .comment("Chance of successfull fishing every 1/X tick (randomly)")
                 .translation(Reference.MODID + ".config.fishing_net_chance")
-                .defineInRange("fishingNetChance", 3600, 1, Integer.MAX_VALUE);
+                .defineInRange("fishingNetChance", 12000, 1, Integer.MAX_VALUE);
         disableVanillaCraftingTable = builder
                 .comment("Disable use of vanilla crafting table until end of Stone Age")
                 .translation(Reference.MODID + ".config.disable_vanilla_crafting_table")

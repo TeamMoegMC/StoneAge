@@ -5,7 +5,10 @@ import com.yanny.age.stone.api.utils.Tags;
 import com.yanny.age.stone.config.ConfigHolder;
 import com.yanny.age.stone.subscribers.TileEntitySubscriber;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.tags.BiomeTags;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.player.Inventory;
@@ -63,7 +66,9 @@ public class FishingNetTileEntity extends BlockEntity implements IInventoryInter
 
     public static void tick(Level level, BlockPos blockPos, BlockState state, FishingNetTileEntity tile) {
         if (level != null && !level.isClientSide) {
-            if (!tile.stacks.get(0).isEmpty() && level.random.nextInt(ConfigHolder.SERVER.fishingNetChance.get()) == 0 && tile.hasWaterAround()) {
+            Holder<Biome> biome = level.getBiome(blockPos);
+            boolean validBiome = biome.is(Tags.Biomes.FISHING_NET_WORKS);
+            if (validBiome && !tile.stacks.get(0).isEmpty() && level.random.nextInt(ConfigHolder.SERVER.fishingNetChance.get()) == 0 && tile.hasWaterAround()) {
                 if (tile.stacks.get(0).hurt(1, level.random, null)) {
                     tile.stacks.set(0, ItemStack.EMPTY);
                     level.setBlockAndUpdate(blockPos, state.setValue(BlockStateProperties.ATTACHED, false));

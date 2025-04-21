@@ -5,10 +5,19 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 
 public class Tags {
     public static class Blocks {
 
+    }
+
+    public static class Biomes {
+        public static final TagKey<Biome> FISHING_NET_WORKS = tag(new ResourceLocation(Reference.MODID, "fishing_net_works"));
+
+        private static TagKey<Biome> tag(ResourceLocation resourceLocation) {;
+            return TagKey.create(Registries.BIOME, resourceLocation);
+        }
     }
 
     public static class Items {
