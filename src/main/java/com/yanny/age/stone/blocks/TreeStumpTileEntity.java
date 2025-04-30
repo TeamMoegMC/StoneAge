@@ -64,8 +64,9 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
         chopLeft = tag.getInt("chopLeft");
         totalChops = tag.getInt("totalChops");
         recipeResult = ItemStack.of(tag.getCompound("result"));
-        CompoundTag toolTag = tag.getCompound("tool");
-        ItemStackUtils.deserializeIngredients(toolTag, tools);
+        TreeStumpRecipe rcp=getRecipe(stacks.get(0));
+        if(rcp!=null)
+        	tools.addAll(rcp.getTools());
         super.load(tag);
     }
 
@@ -78,7 +79,6 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
         CompoundTag resTag = new CompoundTag();
         recipeResult.save(resTag);
         tag.put("result", resTag);
-        tag.put("tool", ItemStackUtils.serializeIngredients(tools));
         super.saveAdditional(tag);
     }
 
@@ -193,7 +193,7 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
     }
 
     boolean hasTool(@Nonnull ItemStack toolInHand) {
-        return tools.stream().anyMatch(ingredient -> Arrays.stream(ingredient.getItems()).anyMatch(itemStack -> itemStack.getItem() == toolInHand.getItem()));
+        return tools.stream().anyMatch(ingredient -> ingredient.test(toolInHand));
     }
 
     @Nonnull
