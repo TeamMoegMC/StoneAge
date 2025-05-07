@@ -64,9 +64,7 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
         chopLeft = tag.getInt("chopLeft");
         totalChops = tag.getInt("totalChops");
         recipeResult = ItemStack.of(tag.getCompound("result"));
-        TreeStumpRecipe rcp=getRecipe(stacks.get(0));
-        if(rcp!=null)
-        	tools.addAll(rcp.getTools());
+
         super.load(tag);
     }
 
@@ -122,7 +120,11 @@ public class TreeStumpTileEntity extends BlockEntity implements IInventoryInterf
 
     void onBlockRightClicked(@Nonnull Player player) {
         assert level != null;
-
+        if(tools.isEmpty()) {
+	        TreeStumpRecipe rcp=getRecipe(stacks.get(0));
+	        if(rcp!=null)
+	        	tools.addAll(rcp.getTools());
+        }
         if (hasTool(player.getMainHandItem())) {
             if (stacks.get(0).getCount() == getRecipe(stacks.get(0)).getIngredients().get(0).getItems()[0].getCount()) {
                 chopLeft--;
