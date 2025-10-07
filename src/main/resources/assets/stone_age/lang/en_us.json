@@ -136,5 +136,7 @@
   "advancements.stone_age.livestock.title": "Livestock",
   "advancements.stone_age.livestock.description": "Domesticate wild animals through breeding",
   "advancements.stone_age.end_of_stone_age.title": "End of Stone Age",
-  "advancements.stone_age.end_of_stone_age.description": "The Stone age ends here, just craft the Crafting Table to move on"
+  "advancements.stone_age.end_of_stone_age.description": "The Stone age ends here, just craft the Crafting Table to move on",
+  "config.jade.plugin_stoneage.wild_animal_generation": "Animal Generation",
+  "jade.stoneage.generation": "Generation: %d"
 }

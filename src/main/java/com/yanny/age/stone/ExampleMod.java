@@ -14,8 +14,9 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 @Mod(Reference.MODID)
 public class ExampleMod {
-    public static final IProxy proxy = DistExecutor.safeRunForDist(() -> () -> new ClientProxy(), () -> () -> new ServerProxy());
-
+    public static final IProxy proxy = DistExecutor.safeRunForDist(
+            () -> ClientProxy::new,
+            () -> ServerProxy::new);
     public ExampleMod() {
         final ModLoadingContext modLoadingContext = ModLoadingContext.get();
         modLoadingContext.registerConfig(ModConfig.Type.CLIENT, ConfigHolder.CLIENT_SPEC);

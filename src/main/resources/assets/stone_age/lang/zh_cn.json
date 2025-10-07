@@ -135,5 +135,7 @@
   "advancements.stone_age.livestock.title": "牲畜",
   "advancements.stone_age.livestock.description": "通过饲养牲畜来让牲畜繁殖",
   "advancements.stone_age.end_of_stone_age.title": "石器时代之结束",
-  "advancements.stone_age.end_of_stone_age.description": "石器时代到这里结束了，你可以接着去制作更复杂的物品了！"
+  "advancements.stone_age.end_of_stone_age.description": "石器时代到这里结束了，你可以接着去制作更复杂的物品了！",
+  "config.jade.plugin_stoneage.wild_animal_generation": "动物世代",
+  "jade.stoneage.generation": "世代: %d"
 }
